@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.3] - 2025-02-24
+
+### Changed
+
+- Updated to use `vite` 6.2, `vue` 3.5, `typescript` 5.7, etc.
+
+### Documentation
+
+- Updated `unplugin-vue-router` config after version 0.9.0
+
+### Examples
+
+- Added `beasties`, `shiki`, `@shikijs/markdown-it`, remove `critters`, `vue-tsc`, `markdown-it-shikiji`, `shikiji` (deprecated) in `vitesse`
+
+### Chore
+
+- Updated `eslint` to version 9
+
 ## [0.0.2] - 2025-02-24
 
 ### Changed
