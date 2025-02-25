@@ -45,21 +45,21 @@
     "vue-router": "^4.0.11"
   },
   "dependencies": {
-    "debug": "^4.3.4",
-    "fast-glob": "^3.3.2"
+    "debug": "^4.4.0",
+    "fast-glob": "^3.3.3"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^2.3.4",
+    "@antfu/eslint-config": "^4.3.0",
     "@types/debug": "^4.1.12",
-    "@types/node": "^20.10.3",
+    "@types/node": "^22.13.5",
     "cross-env": "^7.0.3",
-    "eslint": "^8.55.0",
-    "eslint-plugin-format": "^0.1.0",
-    "rollup": "^4.6.1",
-    "tsup": "^8.0.1",
-    "typescript": "^5.3.2",
-    "vite": "^5.0.5",
-    "vue": "^3.3.10",
-    "vue-router": "^4.2.5"
+    "eslint": "^9.21.0",
+    "eslint-plugin-format": "^1.0.1",
+    "rollup": "^4.34.8",
+    "tsup": "^8.3.6",
+    "typescript": "^5.7.3",
+    "vite": "^6.2.0",
+    "vue": "^3.5.13",
+    "vue-router": "^4.5.0"
   }
 }

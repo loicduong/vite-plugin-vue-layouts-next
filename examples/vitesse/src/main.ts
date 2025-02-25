@@ -1,10 +1,10 @@
-import { ViteSSG } from 'vite-ssg'
+import type { UserModule } from './types'
 import { setupLayouts } from 'virtual:generated-layouts'
 
+import { ViteSSG } from 'vite-ssg'
 // import Previewer from 'virtual:vue-component-preview'
 import { routes } from 'vue-router/auto/routes'
 import App from './App.vue'
-import type { UserModule } from './types'
 
 import '@unocss/reset/tailwind.css'
 import './styles/main.css'

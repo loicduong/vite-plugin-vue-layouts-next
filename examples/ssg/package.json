@@ -1,27 +1,28 @@
 {
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "nodemon --watch ../../dist/index.js -x \"cross-env DEBUG=vite-plugin-layouts vite\"",
     "build": "cross-env DEBUG=vite-plugin-layouts vite-ssg build",
     "serve": "vite preview"
   },
   "dependencies": {
-    "vue": "^3.3.10",
-    "vue-router": "^4.2.5"
+    "vue": "^3.5.13",
+    "vue-router": "^4.5.0"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^4.5.0",
-    "@vue/compiler-sfc": "^3.3.8",
-    "@vue/server-renderer": "^3.3.10",
+    "@vitejs/plugin-vue": "^5.2.1",
+    "@vue/compiler-sfc": "^3.5.13",
+    "@vue/server-renderer": "^3.5.13",
     "@vueuse/head": "^2.0.0",
     "cross-env": "^7.0.3",
-    "nodemon": "^3.0.1",
-    "typescript": "^5.3.2",
-    "unplugin-vue-markdown": "^0.25.2",
-    "vite": "^5.0.2",
-    "vite-plugin-inspect": "^0.8.1",
-    "vite-plugin-pages": "^0.32.0",
+    "nodemon": "^3.1.9",
+    "typescript": "^5.7.3",
+    "unplugin-vue-markdown": "^28.3.1",
+    "vite": "^6.2.0",
+    "vite-plugin-inspect": "^11.0.0",
+    "vite-plugin-pages": "^0.32.5",
     "vite-plugin-vue-layouts-next": "workspace:*",
-    "vite-ssg": "^0.23.5"
+    "vite-ssg": "^25.2.0"
   }
 }

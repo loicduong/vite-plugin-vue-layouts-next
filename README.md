@@ -65,12 +65,13 @@ const router = createRouter({
 ## [unplugin-vue-router](https://github.com/posva/unplugin-vue-router)
 
 ```js
-import { createRouter } from 'vue-router/auto'
+import { createRouter } from 'vue-router'
 import { setupLayouts } from 'virtual:generated-layouts'
+import { routes } from 'vue-router/auto-routes'
 
 const router = createRouter({
   // ...
-  extendRoutes: routes => setupLayouts(routes),
+  routes: setupLayouts(routes),
 })
 ```
 
