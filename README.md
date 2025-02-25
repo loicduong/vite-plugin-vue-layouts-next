@@ -1,10 +1,12 @@
-# vite-plugin-vue-layouts
+# vite-plugin-vue-layouts-next
 
-[![npm version](https://img.shields.io/npm/v/vite-plugin-vue-layouts)](https://www.npmjs.com/package/vite-plugin-vue-layouts)
+[![npm version](https://img.shields.io/npm/v/vite-plugin-vue-layouts-next)](https://www.npmjs.com/package/vite-plugin-vue-layouts-next)
 
 > Router based layout for Vue 3 applications using [Vite](https://github.com/vitejs/vite)
 
 ## Overview
+
+A fork of [vite-plugin-vue-layouts](https://github.com/JohnCampionJr/vite-plugin-vue-layouts) with some improvements and fixes, supports the latest versions of Vite and Vue.
 
 This works best along with the [vite-plugin-pages](https://github.com/hannoeru/vite-plugin-pages).
 
@@ -14,7 +16,7 @@ Pages without a layout specified use `default.vue` for their layout.
 
 You can use route blocks to allow each page to determine its layout.  The block below in a page will look for `/src/layouts/users.vue` for its layout.
 
-See the [Vitesse starter template](https://github.com/antfu/vitesse) for a working example.
+See the [Vitesse starter template](https://github.com/antfu/vitesse) for a working example with [vite-plugin-vue-layouts] and it also works similarly with this.
 
 ```html
 <route lang="yaml">
@@ -23,30 +25,30 @@ meta:
 </route>
 ```
 
-
 ## Getting Started
 
 Install Layouts:
 
 ```bash
-$ npm install -D vite-plugin-vue-layouts
+npm install -D vite-plugin-vue-layouts-next
 ```
 
 Add to your `vite.config.js`:
 
 ```js
-import Vue from '@vitejs/plugin-vue';
-import Pages from 'vite-plugin-pages';
-import Layouts from 'vite-plugin-vue-layouts';
+import Vue from '@vitejs/plugin-vue'
+import Pages from 'vite-plugin-pages'
+import Layouts from 'vite-plugin-vue-layouts-next'
 
 export default {
   plugins: [Vue(), Pages(), Layouts()],
-};
+}
 ```
 
 In main.ts, you need to add a few lines to import the generated code and setup the layouts.
 
 ## vue-router
+
 ```js
 import { createRouter } from 'vue-router'
 import { setupLayouts } from 'virtual:generated-layouts'
@@ -57,26 +59,29 @@ const routes = setupLayouts(generatedRoutes)
 const router = createRouter({
   // ...
   routes,
-});
+})
 ```
 
 ## [unplugin-vue-router](https://github.com/posva/unplugin-vue-router)
+
 ```js
 import { createRouter } from 'vue-router/auto'
 import { setupLayouts } from 'virtual:generated-layouts'
 
 const router = createRouter({
   // ...
-  extendRoutes: (routes) => setupLayouts(routes),
+  extendRoutes: routes => setupLayouts(routes),
 })
 ```
 
 ## Client Types
-If you want type definition of `virtual:generated-layouts`, add `vite-plugin-vue-layouts/client` to `compilerOptions.types` of your `tsconfig`:
+
+If you want type definition of `virtual:generated-layouts`, add `vite-plugin-vue-layouts-next/client` to `compilerOptions.types` of your `tsconfig`:
+
 ```json
 {
   "compilerOptions": {
-    "types": ["vite-plugin-vue-layouts/client"]
+    "types": ["vite-plugin-vue-layouts-next/client"]
   }
 }
 ```
@@ -98,7 +103,7 @@ To use custom configuration, pass your options to Layouts when instantiating the
 
 ```js
 // vite.config.js
-import Layouts from 'vite-plugin-vue-layouts';
+import Layouts from 'vite-plugin-vue-layouts-next'
 
 export default {
   plugins: [
@@ -108,7 +113,7 @@ export default {
       defaultLayout: 'myDefault'
     }),
   ],
-};
+}
 ```
 
 ### layoutsDirs
@@ -144,12 +149,14 @@ Can also be an array of layout dirs or use `**` glob patterns
 Simply put, layouts are [nested routes](https://next.router.vuejs.org/guide/essentials/nested-routes.html#nested-routes) with the same path.
 
 Before:
-```
+
+```text
 router: [ page1, page2, page3 ]
 ```
 
 After `setupLayouts()`:
-```
+
+```text
 router: [
   layoutA: page1,
   layoutB: page2,
@@ -162,9 +169,11 @@ That means you have the full flexibility of the [vue-router API](https://next.ro
 ## Common patterns
 
 ### Transitions
+
 Layouts and Transitions work as expected and explained in the [vue-router docs](https://next.router.vuejs.org/guide/advanced/transitions.html) only as long as `Component` changes on each route. So if you want a transition between pages with the same layout *and* a different layout, you have to mutate `:key` on `<component>` (for a detailed example, see the vue docs about [transitions between elements](https://v3.vuejs.org/guide/transitions-enterleave.html#transitioning-between-elements)).
 
 `App.vue`
+
 ```html
 <template>
   <router-view v-slot="{ Component, route }">
@@ -180,7 +189,8 @@ Now Vue will always trigger a transition if you change the route.
 ### Data from layout to page
 
 If you want to send data *down* from the layout to the page, use props
-```
+
+```html
 <router-view foo="bar" />
 ```
 
@@ -191,6 +201,7 @@ If you want to set state in your page and do something with it in your layout, a
 You can use the `<route>` block if you work with [vite-plugin-pages](https://github.com/hannoeru/vite-plugin-pages).
 
 In `page.vue`:
+
 ```html
 <template><div>Content</div></template>
 <route lang="yaml">
@@ -201,6 +212,7 @@ meta:
 ```
 
 Now you can read `bgColor` in `layout.vue`:
+
 ```html
 <script setup>
 import { useRouter } from 'vue-router'
@@ -217,6 +229,7 @@ import { useRouter } from 'vue-router'
 If you need to set `bgColor` dynamically at run-time, you can use [custom events](https://v3.vuejs.org/guide/component-custom-events.html#custom-events).
 
 Emit the event in `page.vue`:
+
 ```html
 <script setup>
 import { defineEmit } from 'vue'
@@ -230,6 +243,7 @@ else
 ```
 
 Listen for `setColor` custom-event in `layout.vue`:
+
 ```html
 <script setup>
 import { ref } from 'vue'
@@ -251,12 +265,11 @@ const setBg = (color) => {
 
 The clientSideLayout uses a simpler [virtual file](https://vitejs.dev/guide/api-plugin.html#importing-a-virtual-file) + [glob import](https://vitejs.dev/guide/features.html#glob-import) scheme, This means that its hmr is faster and more accurate, but also more limited
 
-
 ### Usage
 
 ```js
 // vite.config.js
-import { ClientSideLayout } from 'vite-plugin-vue-layouts'
+import { ClientSideLayout } from 'vite-plugin-vue-layouts-next'
 
 export default {
   plugins: [
@@ -266,6 +279,5 @@ export default {
       importMode: 'sync' // The default will automatically detect -> ssg is sync，other is async
     }),
   ],
-};
+}
 ```
-

@@ -1,6 +1,6 @@
+import { resolve } from 'node:path'
 import Debug from 'debug'
 import fg from 'fast-glob'
-import { resolve } from 'path'
 
 export function extensionsToGlob(extensions: string[]) {
   return extensions.length > 1 ? `{${extensions.join(',')}}` : extensions[0] || ''
@@ -17,7 +17,8 @@ export function pathToName(filepath: string) {
 }
 
 export function resolveDirs(dirs: string | string[] | null, root: string) {
-  if (dirs === null) return []
+  if (dirs === null)
+    return []
   const dirsArray = Array.isArray(dirs) ? dirs : [dirs]
   const dirsResolved: string[] = []
 
@@ -33,5 +34,4 @@ export function resolveDirs(dirs: string | string[] | null, root: string) {
   }
 
   return dirsResolved
-
 }

@@ -1,15 +1,15 @@
 {
-  "name": "vite-plugin-vue-layouts",
-  "version": "0.11.0",
-  "description": "Router based layout plugin for Vite and Vue",
-  "author": "johncampionjr <npm@relate.dev>",
+  "name": "vite-plugin-vue-layouts-next",
+  "version": "0.0.0",
+  "description": "Router-based layout plugin for Vite and Vue, supports the latest versions.",
+  "author": "loicduong <npm@relate.dev>",
   "license": "MIT",
-  "homepage": "https://github.com/johncampionjr/vite-plugin-vue-layouts",
+  "homepage": "https://github.com/loicduong/vite-plugin-vue-layouts-next",
   "repository": {
     "type": "git",
-    "url": "https://github.com/johncampionjr/vite-plugin-vue-layouts"
+    "url": "https://github.com/loicduong/vite-plugin-vue-layouts-next"
   },
-  "bugs": "https://github.com/johncampionjr/vite-plugin-vue-layouts",
+  "bugs": "https://github.com/loicduong/vite-plugin-vue-layouts-next",
   "exports": {
     "./client": {
       "types": "./client.d.ts"

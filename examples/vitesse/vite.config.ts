@@ -2,7 +2,7 @@ import path from 'node:path'
 import { defineConfig } from 'vite'
 import Vue from '@vitejs/plugin-vue'
 import generateSitemap from 'vite-ssg-sitemap'
-import Layouts from 'vite-plugin-vue-layouts'
+import Layouts from 'vite-plugin-vue-layouts-next'
 import Components from 'unplugin-vue-components/vite'
 import AutoImport from 'unplugin-auto-import/vite'
 import Markdown from 'unplugin-vue-markdown/vite'
@@ -39,7 +39,7 @@ export default defineConfig({
       dts: 'src/typed-router.d.ts',
     }),
 
-    // https://github.com/JohnCampionJr/vite-plugin-vue-layouts
+    // https://github.com/loicduong/vite-plugin-vue-layouts-next
     Layouts(),
 
     // https://github.com/antfu/unplugin-auto-import
