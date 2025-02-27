@@ -14,8 +14,8 @@ import { defineConfig } from 'vite'
 import { VitePWA } from 'vite-plugin-pwa'
 import VueDevTools from 'vite-plugin-vue-devtools'
 import Layouts from 'vite-plugin-vue-layouts-next'
-import WebfontDownload from 'vite-plugin-webfont-dl'
 import generateSitemap from 'vite-ssg-sitemap'
+import 'vitest/config'
 
 export default defineConfig({
   resolve: {
@@ -82,7 +82,7 @@ export default defineConfig({
       wrapperClasses: 'prose prose-sm m-auto text-left',
       headEnabled: true,
       async markdownItSetup(md) {
-        md.use(LinkAttributes as any, {
+        md.use(LinkAttributes, {
           matcher: (link: string) => /^https?:\/\//.test(link),
           attrs: {
             target: '_blank',
@@ -95,7 +95,7 @@ export default defineConfig({
             light: 'vitesse-light',
             dark: 'vitesse-dark',
           },
-        }) as any)
+        }))
       },
     }),
 
@@ -135,9 +135,6 @@ export default defineConfig({
       fullInstall: true,
       include: [path.resolve(__dirname, 'locales/**')],
     }),
-
-    // https://github.com/feat-agency/vite-plugin-webfont-dl
-    WebfontDownload(),
 
     // https://github.com/webfansplz/vite-plugin-vue-devtools
     VueDevTools(),

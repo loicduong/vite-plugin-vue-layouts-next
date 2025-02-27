@@ -5,14 +5,8 @@
   >
     <RouterView />
     <TheFooter />
-    <div mx-auto mt-5 text-center text-sm opacity-50 class="my-large-text">
+    <div mx-auto mt-5 text-center text-sm opacity-50>
       [Default Layout]
     </div>
   </main>
 </template>
-
-<style scoped>
-:deep(.my-large-text) {
-  font-size: 0.5rem;
-}
-</style>
