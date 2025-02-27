@@ -7,9 +7,16 @@
   "homepage": "https://github.com/loicduong/vite-plugin-vue-layouts-next",
   "repository": {
     "type": "git",
-    "url": "https://github.com/loicduong/vite-plugin-vue-layouts-next"
+    "url": "git+https://github.com/loicduong/vite-plugin-vue-layouts-next.git"
   },
   "bugs": "https://github.com/loicduong/vite-plugin-vue-layouts-next",
+  "keywords": [
+    "typescript",
+    "vite-plugin",
+    "vite6",
+    "vue-router",
+    "vue"
+  ],
   "exports": {
     "./client": {
       "types": "./client.d.ts"
