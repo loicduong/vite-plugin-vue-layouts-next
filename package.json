@@ -43,8 +43,18 @@
     "example:dev": "npm -C examples/spa run dev",
     "example:build": "npm -C examples/spa run build",
     "example:serve": "npm -C examples/spa run serve",
+    "example:dev-ssg": "npm -C examples/ssg run dev",
     "example:build-ssg": "npm -C examples/ssg run build",
-    "example:serve-ssg": "npm -C examples/ssg run serve"
+    "example:serve-ssg": "npm -C examples/ssg run serve",
+    "example:dev-client": "npm -C examples/client-side run dev",
+    "example:build-client": "npm -C examples/client-side run build",
+    "example:serve-client": "npm -C examples/client-side run serve",
+    "example:dev-unplugin": "npm -C examples/unplugin-vue-router run dev",
+    "example:build-unplugin": "npm -C examples/unplugin-vue-router run build",
+    "example:serve-unplugin": "npm -C examples/unplugin-vue-router run serve",
+    "example:dev-vitesse": "npm -C examples/vitesse run dev",
+    "example:build-vitesse": "npm -C examples/vitesse run build",
+    "example:serve-vitesse": "npm -C examples/vitesse run preview"
   },
   "peerDependencies": {
     "vite": "^4.0.0 || ^5.0.0 || ^6.0.0",
