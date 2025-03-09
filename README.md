@@ -93,8 +93,10 @@ If you want type definition of `virtual:generated-layouts`, add `vite-plugin-vue
 interface UserOptions {
   layoutsDirs?: string | string[]
   pagesDirs?: string | string[] | null
-  exclude: string[]
+  extensions?: string[]
+  exclude?: string[]
   defaultLayout?: string
+  importMode?: (name: string) => 'sync' | 'async'
 }
 ```
 
@@ -140,6 +142,12 @@ Can also be an array of layout dirs or use `**` glob patterns
 
 **Default:** `'src/pages'`
 
+### extensions
+
+Valid file extensions for page components.
+
+**Default:** `['vue']`
+
 ### exclude
 
 List of path globs to exclude when resolving pages.
@@ -149,6 +157,12 @@ List of path globs to exclude when resolving pages.
 Filename of default layout (".vue" is not needed).
 
 **Default:** `'default'`
+
+### importMode
+
+Mode for importing layouts.
+
+**Default:** ssg is `'sync'`，other is `'async'`
 
 ## How it works
 
