@@ -140,6 +140,16 @@ Can also be an array of layout dirs or use `**` glob patterns
 
 **Default:** `'src/pages'`
 
+### exclude
+
+List of path globs to exclude when resolving pages.
+
+### defaultLayout
+
+Filename of default layout (".vue" is not needed).
+
+**Default:** `'default'`
+
 ## How it works
 
 `setupLayouts` transforms the original `router` by
