@@ -68,11 +68,11 @@
   "devDependencies": {
     "@antfu/eslint-config": "^4.11.0",
     "@types/debug": "^4.1.12",
-    "@types/node": "^22.13.13",
+    "@types/node": "^22.13.14",
     "cross-env": "^7.0.3",
     "eslint": "^9.23.0",
     "eslint-plugin-format": "^1.0.1",
-    "rollup": "^4.37.0",
+    "rollup": "^4.38.0",
     "tsup": "^8.4.0",
     "typescript": "^5.8.2",
     "vite": "^6.2.3",
