@@ -1,6 +1,6 @@
 {
   "name": "vite-plugin-vue-layouts-next",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "Router-based layout plugin for Vite and Vue, supports the latest versions.",
   "author": "loicduong <npm@relate.dev>",
   "license": "MIT",
