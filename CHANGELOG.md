@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.10] - 2025-04-03
+
+### Chore
+
+- Updated deps
+
 ## [0.0.9] - 2025-03-29
 
 ### Chore
