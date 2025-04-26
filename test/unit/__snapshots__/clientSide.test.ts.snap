@@ -1,0 +1,186 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`createVirtualModuleCode > generates code with default layout 1`] = `
+"
+  export const createGetRoutes = (router, withLayout = false) => {
+      const routes = router.getRoutes()
+      if (withLayout) {
+          return routes
+      }
+      return () => routes.filter(route => !route.meta.isLayout)
+  }
+  
+  export const setupLayouts = routes => {
+      const layouts = {}
+  
+      const modules = import.meta.glob("/layouts/**/*.vue", { eager: true })
+    
+      Object.entries(modules).forEach(([name, module]) => {
+          let key = name.replace("/layouts/", '').replace('.vue', '')
+          layouts[key] = module.default
+      })
+      
+    function deepSetupLayout(routes, top = true) {
+      return routes.map(route => {
+        if (route.children?.length > 0) {
+          route.children = deepSetupLayout(route.children, false)
+        }
+
+        const layout = route.meta?.layout ?? 'default'
+
+        const skipLayout = top
+          && !route.component
+          && route.children?.find(r => (r.path === '' || r.path === '/') && r.meta?.isLayout);
+  
+        if (skipLayout) {
+          return route
+        }
+            
+        if (layout && layouts[layout]) {
+          
+/** @type {import('vue-router').RouteRecordRaw} */
+const layoutRoute = {
+        path: route.path,
+        component: layouts[layout],
+        meta: { ...route.meta, isLayout: true },
+        // Handle root path specially to avoid infinite nesting
+        children: top && route.path === '/' 
+        ? [route] 
+        : [{ ...route, path: '', meta: { ...route.meta, isLayout: false } }]
+}
+return layoutRoute
+
+        }
+  
+        return route
+      })
+    }
+  
+      return deepSetupLayout(routes)
+  }"
+`;
+
+exports[`createVirtualModuleCode > generates code with top level route layout skipping 1`] = `
+"
+  export const createGetRoutes = (router, withLayout = false) => {
+      const routes = router.getRoutes()
+      if (withLayout) {
+          return routes
+      }
+      return () => routes.filter(route => !route.meta.isLayout)
+  }
+  
+  export const setupLayouts = routes => {
+      const layouts = {}
+  
+      const modules = import.meta.glob("/layouts/**/*.vue", { eager: true })
+    
+      Object.entries(modules).forEach(([name, module]) => {
+          let key = name.replace("/layouts/", '').replace('.vue', '')
+          layouts[key] = module.default
+      })
+      
+    function deepSetupLayout(routes, top = true) {
+      return routes.map(route => {
+        if (route.children?.length > 0) {
+          route.children = deepSetupLayout(route.children, false)
+        }
+
+        const layout = route.meta?.layout ?? 'default'
+
+        const skipLayout = top
+          && !route.component
+          && route.children?.find(r => (r.path === '' || r.path === '/') && r.meta?.isLayout);
+  
+        if (skipLayout) {
+          return route
+        }
+            
+        if (layout && layouts[layout]) {
+          
+/** @type {import('vue-router').RouteRecordRaw} */
+const layoutRoute = {
+        path: route.path,
+        component: layouts[layout],
+        meta: { ...route.meta, isLayout: true },
+        // Handle root path specially to avoid infinite nesting
+        children: top && route.path === '/' 
+        ? [route] 
+        : [{ ...route, path: '', meta: { ...route.meta, isLayout: false } }]
+}
+return layoutRoute
+
+        }
+  
+        return route
+      })
+    }
+  
+      return deepSetupLayout(routes)
+  }"
+`;
+
+exports[`createVirtualModuleCode > generates code with wrapped components 1`] = `
+"
+  export const createGetRoutes = (router, withLayout = false) => {
+      const routes = router.getRoutes()
+      if (withLayout) {
+          return routes
+      }
+      return () => routes.filter(route => !route.meta.isLayout)
+  }
+  
+  export const setupLayouts = routes => {
+      const layouts = {}
+  
+      const modules = import.meta.glob("/layouts/**/*.vue", { eager: false })
+    
+      Object.entries(modules).forEach(([name, module]) => {
+          let key = name.replace("/layouts/", '').replace('.vue', '')
+          layouts[key] = module
+      })
+      
+    function deepSetupLayout(routes, top = true) {
+      return routes.map(route => {
+        if (route.children?.length > 0) {
+          route.children = deepSetupLayout(route.children, false)
+        }
+
+        const layout = route.meta?.layout ?? 'default'
+
+        const skipLayout = top
+          && !route.component
+          && route.children?.find(r => (r.path === '' || r.path === '/') && r.meta?.isLayout);
+  
+        if (skipLayout) {
+          return route
+        }
+            
+        if (layout && layouts[layout]) {
+          
+if (!route.component) {
+        return route
+}
+/** @type {import('vue-router').RouteRecordRaw} */
+const wrappedRoute = {
+        ...route,
+        component: h('div', [
+        h(layouts[layout].layout),
+        h(layouts[layout].isSync ? defineComponent(() => route.component()) : defineAsyncComponent(() => route.component())),
+        ]),
+        meta: {
+        ...route.meta,
+        isLayout: true
+        }
+}
+return wrappedRoute
+
+        }
+  
+        return route
+      })
+    }
+  
+      return deepSetupLayout(routes)
+  }"
+`;

@@ -54,7 +54,12 @@
     "example:serve-unplugin": "npm -C examples/unplugin-vue-router run serve",
     "example:dev-vitesse": "npm -C examples/vitesse run dev",
     "example:build-vitesse": "npm -C examples/vitesse run build",
-    "example:serve-vitesse": "npm -C examples/vitesse run preview"
+    "example:serve-vitesse": "npm -C examples/vitesse run preview",
+    "test": "pnpm run \"/^test:.*/\"",
+    "test-watch": "pnpm run \"/^test:.*/\" --watch",
+    "test-update": "pnpm run \"/^test:.*/\" --update",
+    "test:unit": "vitest run --config test/unit/vitest.config.mts",
+    "test:e2e": "vitest run --config test/e2e/vitest.config.ts"
   },
   "peerDependencies": {
     "vite": "^4.0.0 || ^5.0.0 || ^6.0.0",
@@ -76,6 +81,7 @@
     "tsup": "^8.4.0",
     "typescript": "^5.8.3",
     "vite": "^6.3.1",
+    "vitest": "^3.1.2",
     "vue": "^3.5.13",
     "vue-router": "^4.5.0"
   }
