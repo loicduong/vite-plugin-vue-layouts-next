@@ -1,6 +1,6 @@
 {
   "name": "vite-plugin-vue-layouts-next",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "description": "Router-based layout plugin for Vite and Vue, supports the latest versions.",
   "author": "loicduong <npm@relate.dev>",
   "license": "MIT",
@@ -73,16 +73,16 @@
   "devDependencies": {
     "@antfu/eslint-config": "^4.12.0",
     "@types/debug": "^4.1.12",
-    "@types/node": "^22.14.1",
+    "@types/node": "^22.15.2",
     "cross-env": "^7.0.3",
-    "eslint": "^9.24.0",
+    "eslint": "^9.25.1",
     "eslint-plugin-format": "^1.0.1",
     "rollup": "^4.40.0",
     "tsup": "^8.4.0",
     "typescript": "^5.8.3",
-    "vite": "^6.3.1",
+    "vite": "^6.3.3",
     "vitest": "^3.1.2",
     "vue": "^3.5.13",
-    "vue-router": "^4.5.0"
+    "vue-router": "^4.5.1"
   }
 }
