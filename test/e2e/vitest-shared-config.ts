@@ -30,7 +30,7 @@ export function createConfig(name: string, opts: UserOptions = {}) {
     plugins: getBasePlugins(opts),
     root: process.cwd(),
     test: {
-      name,
+      name: `e2e:${name}`,
       provide: {
         runName: name,
       },

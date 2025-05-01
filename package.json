@@ -55,11 +55,11 @@
     "example:dev-vitesse": "npm -C examples/vitesse run dev",
     "example:build-vitesse": "npm -C examples/vitesse run build",
     "example:serve-vitesse": "npm -C examples/vitesse run preview",
-    "test": "pnpm run \"/^test:.*/\"",
-    "test-watch": "pnpm run \"/^test:.*/\" --watch",
-    "test-update": "pnpm run \"/^test:.*/\" --update",
-    "test:unit": "vitest run --config test/unit/vitest.config.mts",
-    "test:e2e": "vitest run --config test/e2e/vitest.config.ts"
+    "test": "vitest run",
+    "test-watch": "pnpm run --watch",
+    "test-update": "pnpm run --update",
+    "test:unit": "vitest run --exclude test/e2e/**",
+    "test:e2e": "vitest run --exclude test/unit/**"
   },
   "peerDependencies": {
     "vite": "^4.0.0 || ^5.0.0 || ^6.0.0",
