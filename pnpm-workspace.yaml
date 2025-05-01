@@ -2,6 +2,12 @@ packages:
   - examples/*
   - test/e2e
 
+catalog:
+  vite: ^6.3.3
+  vitest: ^3.1.2
+  vue: ^3.3.0
+  vue-router: 4.5.0
+
 onlyBuiltDependencies:
   - cypress
   - esbuild
