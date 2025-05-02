@@ -56,8 +56,8 @@
     "example:build-vitesse": "npm -C examples/vitesse run build",
     "example:serve-vitesse": "npm -C examples/vitesse run preview",
     "test": "vitest run",
-    "test-watch": "pnpm run --watch",
-    "test-update": "pnpm run --update",
+    "test-watch": "vitest run --watch",
+    "test-update": "vitest run --update",
     "test:unit": "vitest run --exclude test/e2e/**",
     "test:e2e": "vitest run --exclude test/unit/**"
   },
