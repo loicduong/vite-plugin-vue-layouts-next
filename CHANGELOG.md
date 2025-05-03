@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.0] - 2025-05-03
+
+### Added
+
+- Added component wrapping ([#1](https://github.com/loicduong/vite-plugin-vue-layouts-next/issues/1))
+
+### Chore
+
+- Updated deps
+
 ## [0.0.14] - 2025-04-25
 
 ### Chore
