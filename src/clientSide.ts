@@ -1,4 +1,6 @@
 import { posix } from 'node:path'
+import { addIndentation } from './utils.js'
+import { returnLayoutComponent, returnLayoutRoute } from './layoutReturn.js'
 
 function normalizePath(path: string) {
   path = path.startsWith('/') ? path : `/${path}`
@@ -9,6 +11,7 @@ interface VirtualModuleCodeOptions {
   layoutDir: string
   defaultLayout: string
   importMode: 'sync' | 'async'
+  wrapComponent: boolean
 }
 
 async function createVirtualGlob(
@@ -28,7 +31,7 @@ export async function createVirtualModuleCode(
 
   const isSync = importMode === 'sync'
 
-  return `
+  return /* js */`
   export const createGetRoutes = (router, withLayout = false) => {
       const routes = router.getRoutes()
       if (withLayout) {
@@ -56,35 +59,18 @@ export async function createVirtualModuleCode(
           route.children = deepSetupLayout(route.children, false)
         }
 
-        if (top) {
-          // unplugin-vue-router adds a top-level route to the routing group, which we should skip.
-          const skipLayout = !route.component && route.children?.find(r => (r.path === '' || r.path === '/') && r.meta?.isLayout)  
+        const layout = route.meta?.layout ?? '${options.defaultLayout}'
 
-          if (skipLayout) {
-            return route
-          }
-
-          if (route.meta?.layout !== false) {
-            return { 
-              path: route.path,
-              component: layouts[route.meta?.layout || '${defaultLayout}'],
-              children: route.path === '/' ? [route] : [{...route, path: ''}],
-              meta: {
-                isLayout: true
-              }
-            }
-          }
-        }
+        const skipLayout = top
+          && !route.component
+          && route.children?.find(r => (r.path === '' || r.path === '/') && r.meta?.isLayout);
   
-        if (route.meta?.layout) {
-          return { 
-            path: route.path,
-            component: layouts[route.meta?.layout],
-            children: [ {...route, path: ''} ],
-            meta: {
-              isLayout: true
-            }
-          }
+        if (skipLayout) {
+          return route
+        }
+            
+        if (layout && layouts[layout]) {
+          ${addIndentation(options.wrapComponent ? returnLayoutComponent : returnLayoutRoute, 8)}
         }
   
         return route

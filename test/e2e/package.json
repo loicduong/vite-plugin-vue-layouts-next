@@ -1,0 +1,19 @@
+{
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "test": "vitest run",
+    "test:update": "vitest run --update"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "5.2.1",
+    "@vue/test-utils": "2.4.6",
+    "happy-dom": "17.1.0",
+    "unplugin-vue-router": "0.11.2",
+    "vite": "catalog:",
+    "vite-plugin-vue-layouts-next": "workspace:*",
+    "vitest": "catalog:",
+    "vue": "catalog:",
+    "vue-router": "catalog:"
+  }
+}

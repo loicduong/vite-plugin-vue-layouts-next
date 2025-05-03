@@ -35,3 +35,7 @@ export function resolveDirs(dirs: string | string[] | null, root: string) {
 
   return dirsResolved
 }
+
+export function addIndentation(code: string, indent: number) {
+  return code.replace(/\n[ \t]+/g, `\n${' '.repeat(indent)}`)
+}
