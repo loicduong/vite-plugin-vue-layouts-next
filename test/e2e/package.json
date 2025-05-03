@@ -6,10 +6,10 @@
     "test:update": "vitest run --update"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "5.2.1",
+    "@vitejs/plugin-vue": "5.2.3",
     "@vue/test-utils": "2.4.6",
-    "happy-dom": "17.1.0",
-    "unplugin-vue-router": "0.11.2",
+    "happy-dom": "17.4.6",
+    "unplugin-vue-router": "0.12.0",
     "vite": "catalog:",
     "vite-plugin-vue-layouts-next": "workspace:*",
     "vitest": "catalog:",
