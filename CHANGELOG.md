@@ -2,11 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.1] - 2025-05-05
+
+### Removed
+
+- Revert component wrapping
+
 ## [0.1.0] - 2025-05-03
 
 ### Added
 
-- Added component wrapping ([#1](https://github.com/loicduong/vite-plugin-vue-layouts-next/issues/1)) - [@josh-hemphill](https://github.com/josh-hemphill) 
+- Add component wrapping ([#1](https://github.com/loicduong/vite-plugin-vue-layouts-next/issues/1)) - [@josh-hemphill](https://github.com/josh-hemphill) 
 
 ### Changed
 
