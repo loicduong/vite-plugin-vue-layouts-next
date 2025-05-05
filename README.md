@@ -50,8 +50,8 @@ In main.ts, you need to add a few lines to import the generated code and setup t
 ## vue-router
 
 ```js
-import { setupLayouts } from 'virtual:generated-layouts'
 import { createRouter } from 'vue-router'
+import { setupLayouts } from 'virtual:generated-layouts'
 import generatedRoutes from '~pages'
 
 const routes = setupLayouts(generatedRoutes)
@@ -65,8 +65,8 @@ const router = createRouter({
 ## [unplugin-vue-router](https://github.com/posva/unplugin-vue-router)
 
 ```js
-import { setupLayouts } from 'virtual:generated-layouts'
 import { createRouter } from 'vue-router'
+import { setupLayouts } from 'virtual:generated-layouts'
 import { routes } from 'vue-router/auto-routes'
 
 const router = createRouter({
@@ -96,7 +96,6 @@ interface UserOptions {
   extensions?: string[]
   exclude?: string[]
   defaultLayout?: string
-  wrapComponent?: boolean
   importMode?: (name: string) => 'sync' | 'async'
 }
 ```
@@ -164,12 +163,6 @@ Filename of default layout (".vue" is not needed).
 Mode for importing layouts.
 
 **Default:** ssg is `'sync'`，other is `'async'`
-
-### wrapComponent
-
-If set to `true`, wraps the route's internal component with a layout instead of adding a wrapping route. This can be useful for better performance and simpler route structure. Especially if you have extensive routes, you can use this to avoid the overhead of adding a wrapping route for each page and maintain an easily parsable route structure.
-
-**Default:** `false`
 
 ## How it works
 

@@ -4,21 +4,6 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-catalogs:
-  default:
-    vite:
-      specifier: ^6.3.4
-      version: 6.3.4
-    vitest:
-      specifier: ^3.1.2
-      version: 3.1.2
-    vue:
-      specifier: ^3.3.0
-      version: 3.5.13
-    vue-router:
-      specifier: 4.5.1
-      version: 4.5.1
-
 importers:
 
   .:
@@ -58,16 +43,13 @@ importers:
         specifier: ^5.8.3
         version: 5.8.3
       vite:
-        specifier: 'catalog:'
+        specifier: ^6.3.3
         version: 6.3.4(@types/node@22.15.3)(jiti@2.4.2)(terser@5.25.0)(tsx@4.19.3)(yaml@2.7.0)
-      vitest:
-        specifier: 'catalog:'
-        version: 3.1.2(@types/debug@4.1.12)(@types/node@22.15.3)(happy-dom@17.4.6)(jiti@2.4.2)(jsdom@26.0.0)(terser@5.25.0)(tsx@4.19.3)(yaml@2.7.0)
       vue:
-        specifier: 'catalog:'
+        specifier: ^3.5.13
         version: 3.5.13(typescript@5.8.3)
       vue-router:
-        specifier: 'catalog:'
+        specifier: ^4.5.1
         version: 4.5.1(vue@3.5.13(typescript@5.8.3))
 
   examples/client-side:
@@ -401,36 +383,6 @@ importers:
       workbox-window:
         specifier: ^7.3.0
         version: 7.3.0
-
-  test/e2e:
-    devDependencies:
-      '@vitejs/plugin-vue':
-        specifier: 5.2.3
-        version: 5.2.3(vite@6.3.4(@types/node@22.15.3)(jiti@2.4.2)(terser@5.25.0)(tsx@4.19.3)(yaml@2.7.0))(vue@3.5.13(typescript@5.8.3))
-      '@vue/test-utils':
-        specifier: 2.4.6
-        version: 2.4.6
-      happy-dom:
-        specifier: 17.4.6
-        version: 17.4.6
-      unplugin-vue-router:
-        specifier: 0.12.0
-        version: 0.12.0(vue-router@4.5.1(vue@3.5.13(typescript@5.8.3)))(vue@3.5.13(typescript@5.8.3))
-      vite:
-        specifier: 'catalog:'
-        version: 6.3.4(@types/node@22.15.3)(jiti@2.4.2)(terser@5.25.0)(tsx@4.19.3)(yaml@2.7.0)
-      vite-plugin-vue-layouts-next:
-        specifier: workspace:*
-        version: link:../..
-      vitest:
-        specifier: 'catalog:'
-        version: 3.1.2(@types/debug@4.1.12)(@types/node@22.15.3)(happy-dom@17.4.6)(jiti@2.4.2)(jsdom@26.0.0)(terser@5.25.0)(tsx@4.19.3)(yaml@2.7.0)
-      vue:
-        specifier: 'catalog:'
-        version: 3.5.13(typescript@5.8.3)
-      vue-router:
-        specifier: 'catalog:'
-        version: 4.5.1(vue@3.5.13(typescript@5.8.3))
 
 packages:
 
@@ -10578,6 +10530,7 @@ snapshots:
     dependencies:
       webidl-conversions: 7.0.0
       whatwg-mimetype: 3.0.0
+    optional: true
 
   has-bigints@1.0.1: {}
 
@@ -13433,7 +13386,8 @@ snapshots:
     dependencies:
       iconv-lite: 0.6.3
 
-  whatwg-mimetype@3.0.0: {}
+  whatwg-mimetype@3.0.0:
+    optional: true
 
   whatwg-mimetype@4.0.0: {}
 

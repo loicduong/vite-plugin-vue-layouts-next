@@ -27,17 +27,12 @@ interface Options {
    */
   defaultLayout: string
   /**
-   * If set, wrap the route's internal component with a layout instead of adding a wrapping route
-   * @default false
-   */
-  wrapComponent?: boolean
-  /**
    * Mode for importing layouts
    */
   importMode: (name: string) => 'sync' | 'async'
 }
 
-export interface FileContainer {
+export type FileContainer = {
   path: string
   files: string[]
 }
@@ -60,9 +55,4 @@ export interface clientSideOptions {
    * default auto resolve
    */
   importMode?: 'sync' | 'async'
-  /**
-   * If set, wrap the route's internal component with a layout instead of adding a wrapping route
-   * @default false
-   */
-  wrapComponent?: boolean
 }

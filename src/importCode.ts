@@ -1,5 +1,5 @@
-import type { FileContainer, ResolvedOptions } from './types'
-import { join, parse } from 'node:path'
+import { join, parse } from 'path'
+import { ResolvedOptions, FileContainer } from './types'
 
 export function getImportCode(files: FileContainer[], options: ResolvedOptions) {
   const imports: string[] = []
@@ -14,39 +14,19 @@ export function getImportCode(files: FileContainer[], options: ResolvedOptions) 
       if (options.importMode(name) === 'sync') {
         const variable = `__layout_${id}`
         head.push(`import ${variable} from '${path}'`)
-        imports.push(/* js */`'${name}': { layout: ${variable}, isSync: true },`)
+        imports.push(`'${name}': ${variable},`)
         id += 1
       }
       else {
-        imports.push(/* js */`'${name}': { layout: () => import('${path}'), isSync: false },`)
+        imports.push(`'${name}': () => import('${path}'),`)
       }
     }
   }
 
-  let importsCode = `
+  const importsCode = `
 ${head.join('\n')}
 export const layouts = {
 ${imports.join('\n')}
 }`
-
-  if (options.wrapComponent) {
-    const vueImports = []
-    const nullImports = []
-    vueImports.push('h')
-    if (id > 0)
-      vueImports.push('defineAsyncComponent')
-    else
-      nullImports.push('defineAsyncComponent')
-    if ((imports.length - id) > 0)
-      vueImports.push('defineComponent')
-    else
-      nullImports.push('defineComponent')
-    importsCode = `
-import { ${vueImports.join(', ')} } from 'vue'
-${importsCode}
-${nullImports.map(v => `const ${v} = null`).join('\n')}
-`
-  }
-
   return importsCode
 }

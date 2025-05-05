@@ -1,4 +1,4 @@
 // eslint.config.js
-const antfu = import('@antfu/eslint-config').then(module => module.default())
+const antfu = require('@antfu/eslint-config').default
 
-module.exports = antfu
+module.exports = antfu()

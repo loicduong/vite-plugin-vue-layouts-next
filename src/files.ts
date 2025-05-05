@@ -1,6 +1,6 @@
-import type { ResolvedOptions } from './types'
 import fg from 'fast-glob'
-import { debug, extensionsToGlob } from './utils'
+import { ResolvedOptions } from './types'
+import { extensionsToGlob, debug } from './utils'
 
 /**
  * Resolves the files that are valid pages for the given context.
