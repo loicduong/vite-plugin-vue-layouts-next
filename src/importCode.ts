@@ -1,5 +1,5 @@
-import { join, parse } from 'path'
-import { ResolvedOptions, FileContainer } from './types'
+import type { FileContainer, ResolvedOptions } from './types'
+import { join, parse } from 'node:path'
 
 export function getImportCode(files: FileContainer[], options: ResolvedOptions) {
   const imports: string[] = []

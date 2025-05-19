@@ -1,6 +1,7 @@
 <template>
   <router-view />
 </template>
+
 <route>
 {
   meta: {

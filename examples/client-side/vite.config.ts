@@ -1,7 +1,7 @@
-import { defineConfig } from 'vite'
 import Vue from '@vitejs/plugin-vue'
-import Pages from 'vite-plugin-pages'
 import Markdown from 'unplugin-vue-markdown/vite'
+import { defineConfig } from 'vite'
+import Pages from 'vite-plugin-pages'
 import { ClientSideLayout } from 'vite-plugin-vue-layouts-next'
 
 const config = defineConfig({

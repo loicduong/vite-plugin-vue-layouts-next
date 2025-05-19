@@ -1,17 +1,17 @@
-import { resolve } from 'node:path'
 import type { ModuleNode, Plugin, ResolvedConfig } from 'vite'
+import type {
+  clientSideOptions,
+  FileContainer,
+  ResolvedOptions,
+  UserOptions,
+} from './types'
+import { resolve } from 'node:path'
 import { createVirtualModuleCode } from './clientSide'
 import { getFilesFromPath } from './files'
 import { getImportCode } from './importCode'
 import getClientCode from './RouteLayout'
-import { debug, normalizePath, resolveDirs } from './utils'
 
-import type {
-  FileContainer,
-  ResolvedOptions,
-  UserOptions,
-  clientSideOptions,
-} from './types'
+import { debug, normalizePath, resolveDirs } from './utils'
 
 const MODULE_IDS = ['layouts-generated', 'virtual:generated-layouts']
 const MODULE_ID_VIRTUAL = '/@vite-plugin-vue-layouts-next/generated-layouts'

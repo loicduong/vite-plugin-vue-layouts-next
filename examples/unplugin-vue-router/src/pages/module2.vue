@@ -1,6 +1,7 @@
 <template>
   <div>Module 2 Content</div>
 </template>
+
 <route>
 {
   meta: {

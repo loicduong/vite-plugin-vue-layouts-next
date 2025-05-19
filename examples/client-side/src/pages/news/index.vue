@@ -1,6 +1,7 @@
 <template>
   <p>/news/index.vue</p>
 </template>
+
 <route>
   {
     meta: {
@@ -8,4 +9,3 @@
     }
   }
   </route>
-  

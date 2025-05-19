@@ -41,9 +41,9 @@ export async function createVirtualModuleCode(
       const layouts = {}
   
       const modules = ${await createVirtualGlob(
-    normalizedTarget,
-    isSync,
-  )}
+        normalizedTarget,
+        isSync,
+      )}
     
       Object.entries(modules).forEach(([name, module]) => {
           let key = name.replace("${normalizedTarget}/", '').replace('.vue', '')

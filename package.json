@@ -1,5 +1,6 @@
 {
   "name": "vite-plugin-vue-layouts-next",
+  "type": "module",
   "version": "0.1.1",
   "description": "Router-based layout plugin for Vite and Vue, supports the latest versions.",
   "author": "loicduong <npm@relate.dev>",
@@ -54,7 +55,9 @@
     "example:serve-unplugin": "npm -C examples/unplugin-vue-router run serve",
     "example:dev-vitesse": "npm -C examples/vitesse run dev",
     "example:build-vitesse": "npm -C examples/vitesse run build",
-    "example:serve-vitesse": "npm -C examples/vitesse run preview"
+    "example:serve-vitesse": "npm -C examples/vitesse run preview",
+    "lint": "eslint",
+    "lint:fix": "eslint --fix"
   },
   "peerDependencies": {
     "vite": "^4.0.0 || ^5.0.0 || ^6.0.0",

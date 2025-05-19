@@ -32,7 +32,7 @@ interface Options {
   importMode: (name: string) => 'sync' | 'async'
 }
 
-export type FileContainer = {
+export interface FileContainer {
   path: string
   files: string[]
 }

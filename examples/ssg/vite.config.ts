@@ -1,8 +1,8 @@
-import { defineConfig } from 'vite'
 import Vue from '@vitejs/plugin-vue'
+import Markdown from 'unplugin-vue-markdown/vite'
+import { defineConfig } from 'vite'
 import Pages from 'vite-plugin-pages'
 import Layouts from 'vite-plugin-vue-layouts-next'
-import Markdown from 'unplugin-vue-markdown/vite'
 
 const config = defineConfig({
   plugins: [
