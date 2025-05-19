@@ -11,6 +11,7 @@ const router = createRouter({
 })
 
 const getRoutes = createGetRoutes(router)
+// eslint-disable-next-line no-console
 console.log(getRoutes())
 
 const app = createApp(App)

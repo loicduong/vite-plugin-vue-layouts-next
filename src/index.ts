@@ -6,6 +6,7 @@ import type {
   UserOptions,
 } from './types'
 import { resolve } from 'node:path'
+import process from 'node:process'
 import { createVirtualModuleCode } from './clientSide'
 import { getFilesFromPath } from './files'
 import { getImportCode } from './importCode'
