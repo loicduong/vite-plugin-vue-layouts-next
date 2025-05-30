@@ -69,17 +69,17 @@
     "fast-glob": "^3.3.3"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^4.13.1",
+    "@antfu/eslint-config": "^4.13.2",
     "@types/debug": "^4.1.12",
-    "@types/node": "^22.15.18",
+    "@types/node": "^22.15.26",
     "cross-env": "^7.0.3",
-    "eslint": "^9.26.0",
+    "eslint": "^9.27.0",
     "eslint-plugin-format": "^1.0.1",
-    "rollup": "^4.40.2",
-    "tsup": "^8.4.0",
+    "rollup": "^4.41.1",
+    "tsup": "^8.5.0",
     "typescript": "^5.8.3",
     "vite": "^6.3.5",
-    "vue": "^3.5.14",
+    "vue": "^3.5.16",
     "vue-router": "^4.5.1"
   }
 }
