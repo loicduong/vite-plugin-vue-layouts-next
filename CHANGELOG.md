@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.5] - 2025-06-09
+
+### Fixed
+
+- Use correct package exports ([#7](https://github.com/loicduong/vite-plugin-vue-layouts-next/issues/7)) - [@userquin](https://github.com/userquin) 
+
 ## [0.1.2]...[0.1.4] - 2025-06-07
 
 ### Changed
