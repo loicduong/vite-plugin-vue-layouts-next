@@ -40,16 +40,17 @@ yarn add -D vite-plugin-vue-layouts-next
 pnpm add -D vite-plugin-vue-layouts-next
 ```
 
-Add to your `vite.config.js`:
+Add to your `vite.config.ts`:
 
 ```js
 import Vue from '@vitejs/plugin-vue'
 import Pages from 'vite-plugin-pages'
 import Layouts from 'vite-plugin-vue-layouts-next'
+import { defineConfig } from 'vite'
 
-export default {
+export default defineConfig({
   plugins: [Vue(), Pages(), Layouts()],
-}
+})
 ```
 
 In main.ts, you need to add a few lines to import the generated code and setup the layouts.
@@ -112,10 +113,11 @@ interface UserOptions {
 To use custom configuration, pass your options to Layouts when instantiating the plugin:
 
 ```js
-// vite.config.js
+// vite.config.ts
 import Layouts from 'vite-plugin-vue-layouts-next'
+import { defineConfig } from 'vite'
 
-export default {
+export default defineConfig({
   plugins: [
     Layouts({
       layoutsDirs: 'src/mylayouts',
@@ -123,7 +125,7 @@ export default {
       defaultLayout: 'myDefault'
     }),
   ],
-}
+})
 ```
 
 ### layoutsDirs
@@ -246,7 +248,7 @@ meta:
 Now you can read `bgColor` in `layout.vue`:
 
 ```html
-<script setup>
+<script setup lang="ts">
 import { useRouter } from 'vue-router'
 </script>
 <template>
@@ -263,7 +265,7 @@ If you need to set `bgColor` dynamically at run-time, you can use [custom events
 Emit the event in `page.vue`:
 
 ```html
-<script setup>
+<script setup lang="ts">
 import { defineEmit } from 'vue'
 const emit = defineEmit(['setColor'])
 
@@ -277,7 +279,7 @@ else
 Listen for `setColor` custom-event in `layout.vue`:
 
 ```html
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue'
 
 const bgColor = ref('yellow')
@@ -300,10 +302,11 @@ The clientSideLayout uses a simpler [virtual file](https://vitejs.dev/guide/api-
 ### Usage
 
 ```js
-// vite.config.js
+// vite.config.ts
 import { ClientSideLayout } from 'vite-plugin-vue-layouts-next'
+import { defineConfig } from 'vite'
 
-export default {
+export default defineConfig({
   plugins: [
     ClientSideLayout({
       layoutsDir: 'src/mylayouts', // default to 'src/layouts'
@@ -311,5 +314,5 @@ export default {
       importMode: 'sync' // The default will automatically detect -> ssg is sync，other is async
     }),
   ],
-}
+})
 ```
