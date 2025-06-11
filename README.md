@@ -30,7 +30,14 @@ meta:
 Install Layouts:
 
 ```bash
+# npm
 npm install -D vite-plugin-vue-layouts-next
+
+# yarn
+yarn add -D vite-plugin-vue-layouts-next
+
+# pnpm
+pnpm add -D vite-plugin-vue-layouts-next
 ```
 
 Add to your `vite.config.js`:
