@@ -1,10 +1,5 @@
 import type { ModuleNode, Plugin, ResolvedConfig } from 'vite'
-import type {
-  clientSideOptions,
-  FileContainer,
-  ResolvedOptions,
-  UserOptions,
-} from './types'
+import type { clientSideOptions, FileContainer, ResolvedOptions, UserOptions } from './types'
 import { resolve } from 'node:path'
 import process from 'node:process'
 import { createVirtualModuleCode } from './clientSide'
@@ -14,7 +9,7 @@ import getClientCode from './RouteLayout'
 
 import { debug, normalizePath, resolveDirs } from './utils'
 
-const MODULE_IDS = ['layouts-generated', 'virtual:generated-layouts']
+const MODULE_ID = 'virtual:generated-layouts'
 const MODULE_ID_VIRTUAL = '/@vite-plugin-vue-layouts-next/generated-layouts'
 
 export function defaultImportMode(name: string) {
@@ -54,8 +49,6 @@ export default function Layout(userOptions: UserOptions = {}): Plugin {
   let layoutsDirs: string[]
   let pagesDirs: string[]
 
-  // const pagesDirs = resolveDirs(options.pagesDirs, config.root)
-
   return {
     name: 'vite-plugin-vue-layouts-next',
     enforce: 'pre',
@@ -78,8 +71,6 @@ export default function Layout(userOptions: UserOptions = {}): Plugin {
           }
         }
       }
-
-      //       const absolutePagesDir = options.pagesDir ? normalizePath(resolve(process.cwd(), options.pagesDir)) : null
 
       const updateVirtualModule = (path: string) => {
         path = normalizePath(path)
@@ -106,7 +97,7 @@ export default function Layout(userOptions: UserOptions = {}): Plugin {
       })
     },
     resolveId(id) {
-      return MODULE_IDS.includes(id) || MODULE_IDS.some(i => id.startsWith(i))
+      return id === MODULE_ID || id.startsWith(MODULE_ID)
         ? MODULE_ID_VIRTUAL
         : null
     },
@@ -115,7 +106,7 @@ export default function Layout(userOptions: UserOptions = {}): Plugin {
         const container: FileContainer[] = []
 
         for (const dir of layoutsDirs) {
-          const layoutsDirPath = dir.substr(0, 1) === '/'
+          const layoutsDirPath = dir.startsWith('/')
             ? normalizePath(dir)
             : normalizePath(resolve(config.root, dir))
 
@@ -145,14 +136,11 @@ export function ClientSideLayout(options?: clientSideOptions): Plugin {
   return {
     name: 'vite-plugin-vue-layouts-next',
     resolveId(id) {
-      const MODULE_ID = MODULE_IDS.find(MODULE_ID => id === MODULE_ID)
-      if (MODULE_ID)
+      if (id === MODULE_ID)
         return `\0${MODULE_ID}`
     },
     load(id) {
-      if (
-        MODULE_IDS.some(MODULE_ID => id === `\0${MODULE_ID}`)
-      ) {
+      if (id === `\0${MODULE_ID}`) {
         return createVirtualModuleCode({
           layoutDir,
           importMode,
