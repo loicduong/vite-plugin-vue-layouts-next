@@ -51,7 +51,7 @@ export default function Layout(userOptions: UserOptions = {}): Plugin {
 
   const options: ResolvedOptions = resolveOptions(userOptions)
 
-  let layoutDirs: string[]
+  let layoutsDirs: string[]
   let pagesDirs: string[]
 
   // const pagesDirs = resolveDirs(options.pagesDirs, config.root)
@@ -61,7 +61,7 @@ export default function Layout(userOptions: UserOptions = {}): Plugin {
     enforce: 'pre',
     configResolved(_config) {
       config = _config
-      layoutDirs = resolveDirs(options.layoutsDirs, config.root)
+      layoutsDirs = resolveDirs(options.layoutsDirs, config.root)
       pagesDirs = resolveDirs(options.pagesDirs, config.root)
     },
     configureServer({ moduleGraph, watcher, ws }) {
@@ -86,7 +86,7 @@ export default function Layout(userOptions: UserOptions = {}): Plugin {
 
         if (pagesDirs.length === 0
           || pagesDirs.some(dir => path.startsWith(dir))
-          || layoutDirs.some(dir => path.startsWith(dir))) {
+          || layoutsDirs.some(dir => path.startsWith(dir))) {
           debug('reload', path)
           const module = moduleGraph.getModuleById(MODULE_ID_VIRTUAL)
           reloadModule(module)
@@ -114,7 +114,7 @@ export default function Layout(userOptions: UserOptions = {}): Plugin {
       if (id === MODULE_ID_VIRTUAL) {
         const container: FileContainer[] = []
 
-        for (const dir of layoutDirs) {
+        for (const dir of layoutsDirs) {
           const layoutsDirPath = dir.substr(0, 1) === '/'
             ? normalizePath(dir)
             : normalizePath(resolve(config.root, dir))
@@ -167,7 +167,7 @@ function canEnableClientLayout(options: UserOptions) {
   const keys = Object.keys(options)
 
   // Non isomorphic options
-  if (keys.length > 2 || keys.some(key => !['layoutDirs', 'defaultLayout'].includes(key)))
+  if (keys.length > 2 || keys.some(key => !['layoutsDirs', 'defaultLayout'].includes(key)))
     return false
 
   //  arrays and glob cannot be isomorphic either
