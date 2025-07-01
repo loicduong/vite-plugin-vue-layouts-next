@@ -26,7 +26,7 @@ declare module 'vue-router/auto-routes' {
     '/deep/deeper/deepest/': RouteRecordInfo<'/deep/deeper/deepest/', '/deep/deeper/deepest', Record<never, never>, Record<never, never>>,
     '/module1': RouteRecordInfo<'/module1', '/module1', Record<never, never>, Record<never, never>>,
     '/module2': RouteRecordInfo<'/module2', '/module2', Record<never, never>, Record<never, never>>,
-    '/news': RouteRecordInfo<'/news', '/news', Record<never, never>, Record<never, never>>,
+    '/news': RouteRecordInfo<'/news', '/news', Record<never, never>, Record<never, never>, '/news/' | 'named-news-page'>,
     '/news/': RouteRecordInfo<'/news/', '/news', Record<never, never>, Record<never, never>>,
     'named-news-page': RouteRecordInfo<'named-news-page', '/news/Today', Record<never, never>, Record<never, never>>,
     '/nolayout': RouteRecordInfo<'/nolayout', '/nolayout', Record<never, never>, Record<never, never>>,
