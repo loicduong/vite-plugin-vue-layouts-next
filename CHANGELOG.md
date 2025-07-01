@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0] - 2025-07-02
+
+### Added
+
+- Support Vite 7
+
+### Removed
+
+- Remove `cjs` export
+- Remove `layouts-generated` module
+- **Examples:** Remove vitesse
+
 ## [0.1.5] - 2025-06-09
 
 ### Fixed
@@ -67,7 +79,7 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
-- Support for vite 6
+- Support Vite 6
 
 ## [0.0.0] - 2025-02-24
 
