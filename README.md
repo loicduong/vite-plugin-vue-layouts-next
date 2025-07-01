@@ -16,8 +16,6 @@ Pages without a layout specified use `default.vue` for their layout.
 
 You can use route blocks to allow each page to determine its layout.  The block below in a page will look for `/src/layouts/users.vue` for its layout.
 
-See the [Vitesse starter template](https://github.com/antfu/vitesse) for a working example with [vite-plugin-vue-layouts](https://github.com/JohnCampionJr/vite-plugin-vue-layouts) and it also works similarly with this.
-
 ```html
 <route lang="yaml">
 meta:
