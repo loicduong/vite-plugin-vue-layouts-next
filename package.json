@@ -53,9 +53,6 @@
     "example:dev-unplugin": "npm -C examples/unplugin-vue-router run dev",
     "example:build-unplugin": "npm -C examples/unplugin-vue-router run build",
     "example:serve-unplugin": "npm -C examples/unplugin-vue-router run serve",
-    "example:dev-vitesse": "npm -C examples/vitesse run dev",
-    "example:build-vitesse": "npm -C examples/vitesse run build",
-    "example:serve-vitesse": "npm -C examples/vitesse run preview",
     "lint": "eslint",
     "lint:fix": "eslint --fix"
   },
