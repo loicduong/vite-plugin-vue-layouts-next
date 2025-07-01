@@ -4,7 +4,7 @@
   "scripts": {
     "dev": "nodemon --watch ../../dist/index.js -x \"cross-env DEBUG=vite-plugin-layouts vite\"",
     "build": "cross-env DEBUG=vite-plugin-layouts vite build",
-    "serve": "vite preview"
+    "preview": "vite preview"
   },
   "dependencies": {
     "vue": "^3.5.17",
