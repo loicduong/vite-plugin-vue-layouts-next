@@ -42,9 +42,9 @@ Add to your `vite.config.ts`:
 
 ```js
 import Vue from '@vitejs/plugin-vue'
+import { defineConfig } from 'vite'
 import Pages from 'vite-plugin-pages'
 import Layouts from 'vite-plugin-vue-layouts-next'
-import { defineConfig } from 'vite'
 
 export default defineConfig({
   plugins: [Vue(), Pages(), Layouts()],
@@ -112,8 +112,8 @@ To use custom configuration, pass your options to Layouts when instantiating the
 
 ```js
 // vite.config.ts
-import Layouts from 'vite-plugin-vue-layouts-next'
 import { defineConfig } from 'vite'
+import Layouts from 'vite-plugin-vue-layouts-next'
 
 export default defineConfig({
   plugins: [
@@ -169,7 +169,7 @@ Filename of default layout (".vue" is not needed).
 
 Mode for importing layouts.
 
-**Default:** ssg is `'sync'`，other is `'async'`
+**Default:** ssg is `'sync'`, other is `'async'`
 
 ## How it works
 
@@ -301,8 +301,8 @@ The clientSideLayout uses a simpler [virtual file](https://vitejs.dev/guide/api-
 
 ```js
 // vite.config.ts
-import { ClientSideLayout } from 'vite-plugin-vue-layouts-next'
 import { defineConfig } from 'vite'
+import { ClientSideLayout } from 'vite-plugin-vue-layouts-next'
 
 export default defineConfig({
   plugins: [
