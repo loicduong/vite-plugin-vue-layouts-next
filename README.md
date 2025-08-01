@@ -6,7 +6,7 @@
 
 ## Overview
 
-A fork of [vite-plugin-vue-layouts](https://github.com/JohnCampionJr/vite-plugin-vue-layouts) with some improvements and fixes, supports the latest versions of Vite and Vue.
+A fork of [vite-plugin-vue-layouts](https://github.com/JohnCampionJr/vite-plugin-vue-layouts) with some improvements and fixes, supports Vite 7 and Vue 3.
 
 This works best along with the [vite-plugin-pages](https://github.com/hannoeru/vite-plugin-pages).
 
