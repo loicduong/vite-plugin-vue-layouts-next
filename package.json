@@ -65,16 +65,16 @@
     "fast-glob": "^3.3.3"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^5.0.0",
+    "@antfu/eslint-config": "^5.2.1",
     "@types/debug": "^4.1.12",
-    "@types/node": "^24.1.0",
+    "@types/node": "^24.2.1",
     "cross-env": "^10.0.0",
-    "eslint": "^9.32.0",
+    "eslint": "^9.33.0",
     "eslint-plugin-format": "^1.0.1",
     "rollup": "^4.46.2",
     "tsup": "^8.5.0",
     "typescript": "^5.9.2",
-    "vite": "^7.0.6",
+    "vite": "^7.1.2",
     "vue": "^3.5.18",
     "vue-router": "^4.5.1"
   }
