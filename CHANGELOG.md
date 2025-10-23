@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.0] - 2025-10-23
+
+### Added
+
+- Support Unplugin Vue Router 0.16
+
 ## [1.0.0] - 2025-07-02
 
 ### Added
