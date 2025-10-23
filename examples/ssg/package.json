@@ -24,5 +24,8 @@
     "vite-plugin-pages": "^0.33.1",
     "vite-plugin-vue-layouts-next": "workspace:*",
     "vite-ssg": "^28.2.2"
+  },
+  "volta": {
+    "node": "22.14.0"
   }
 }

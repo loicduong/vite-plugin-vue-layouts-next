@@ -20,5 +20,8 @@
     "vite": "^7.1.11",
     "vite-plugin-inspect": "^11.3.3",
     "vite-plugin-vue-layouts-next": "workspace:*"
+  },
+  "volta": {
+    "node": "22.14.0"
   }
 }
