@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.2] - 2025-11-03
+
+### Changed
+
+- Convert from `tsup` to `tsdown`
+
 ## [1.1.1] - 2025-10-23
 
 ### Fixed
