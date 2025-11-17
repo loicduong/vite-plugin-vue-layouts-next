@@ -11,7 +11,6 @@ const config = defineConfig({
     }),
     Pages({
       extensions: ['vue', 'md'],
-      syncIndex: false,
     }),
     ClientSideLayout(),
     Markdown({}),
