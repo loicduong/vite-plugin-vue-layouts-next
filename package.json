@@ -2,7 +2,7 @@
   "name": "vite-plugin-vue-layouts-next",
   "type": "module",
   "version": "1.2.0",
-  "packageManager": "pnpm@10.20.0",
+  "packageManager": "pnpm@10.22.0",
   "description": "Router-based layout plugin for Vite 7 and Vue 3.",
   "author": "loicduong <npm@relate.dev>",
   "license": "MIT",
@@ -21,17 +21,17 @@
   ],
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs"
     },
     "./client": {
       "types": "./client.d.ts"
     },
     "./*": "./*"
   },
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
   "files": [
     "client.d.ts",
     "dist"
@@ -67,14 +67,14 @@
   "devDependencies": {
     "@antfu/eslint-config": "^6.2.0",
     "@types/debug": "^4.1.12",
-    "@types/node": "^24.10.0",
+    "@types/node": "^24.10.1",
     "cross-env": "^10.1.0",
-    "eslint": "^9.39.0",
+    "eslint": "^9.39.1",
     "eslint-plugin-format": "^1.0.2",
-    "tsdown": "^0.15.12",
+    "tsdown": "^0.16.4",
     "typescript": "^5.9.3",
-    "vite": "^7.1.12",
-    "vue": "^3.5.22",
+    "vite": "^7.2.2",
+    "vue": "^3.5.24",
     "vue-router": "^4.6.3"
   },
   "volta": {
