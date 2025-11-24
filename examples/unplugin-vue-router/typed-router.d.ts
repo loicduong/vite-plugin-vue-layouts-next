@@ -30,6 +30,13 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
+    '/[...all]': RouteRecordInfo<
+      '/[...all]',
+      '/:all(.*)',
+      { all: ParamValue<true> },
+      { all: ParamValue<false> },
+      | never
+    >,
     '/about/': RouteRecordInfo<
       '/about/',
       '/about',
@@ -63,6 +70,20 @@ declare module 'vue-router/auto-routes' {
       '/deep/deeper/deepest',
       Record<never, never>,
       Record<never, never>,
+      | never
+    >,
+    '/inherit/[id]': RouteRecordInfo<
+      '/inherit/[id]',
+      '/inherit/:id',
+      { id: ParamValue<true> },
+      { id: ParamValue<false> },
+      | never
+    >,
+    '/inherit/deep/[id]': RouteRecordInfo<
+      '/inherit/deep/[id]',
+      '/inherit/deep/:id',
+      { id: ParamValue<true> },
+      { id: ParamValue<false> },
       | never
     >,
     '/module1': RouteRecordInfo<
@@ -141,6 +162,12 @@ declare module 'vue-router/auto-routes' {
       views:
         | never
     }
+    'src/pages/[...all].vue': {
+      routes:
+        | '/[...all]'
+      views:
+        | never
+    }
     'src/pages/about/index.vue': {
       routes:
         | '/about/'
@@ -168,6 +195,18 @@ declare module 'vue-router/auto-routes' {
     'src/pages/deep/deeper/deepest/index.vue': {
       routes:
         | '/deep/deeper/deepest/'
+      views:
+        | never
+    }
+    'src/pages/inherit/[id].vue': {
+      routes:
+        | '/inherit/[id]'
+      views:
+        | never
+    }
+    'src/pages/inherit/deep/[id].vue': {
+      routes:
+        | '/inherit/deep/[id]'
       views:
         | never
     }

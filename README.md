@@ -103,6 +103,7 @@ interface UserOptions {
   exclude?: string[]
   defaultLayout?: string
   importMode?: (name: string) => 'sync' | 'async'
+  inheritDefaultLayout?: boolean
 }
 ```
 
@@ -170,6 +171,12 @@ Filename of default layout (".vue" is not needed).
 Mode for importing layouts.
 
 **Default:** ssg is `'sync'`, other is `'async'`
+
+### inheritDefaultLayout
+
+Whether nested routes should inherit the default layout from parent routes. When `false`, if a child route has its own layout, the parent route won't use the default layout. This prevents double-wrapping layouts when child routes specify their own layout. This option only works with [unplugin-vue-router](https://github.com/posva/unplugin-vue-router). It has no effect when using [vite-plugin-pages](https://github.com/hannoeru/vite-plugin-pages) because `vite-plugin-pages` generates flat route structures without nested parent-child relationships, while `unplugin-vue-router` generates nested route structures with `children` arrays. This option can only be set globally in the plugin configuration.
+
+**Default:** `true`
 
 ## How it works
 

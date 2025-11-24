@@ -30,6 +30,12 @@ interface Options {
    * Mode for importing layouts
    */
   importMode: (name: string) => 'sync' | 'async'
+  /**
+   * Whether nested routes should inherit the default layout from parent routes.
+   * When false, if a child route has its own layout, the parent route won't use the default layout.
+   * @default true
+   */
+  inheritDefaultLayout: boolean
 }
 
 export interface FileContainer {
@@ -55,4 +61,10 @@ export interface clientSideOptions {
    * default auto resolve
    */
   importMode?: 'sync' | 'async'
+  /**
+   * Whether nested routes should inherit the default layout from parent routes.
+   * When false, if a child route has its own layout, the parent route won't use the default layout.
+   * @default true
+   */
+  inheritDefaultLayout?: boolean
 }

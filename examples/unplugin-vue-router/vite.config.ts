@@ -16,6 +16,7 @@ const config = defineConfig({
       defaultLayout: 'default',
       layoutsDirs: 'src/**/layouts',
       pagesDirs: [],
+      inheritDefaultLayout: false,
     }),
     Markdown({}),
   ],

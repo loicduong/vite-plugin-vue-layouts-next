@@ -28,6 +28,7 @@ function resolveOptions(userOptions: UserOptions): ResolvedOptions {
       extensions: ['vue'],
       exclude: [],
       importMode: defaultImportMode,
+      inheritDefaultLayout: true,
     },
     userOptions,
   )
@@ -39,6 +40,7 @@ export default function Layout(userOptions: UserOptions = {}): Plugin {
     return ClientSideLayout({
       defaultLayout: userOptions.defaultLayout,
       layoutDir: userOptions.layoutsDirs as string,
+      inheritDefaultLayout: userOptions.inheritDefaultLayout,
     })
   }
 
@@ -132,6 +134,7 @@ export function ClientSideLayout(options?: clientSideOptions): Plugin {
     layoutDir = 'src/layouts',
     defaultLayout = 'default',
     importMode = process.env.VITE_SSG ? 'sync' : 'async',
+    inheritDefaultLayout = true,
   } = options || {}
   return {
     name: 'vite-plugin-vue-layouts-next',
@@ -145,6 +148,7 @@ export function ClientSideLayout(options?: clientSideOptions): Plugin {
           layoutDir,
           importMode,
           defaultLayout,
+          inheritDefaultLayout,
         })
       }
     },
@@ -155,7 +159,7 @@ function canEnableClientLayout(options: UserOptions) {
   const keys = Object.keys(options)
 
   // Non isomorphic options
-  if (keys.length > 2 || keys.some(key => !['layoutsDirs', 'defaultLayout'].includes(key)))
+  if (keys.length > 3 || keys.some(key => !['layoutsDirs', 'defaultLayout', 'inheritDefaultLayout'].includes(key)))
     return false
 
   //  arrays and glob cannot be isomorphic either

@@ -9,6 +9,7 @@ interface VirtualModuleCodeOptions {
   layoutDir: string
   defaultLayout: string
   importMode: 'sync' | 'async'
+  inheritDefaultLayout?: boolean
 }
 
 async function createVirtualGlob(
@@ -22,7 +23,7 @@ async function createVirtualGlob(
 export async function createVirtualModuleCode(
   options: VirtualModuleCodeOptions,
 ) {
-  const { layoutDir, defaultLayout, importMode } = options
+  const { layoutDir, defaultLayout, importMode, inheritDefaultLayout = true } = options
 
   const normalizedTarget = normalizePath(layoutDir)
 
@@ -39,6 +40,7 @@ export async function createVirtualModuleCode(
   
   export const setupLayouts = routes => {
       const layouts = {}
+      const inheritDefaultLayout = ${inheritDefaultLayout}
   
       const modules = ${await createVirtualGlob(
         normalizedTarget,
@@ -50,8 +52,30 @@ export async function createVirtualModuleCode(
           layouts[key] = ${isSync ? 'module.default' : 'module'}
       })
       
+      function hasChildWithLayout(route) {
+        if (!route.children || route.children.length === 0) {
+          return false
+        }
+        return route.children.some(child => {
+          // Check if child has layout in meta (before transformation)
+          if (child.meta?.layout && child.meta.layout !== false) {
+            return true
+          }
+          // Also check if child is already a layout route (after transformation)
+          if (child.meta?.isLayout) {
+            return true
+          }
+          return hasChildWithLayout(child)
+        })
+      }
+      
     function deepSetupLayout(routes, top = true) {
       return routes.map(route => {
+        // Check if child has layout before transforming children (only when inheritDefaultLayout is false)
+        const childHasLayout = top && !inheritDefaultLayout && route.children?.length > 0 
+          ? hasChildWithLayout(route) 
+          : false
+        
         if (route.children?.length > 0) {
           route.children = deepSetupLayout(route.children, false)
         }
@@ -65,12 +89,17 @@ export async function createVirtualModuleCode(
           }
 
           if (route.meta?.layout !== false) {
-            return { 
-              path: route.path,
-              component: layouts[route.meta?.layout || '${defaultLayout}'],
-              children: route.path === '/' ? [route] : [{...route, path: ''}],
-              meta: {
-                isLayout: true
+            // Check if child has its own layout and inheritDefaultLayout is false
+            const shouldApplyDefaultLayout = inheritDefaultLayout || !childHasLayout
+            
+            if (shouldApplyDefaultLayout) {
+              return { 
+                path: route.path,
+                component: layouts[route.meta?.layout || '${defaultLayout}'],
+                children: route.path === '/' ? [route] : [{...route, path: ''}],
+                meta: {
+                  isLayout: true
+                }
               }
             }
           }

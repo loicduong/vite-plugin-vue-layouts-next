@@ -42,6 +42,11 @@
         deep sub folder with no layout specified
       </router-link>
     </p>
+    <p>
+      <router-link to="/inherit/1">
+        no inherit default layout
+      </router-link>
+    </p>
   </div>
 </template>
 
