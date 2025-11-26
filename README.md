@@ -1,6 +1,6 @@
 # vite-plugin-vue-layouts-next
 
-[![npm version][npm-badge]][npm] [![Keep a Changelog v1.1.0 badge][changelog-badge]][changelog] [![MIT License Badge][license-badge]][license]
+[![npm version][npm-badge]][npm] [![Keep a Changelog v1.1.0 badge][changelog-badge]][changelog]
 
 
 > Router based layout for Vue 3 applications using [Vite](https://github.com/vitejs/vite)
@@ -327,5 +327,3 @@ export default defineConfig({
 [npm-badge]: https://img.shields.io/npm/v/vite-plugin-vue-layouts-next
 [changelog]: ./CHANGELOG.md
 [changelog-badge]: https://img.shields.io/badge/changelog-Keep%20a%20Changelog%20v1.1.0-%23E05735
-[license]: ./LICENSE
-[license-badge]: https://img.shields.io/badge/license-MIT-blue.svg
