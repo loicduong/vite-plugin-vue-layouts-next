@@ -1,6 +1,7 @@
 # vite-plugin-vue-layouts-next
 
 [![npm version][npm-badge]][npm]
+[![monthly downloads][monthly-downloads-badge]][monthly-downloads]
 [![Keep a Changelog v1.1.0 badge][changelog-badge]][changelog]
 [![standard-readme compliant][standard-readme-badge]][standard-readme]
 
@@ -345,6 +346,8 @@ MIT © loicduong
 
 [npm]: https://www.npmjs.com/package/vite-plugin-vue-layouts-next
 [npm-badge]: https://img.shields.io/npm/v/vite-plugin-vue-layouts-next
+[monthly-downloads]: https://npmjs.com/package/vite-plugin-vue-layouts-next?activeTab=versions
+[monthly-downloads-badge]: https://img.shields.io/npm/dm/vite-plugin-vue-layouts-next
 [changelog]: ./CHANGELOG.md
 [changelog-badge]: https://img.shields.io/badge/changelog-Keep%20a%20Changelog%20v1.1.0-%23E05735
 [standard-readme]: https://github.com/RichardLitt/standard-readme
