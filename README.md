@@ -1,11 +1,10 @@
 # vite-plugin-vue-layouts-next
 
-[![npm version][npm-badge]][npm] [![Keep a Changelog v1.1.0 badge][changelog-badge]][changelog]
+[![npm version][npm-badge]][npm]
+[![Keep a Changelog v1.1.0 badge][changelog-badge]][changelog]
+[![standard-readme compliant][standard-readme-badge]][standard-readme]
 
-
-> Router based layout for Vue 3 applications using [Vite](https://github.com/vitejs/vite)
-
-## Overview
+Router based layout plugin for Vite 7 and Vue 3.
 
 A fork of [vite-plugin-vue-layouts](https://github.com/JohnCampionJr/vite-plugin-vue-layouts) with some improvements and fixes, supports Vite 7 and Vue 3.
 
@@ -15,7 +14,7 @@ Layouts are stored in the `/src/layouts` folder by default and are standard Vue 
 
 Pages without a layout specified use `default.vue` for their layout.
 
-You can use route blocks to allow each page to determine its layout.  The block below in a page will look for `/src/layouts/users.vue` for its layout.
+You can use route blocks to allow each page to determine its layout. The block below in a page will look for `/src/layouts/users.vue` for its layout.
 
 ```html
 <route lang="yaml">
@@ -24,9 +23,18 @@ meta:
 </route>
 ```
 
-## Getting Started
+## Table of Contents
 
-Install Layouts:
+- [Install](#install)
+- [Usage](#usage)
+- [API](#api)
+- [How it works](#how-it-works)
+- [Common patterns](#common-patterns)
+- [ClientSideLayout](#clientsidelayout)
+- [Contributing](#contributing)
+- [License](#license)
+
+## Install
 
 ```bash
 # npm
@@ -38,6 +46,8 @@ yarn add -D vite-plugin-vue-layouts-next
 # pnpm
 pnpm add -D vite-plugin-vue-layouts-next
 ```
+
+## Usage
 
 Add to your `vite.config.ts`:
 
@@ -54,7 +64,7 @@ export default defineConfig({
 
 In main.ts, you need to add a few lines to import the generated code and setup the layouts.
 
-## vue-router
+### vue-router
 
 ```js
 import { setupLayouts } from 'virtual:generated-layouts'
@@ -69,7 +79,7 @@ const router = createRouter({
 })
 ```
 
-## [unplugin-vue-router](https://github.com/posva/unplugin-vue-router)
+### unplugin-vue-router
 
 ```js
 import { setupLayouts } from 'virtual:generated-layouts'
@@ -82,7 +92,7 @@ const router = createRouter({
 })
 ```
 
-## Client Types
+### Client Types
 
 If you want type definition of `virtual:generated-layouts`, add `vite-plugin-vue-layouts-next/client` to `compilerOptions.types` of your `tsconfig`:
 
@@ -94,7 +104,7 @@ If you want type definition of `virtual:generated-layouts`, add `vite-plugin-vue
 }
 ```
 
-## Configuration
+## API
 
 ```ts
 interface UserOptions {
@@ -145,7 +155,7 @@ Any files named `__*__.vue` will be excluded, and you can specify any additional
 
 Defines the pages dir to avoid HMR reloading for all added or deleted files anywhere in the project.
 
-Relative path to the pages directory.  If you want it to watch for all files, like in v0.8.0 or earlier, set to null.
+Relative path to the pages directory. If you want it to watch for all files, like in v0.8.0 or earlier, set to null.
 
 Can also be an array of layout dirs or use `**` glob patterns
 
@@ -323,7 +333,19 @@ export default defineConfig({
 })
 ```
 
+## Contributing
+
+PRs accepted.
+
+Open an issue or submit PRs for any improvements.
+
+## License
+
+MIT © loicduong
+
 [npm]: https://www.npmjs.com/package/vite-plugin-vue-layouts-next
 [npm-badge]: https://img.shields.io/npm/v/vite-plugin-vue-layouts-next
 [changelog]: ./CHANGELOG.md
 [changelog-badge]: https://img.shields.io/badge/changelog-Keep%20a%20Changelog%20v1.1.0-%23E05735
+[standard-readme]: https://github.com/RichardLitt/standard-readme
+[standard-readme-badge]: https://img.shields.io/badge/readme%20style-standard-brightgreen.svg?style=flat-square
