@@ -65,12 +65,12 @@
     "fast-glob": "^3.3.3"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^6.3.0",
+    "@antfu/eslint-config": "^6.4.2",
     "@types/debug": "^4.1.12",
     "@types/node": "^24.10.1",
     "cross-env": "^10.1.0",
     "eslint": "^9.39.1",
-    "tsdown": "^0.16.8",
+    "tsdown": "^0.17.0",
     "typescript": "^5.9.3",
     "vite": "^7.2.6",
     "vue": "^3.5.25",
