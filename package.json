@@ -61,20 +61,20 @@
     "vue-router": "^4.0.11"
   },
   "dependencies": {
-    "debug": "^4.4.3",
-    "fast-glob": "^3.3.3"
+    "debug": "catalog:",
+    "fast-glob": "catalog:"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^6.4.2",
-    "@types/debug": "^4.1.12",
-    "@types/node": "^24.10.1",
-    "cross-env": "^10.1.0",
-    "eslint": "^9.39.1",
-    "tsdown": "^0.17.0",
-    "typescript": "^5.9.3",
-    "vite": "^7.2.6",
-    "vue": "^3.5.25",
-    "vue-router": "^4.6.3"
+    "@antfu/eslint-config": "catalog:",
+    "@types/debug": "catalog:",
+    "@types/node": "catalog:",
+    "cross-env": "catalog:",
+    "eslint": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vue": "catalog:",
+    "vue-router": "catalog:"
   },
   "volta": {
     "node": "22.14.0",
