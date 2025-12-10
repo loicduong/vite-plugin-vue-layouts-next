@@ -8,6 +8,7 @@
     "strict": true,
     "strictNullChecks": true,
     "noUnusedParameters": true,
+    "noEmit": true,
     "esModuleInterop": true,
     "skipLibCheck": true
   },
