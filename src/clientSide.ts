@@ -39,7 +39,7 @@ export async function createVirtualModuleCode(
   }
   
   export const setupLayouts = routes => {
-      const layouts = {}
+      const layouts = Object.create(null)
       const inheritDefaultLayout = ${inheritDefaultLayout}
   
       const modules = ${await createVirtualGlob(
@@ -47,10 +47,14 @@ export async function createVirtualModuleCode(
         isSync,
       )}
     
-      Object.entries(modules).forEach(([name, module]) => {
-          let key = name.replace("${normalizedTarget}/", '').replace('.vue', '')
-          layouts[key] = ${isSync ? 'module.default' : 'module'}
-      })
+      const layoutsDirPrefix = "${normalizedTarget}/"
+      for (const modulePath in modules) {
+          const loadedModule = modules[modulePath]
+          const key = modulePath.startsWith(layoutsDirPrefix)
+            ? modulePath.slice(layoutsDirPrefix.length, modulePath.length - 4)
+            : modulePath.replace(layoutsDirPrefix, '').replace('.vue', '')
+          layouts[key] = ${isSync ? 'loadedModule.default' : 'loadedModule'}
+      }
       
       function hasChildWithLayout(route) {
         if (!route.children || route.children.length === 0) {

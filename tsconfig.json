@@ -10,7 +10,12 @@
     "noUnusedParameters": true,
     "noEmit": true,
     "esModuleInterop": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "vite-plugin-vue-layouts-next": ["./src/index.ts"],
+      "vite-plugin-vue-layouts-next/*": ["./*"]
+    }
   },
   "exclude": [
     "**/dist",

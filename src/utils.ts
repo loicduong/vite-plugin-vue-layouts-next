@@ -24,7 +24,14 @@ export function resolveDirs(dirs: string | string[] | null, root: string) {
 
   for (const dir of dirsArray) {
     if (dir.includes('**')) {
-      const matches = fg.sync(dir, { onlyDirectories: true })
+      const matches = fg.sync(dir, {
+        onlyDirectories: true,
+        cwd: root,
+        ignore: ['**/node_modules/**', '**/.git/**'],
+        dot: false,
+        unique: true,
+        followSymbolicLinks: false,
+      })
       for (const match of matches)
         dirsResolved.push(normalizePath(resolve(root, match)))
     }
