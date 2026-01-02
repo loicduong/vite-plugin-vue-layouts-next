@@ -7,7 +7,7 @@
 
 Router based layout plugin for Vite 7 and Vue 3.
 
-A fork of [vite-plugin-vue-layouts](https://github.com/JohnCampionJr/vite-plugin-vue-layouts) with some improvements and fixes, supports Vite 7 and Vue 3.
+A fork of [vite-plugin-vue-layouts][vite-plugin-vue-layouts] with some improvements and fixes, supports Vite 7 and Vue 3.
 
 This works best along with the [vite-plugin-pages](https://github.com/hannoeru/vite-plugin-pages).
 
@@ -32,6 +32,8 @@ meta:
 - [How it works](#how-it-works)
 - [Common patterns](#common-patterns)
 - [ClientSideLayout](#clientsidelayout)
+- [Maintainer](#maintainer)
+- [Thanks](#thanks)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -334,15 +336,21 @@ export default defineConfig({
 })
 ```
 
+## Maintainer
+
+[Loic Duong](https://github.com/loicduong)
+
+## Thanks
+
+[vite-plugin-vue-layouts][vite-plugin-vue-layouts]
+
 ## Contributing
 
-PRs accepted.
-
-Open an issue or submit PRs for any improvements.
+PRs accepted. [Open an issue][open-an-issue] or submit PRs for any improvements.
 
 ## License
 
-MIT © loicduong
+[MIT © loicduong][license]
 
 [npm]: https://www.npmjs.com/package/vite-plugin-vue-layouts-next
 [npm-badge]: https://img.shields.io/npm/v/vite-plugin-vue-layouts-next
@@ -352,3 +360,6 @@ MIT © loicduong
 [changelog-badge]: https://img.shields.io/badge/changelog-Keep%20a%20Changelog%20v1.1.0-%23E05735
 [standard-readme]: https://github.com/RichardLitt/standard-readme
 [standard-readme-badge]: https://img.shields.io/badge/readme%20style-standard-brightgreen.svg?style=flat-square
+[license]: ./LICENSE
+[open-an-issue]: https://github.com/loicduong/vite-plugin-vue-layouts-next/issues/new
+[vite-plugin-vue-layouts]: https://github.com/JohnCampionJr/vite-plugin-vue-layouts

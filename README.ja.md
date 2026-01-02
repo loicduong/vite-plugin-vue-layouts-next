@@ -7,7 +7,7 @@
 
 Vite 7 と Vue 3 用のルーターベースのレイアウトプラグインです。
 
-[vite-plugin-vue-layouts](https://github.com/JohnCampionJr/vite-plugin-vue-layouts) のフォークで、いくつかの改善と修正を加え、Vite 7 と Vue 3 をサポートしています。
+[vite-plugin-vue-layouts][vite-plugin-vue-layouts] のフォークで、いくつかの改善と修正を加え、Vite 7 と Vue 3 をサポートしています。
 
 このプラグインは [vite-plugin-pages](https://github.com/hannoeru/vite-plugin-pages) と組み合わせて使用すると最適に動作します。
 
@@ -32,6 +32,8 @@ meta:
 - [動作の仕組み](#動作の仕組み)
 - [一般的なパターン](#一般的なパターン)
 - [ClientSideLayout](#clientsidelayout)
+- [メンテナー](#メンテナー)
+- [謝辞](#謝辞)
 - [貢献](#貢献)
 - [ライセンス](#ライセンス)
 
@@ -334,11 +336,17 @@ export default defineConfig({
 })
 ```
 
+## メンテナー
+
+[Loic Duong](https://github.com/loicduong)
+
+## 謝辞
+
+[vite-plugin-vue-layouts][vite-plugin-vue-layouts]
+
 ## 貢献
 
-PR を歓迎します。
-
-改善のための issue を開くか、PR を提出してください。
+PR を歓迎します。[issue を開く][open-an-issue]か、改善のための PR を提出してください。
 
 ## ライセンス
 
@@ -352,4 +360,6 @@ MIT © loicduong
 [changelog-badge]: https://img.shields.io/badge/changelog-Keep%20a%20Changelog%20v1.1.0-%23E05735
 [standard-readme]: https://github.com/RichardLitt/standard-readme
 [standard-readme-badge]: https://img.shields.io/badge/readme%20style-standard-brightgreen.svg?style=flat-square
+[open-an-issue]: https://github.com/loicduong/vite-plugin-vue-layouts-next/issues/new
+[vite-plugin-vue-layouts]: https://github.com/JohnCampionJr/vite-plugin-vue-layouts
 
