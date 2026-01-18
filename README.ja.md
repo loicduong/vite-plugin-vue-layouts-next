@@ -356,10 +356,9 @@ MIT © loicduong
 [npm-badge]: https://img.shields.io/npm/v/vite-plugin-vue-layouts-next
 [monthly-downloads]: https://npmjs.com/package/vite-plugin-vue-layouts-next?activeTab=versions
 [monthly-downloads-badge]: https://img.shields.io/npm/dm/vite-plugin-vue-layouts-next
-[changelog]: ./CHANGELOG.md
+[changelog]: ./CHANGELOG.ja.md
 [changelog-badge]: https://img.shields.io/badge/changelog-Keep%20a%20Changelog%20v1.1.0-%23E05735
 [standard-readme]: https://github.com/RichardLitt/standard-readme
 [standard-readme-badge]: https://img.shields.io/badge/readme%20style-standard-brightgreen.svg?style=flat-square
 [open-an-issue]: https://github.com/loicduong/vite-plugin-vue-layouts-next/issues/new
 [vite-plugin-vue-layouts]: https://github.com/JohnCampionJr/vite-plugin-vue-layouts
-
