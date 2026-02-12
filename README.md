@@ -5,9 +5,9 @@
 [![Keep a Changelog v1.1.0 badge][changelog-badge]][changelog]
 [![standard-readme compliant][standard-readme-badge]][standard-readme]
 
-Router based layout plugin for Vite 7 and Vue 3.
+Router based layout plugin for Vite 7, Vue 3 and Vue Router 5.
 
-A fork of [vite-plugin-vue-layouts][vite-plugin-vue-layouts] with some improvements and fixes, supports Vite 7 and Vue 3.
+A fork of [vite-plugin-vue-layouts][vite-plugin-vue-layouts] with some improvements and fixes, supports Vite 7, Vue 3 and Vue Router 5.
 
 This works best along with the [vite-plugin-pages](https://github.com/hannoeru/vite-plugin-pages).
 
