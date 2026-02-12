@@ -7,7 +7,13 @@
 
 ## [未リリース]
 
-## [2.0.0] - 2025-02-12
+## [2.0.1] - 2025-02-12
+
+### 修正
+
+- 公開 tarball で `catalog:` が解決されるよう `pnpm publish` を使用（npm レジストリからのインストールを修正）
+
+## [2.0.0] - 2025-02-12 [YANKED]
 
 ### 追加
 
@@ -176,7 +182,8 @@
 
 - 初期リリース
 
-[Unreleased]: https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v2.0.0...HEAD
+[Unreleased]: https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v2.0.1...HEAD
+[2.0.1]: https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v1.3.0...v2.0.0
 [1.3.0]: https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v1.1.1...v1.2.0

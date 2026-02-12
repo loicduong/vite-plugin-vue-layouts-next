@@ -7,7 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [2.0.0] - 2025-02-12
+## [2.0.1] - 2025-02-12
+
+### Fixed
+
+- Use `pnpm publish` so `catalog:` is resolved in the published tarball (fixes install from npm registry)
+
+## [2.0.0] - 2025-02-12 [YANKED]
 
 ### Added
 
@@ -176,7 +182,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial releases
 
-[Unreleased]: https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v1.3.0...HEAD
+[Unreleased]: https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v2.0.1...HEAD
+[2.0.1]: https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v2.0.0...v2.0.1
+[2.0.0]: https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v1.3.0...v2.0.0
 [1.3.0]: https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v1.1.1...v1.2.0
 [1.1.1]: https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v1.1.0...v1.1.1
