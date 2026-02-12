@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Support Vue Router 5
+- Support Vue Router 5 (#22)
 
 ## [1.3.0] - 2025-11-25
 
