@@ -5,9 +5,9 @@
 [![Keep a Changelog v1.1.0 badge][changelog-badge]][changelog]
 [![standard-readme compliant][standard-readme-badge]][standard-readme]
 
-Vite 7 と Vue 3 用のルーターベースのレイアウトプラグインです。
+Vite 7、Vue 3 および Vue Router 5 用のルーターベースのレイアウトプラグインです。
 
-[vite-plugin-vue-layouts][vite-plugin-vue-layouts] のフォークで、いくつかの改善と修正を加え、Vite 7 と Vue 3 をサポートしています。
+[vite-plugin-vue-layouts][vite-plugin-vue-layouts] のフォークで、いくつかの改善と修正を加え、Vite 7、Vue 3 および Vue Router 5 をサポートしています。
 
 このプラグインは [vite-plugin-pages](https://github.com/hannoeru/vite-plugin-pages) と組み合わせて使用すると最適に動作します。
 
