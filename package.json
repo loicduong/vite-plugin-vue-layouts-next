@@ -1,7 +1,7 @@
 {
   "name": "vite-plugin-vue-layouts-next",
   "type": "module",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "packageManager": "pnpm@10.29.3",
   "description": "Router based layout plugin for Vite 7, Vue 3 and Vue Router 5.",
   "author": "loicduong",
@@ -39,7 +39,7 @@
   "scripts": {
     "dev": "npm run build -- --watch",
     "build": "tsdown",
-    "release": "npx bumpp --commit --tag --push && npm publish",
+    "release": "npx bumpp --commit --tag --push && pnpm publish",
     "spa:dev": "npm -C examples/spa run dev",
     "spa:build": "npm -C examples/spa run build",
     "spa:preview": "npm -C examples/spa run preview",
