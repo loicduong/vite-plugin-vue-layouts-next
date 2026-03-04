@@ -49,9 +49,9 @@
     "cli:dev": "npm -C examples/client-side run dev",
     "cli:build": "npm -C examples/client-side run build",
     "cli:preview": "npm -C examples/client-side run preview",
-    "uvr:dev": "npm -C examples/unplugin-vue-router run dev",
-    "uvr:build": "npm -C examples/unplugin-vue-router run build",
-    "uvr:preview": "npm -C examples/unplugin-vue-router run preview",
+    "aur:dev": "npm -C examples/auto-routes run dev",
+    "aur:build": "npm -C examples/auto-routes run build",
+    "aur:preview": "npm -C examples/auto-routes run preview",
     "lint": "eslint",
     "lint:fix": "eslint --fix",
     "typecheck": "tsc"

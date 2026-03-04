@@ -37,21 +37,21 @@ export async function createVirtualModuleCode(
       }
       return () => routes.filter(route => !route.meta.isLayout)
   }
-  
+
   export const setupLayouts = routes => {
       const layouts = {}
       const inheritDefaultLayout = ${inheritDefaultLayout}
-  
+
       const modules = ${await createVirtualGlob(
         normalizedTarget,
         isSync,
       )}
-    
+
       Object.entries(modules).forEach(([name, module]) => {
           let key = name.replace("${normalizedTarget}/", '').replace('.vue', '')
           layouts[key] = ${isSync ? 'module.default' : 'module'}
       })
-      
+
       function hasChildWithLayout(route) {
         if (!route.children || route.children.length === 0) {
           return false
@@ -68,21 +68,21 @@ export async function createVirtualModuleCode(
           return hasChildWithLayout(child)
         })
       }
-      
+
     function deepSetupLayout(routes, top = true) {
       return routes.map(route => {
         // Check if child has layout before transforming children (only when inheritDefaultLayout is false)
-        const childHasLayout = top && !inheritDefaultLayout && route.children?.length > 0 
-          ? hasChildWithLayout(route) 
+        const childHasLayout = top && !inheritDefaultLayout && route.children?.length > 0
+          ? hasChildWithLayout(route)
           : false
-        
+
         if (route.children?.length > 0) {
           route.children = deepSetupLayout(route.children, false)
         }
 
         if (top) {
-          // unplugin-vue-router adds a top-level route to the routing group, which we should skip.
-          const skipLayout = !route.component && route.children?.find(r => (r.path === '' || r.path === '/') && r.meta?.isLayout)  
+          // auto-routes adds a top-level route to the routing group, which we should skip.
+          const skipLayout = !route.component && route.children?.find(r => (r.path === '' || r.path === '/') && r.meta?.isLayout)
 
           if (skipLayout) {
             return route
@@ -91,9 +91,9 @@ export async function createVirtualModuleCode(
           if (route.meta?.layout !== false) {
             // Check if child has its own layout and inheritDefaultLayout is false
             const shouldApplyDefaultLayout = inheritDefaultLayout || !childHasLayout
-            
+
             if (shouldApplyDefaultLayout) {
-              return { 
+              return {
                 path: route.path,
                 component: layouts[route.meta?.layout || '${defaultLayout}'],
                 children: route.path === '/' ? [route] : [{...route, path: ''}],
@@ -104,9 +104,9 @@ export async function createVirtualModuleCode(
             }
           }
         }
-  
+
         if (route.meta?.layout) {
-          return { 
+          return {
             path: route.path,
             component: layouts[route.meta?.layout],
             children: [ {...route, path: ''} ],
@@ -115,11 +115,11 @@ export async function createVirtualModuleCode(
             }
           }
         }
-  
+
         return route
       })
     }
-  
+
       return deepSetupLayout(routes)
   }`
 }

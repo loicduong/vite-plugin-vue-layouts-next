@@ -14,7 +14,7 @@ export const createGetRoutes = (router, withLayout = false) => {
 
 export function setupLayouts(routes) {
   const inheritDefaultLayout = ${inheritDefaultLayout}
-  
+
   function hasChildWithLayout(route) {
     if (!route.children || route.children.length === 0) {
       return false
@@ -31,21 +31,21 @@ export function setupLayouts(routes) {
       return hasChildWithLayout(child)
     })
   }
-  
+
   function deepSetupLayout(routes, top = true) {
     return routes.map(route => {
       // Check if child has layout before transforming children (only when inheritDefaultLayout is false)
-      const childHasLayout = top && !inheritDefaultLayout && route.children?.length > 0 
-        ? hasChildWithLayout(route) 
+      const childHasLayout = top && !inheritDefaultLayout && route.children?.length > 0
+        ? hasChildWithLayout(route)
         : false
-      
+
       if (route.children?.length > 0) {
         route.children = deepSetupLayout(route.children, false)
       }
-      
+
       if (top) {
-        // unplugin-vue-router adds a top-level route to the routing group, which we should skip.
-        const skipLayout = !route.component && route.children?.find(r => (r.path === '' || r.path === '/') && r.meta?.isLayout)  
+        // auto-routes adds a top-level route to the routing group, which we should skip.
+        const skipLayout = !route.component && route.children?.find(r => (r.path === '' || r.path === '/') && r.meta?.isLayout)
 
         if (skipLayout) {
           return route
@@ -55,9 +55,9 @@ export function setupLayouts(routes) {
           // If inheritDefaultLayout is true, always apply default layout (original behavior)
           // If inheritDefaultLayout is false, only apply if child doesn't have its own layout
           const shouldApplyDefaultLayout = inheritDefaultLayout || !childHasLayout
-          
+
           if (shouldApplyDefaultLayout) {
-            return { 
+            return {
               path: route.path,
               component: layouts[route.meta?.layout || '${options.defaultLayout}'],
               children: route.path === '/' ? [route] : [{...route, path: ''}],
@@ -70,7 +70,7 @@ export function setupLayouts(routes) {
       }
 
       if (route.meta?.layout) {
-        return { 
+        return {
           path: route.path,
           component: layouts[route.meta?.layout],
           children: [ {...route, path: ''} ],

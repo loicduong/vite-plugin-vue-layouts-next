@@ -7,7 +7,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "vue": "catalog:"
+    "vue": "catalog:",
+    "vue-router": "catalog:"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "catalog:",
@@ -16,7 +17,6 @@
     "nodemon": "catalog:",
     "typescript": "catalog:",
     "unplugin-vue-markdown": "catalog:",
-    "unplugin-vue-router": "catalog:",
     "vite": "catalog:",
     "vite-plugin-inspect": "catalog:",
     "vite-plugin-vue-layouts-next": "workspace:*"

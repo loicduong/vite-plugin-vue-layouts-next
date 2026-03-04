@@ -67,7 +67,7 @@ export default defineConfig({
 
 `main.ts` では、生成されたコードをインポートしてレイアウトを設定するために、いくつかの行を追加してください。
 
-### vue-router
+### vite-plugin-pages
 
 ```js
 import { setupLayouts } from 'virtual:generated-layouts'
@@ -82,7 +82,7 @@ const router = createRouter({
 })
 ```
 
-### unplugin-vue-router
+### vue-router 5
 
 ```js
 import { setupLayouts } from 'virtual:generated-layouts'
@@ -188,7 +188,7 @@ export default defineConfig({
 
 ### inheritDefaultLayout
 
-ネストされたルートが親ルートからデフォルトレイアウトを継承するかどうかを制御します。`false` に設定すると、子ルートに独自のレイアウトがある場合、親ルートはデフォルトレイアウトを使用しません。これにより、子ルートが独自のレイアウトを指定した場合のレイアウトの二重ラッピングを防ぎます。このオプションは [unplugin-vue-router](https://github.com/posva/unplugin-vue-router) でのみ機能します。[vite-plugin-pages](https://github.com/hannoeru/vite-plugin-pages) を使用している場合は効果がありません。これは、`vite-plugin-pages` がネストされた親子関係のないフラットなルート構造を生成するのに対し、`unplugin-vue-router` は `children` 配列を持つネストされたルート構造を生成するためです。このオプションは、プラグイン設定でグローバルにのみ設定できます。
+ネストされたルートが親ルートからデフォルトレイアウトを継承するかどうかを制御します。`false` に設定すると、子ルートに独自のレイアウトがある場合、親ルートはデフォルトレイアウトを使用しません。これにより、子ルートが独自のレイアウトを指定した場合のレイアウトの二重ラッピングを防ぎます。このオプションは vue-router 5 の Auto Route でのみ機能します。[vite-plugin-pages](https://github.com/hannoeru/vite-plugin-pages) を使用している場合は効果がありません。これは、`vite-plugin-pages` がネストされた親子関係のないフラットなルート構造を生成するのに対し、vue-router 5 の Auto Route は `children` 配列を持つネストされたルート構造を生成するためです。このオプションは、プラグイン設定でグローバルにのみ設定できます。
 
 **デフォルト:** `true`
 
