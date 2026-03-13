@@ -2,6 +2,7 @@ catalogMode: prefer
 cleanupUnusedCatalogs: true
 shellEmulator: true
 trustPolicy: no-downgrade
+
 packages:
   - 'examples/*'
 

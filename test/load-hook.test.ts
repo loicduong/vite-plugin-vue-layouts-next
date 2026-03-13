@@ -1,7 +1,7 @@
 import type { Plugin } from 'vite'
-import { describe, expect, it } from 'vitest'
 import { resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { describe, expect, it } from 'vitest'
 import Layout, { ClientSideLayout } from '../src/index'
 
 const MODULE_ID_VIRTUAL = '/@vite-plugin-vue-layouts-next/generated-layouts'
@@ -34,7 +34,7 @@ function assertLoadReturnShape(result: unknown) {
 }
 
 describe('load hook return shape', () => {
-  describe('ClientSideLayout', () => {
+  describe('clientSideLayout', () => {
     it('returns object with code (string) and moduleType === "js" only', async () => {
       const plugin = ClientSideLayout({ layoutDir: 'src/layouts' }) as Plugin
       const load = getLoadFunction(plugin)
@@ -51,12 +51,12 @@ describe('load hook return shape', () => {
     })
   })
 
-  describe('Layout (server/resolved)', () => {
+  describe('layout (server/resolved)', () => {
     it('returns object with code (string) and moduleType === "js" only', async () => {
       const plugin = Layout({
         layoutsDirs: resolve(fixturesRoot, 'layouts'),
         pagesDirs: resolve(fixturesRoot, 'pages'),
-      }) as Plugin & { configResolved(config: { root: string }): void }
+      }) as Plugin & { configResolved: (config: { root: string }) => void }
       const mockConfig = { root: fixturesRoot }
       plugin.configResolved!(mockConfig)
       const load = getLoadFunction(plugin)
@@ -69,7 +69,7 @@ describe('load hook return shape', () => {
       const plugin = Layout({
         layoutsDirs: resolve(fixturesRoot, 'layouts'),
         pagesDirs: resolve(fixturesRoot, 'pages'),
-      }) as Plugin & { configResolved(config: { root: string }): void }
+      }) as Plugin & { configResolved: (config: { root: string }) => void }
       plugin.configResolved!({ root: fixturesRoot })
       const load = getLoadFunction(plugin)
       expect(load).toBeTypeOf('function')

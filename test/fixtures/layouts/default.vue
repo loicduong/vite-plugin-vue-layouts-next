@@ -1,2 +1,5 @@
-<template><div /></template>
 <script setup lang="ts" />
+
+<template>
+  <div />
+</template>
