@@ -1,7 +1,7 @@
-import { describe, expect, it } from 'vitest'
-import { build } from 'vite'
 import { resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { build } from 'vite'
+import { describe, expect, it } from 'vitest'
 import { ClientSideLayout } from '../src/index'
 
 const fixturesRoot = resolve(fileURLToPath(import.meta.url), '..', 'fixtures')
