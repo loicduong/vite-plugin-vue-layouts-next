@@ -70,6 +70,7 @@
     "@antfu/eslint-config": "catalog:",
     "@types/debug": "catalog:",
     "@types/node": "catalog:",
+    "@vitejs/plugin-vue": "catalog:",
     "cross-env": "catalog:",
     "eslint": "catalog:",
     "tsdown": "catalog:",
