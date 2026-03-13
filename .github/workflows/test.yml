@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        VITE_VERSION: [6, 7, 8]
+        VITE_VERSION: ['6.0.0', '7.0.0', '8.0.0']
     steps:
       - uses: actions/checkout@v4
 
@@ -27,7 +27,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Install Vite ${{ matrix.VITE_VERSION }}
-        run: pnpm add -D vite@^${{ matrix.VITE_VERSION }}
+        run: pnpm add -D vite@${{ matrix.VITE_VERSION }}
 
       - name: Run tests
         run: pnpm run test
