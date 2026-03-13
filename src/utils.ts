@@ -2,18 +2,22 @@ import { resolve } from 'node:path'
 import Debug from 'debug'
 import fg from 'fast-glob'
 
+const REGEX_BACKSLASH = /\\/g
+const REGEX_PATH_CHARS = /[_.\-\\/]/g
+const REGEX_BRACKETS_PARENS = /[[:\]()]/g
+
 export function extensionsToGlob(extensions: string[]) {
   return extensions.length > 1 ? `{${extensions.join(',')}}` : extensions[0] || ''
 }
 
 export function normalizePath(str: string): string {
-  return str.replace(/\\/g, '/')
+  return str.replace(REGEX_BACKSLASH, '/')
 }
 
 export const debug = Debug('vite-plugin-layouts-next')
 
 export function pathToName(filepath: string) {
-  return filepath.replace(/[_.\-\\/]/g, '_').replace(/[[:\]()]/g, '$')
+  return filepath.replace(REGEX_PATH_CHARS, '_').replace(REGEX_BRACKETS_PARENS, '$')
 }
 
 export function resolveDirs(dirs: string | string[] | null, root: string) {

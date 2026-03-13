@@ -20,18 +20,16 @@ export function defaultImportMode(name: string) {
 }
 
 function resolveOptions(userOptions: UserOptions): ResolvedOptions {
-  return Object.assign(
-    {
-      defaultLayout: 'default',
-      layoutsDirs: 'src/layouts',
-      pagesDirs: 'src/pages',
-      extensions: ['vue'],
-      exclude: [],
-      importMode: defaultImportMode,
-      inheritDefaultLayout: true,
-    },
-    userOptions,
-  )
+  return {
+    defaultLayout: 'default',
+    layoutsDirs: 'src/layouts',
+    pagesDirs: 'src/pages',
+    extensions: ['vue'],
+    exclude: [],
+    importMode: defaultImportMode,
+    inheritDefaultLayout: true,
+    ...userOptions,
+  }
 }
 
 export default function Layout(userOptions: UserOptions = {}): Plugin {
@@ -123,7 +121,7 @@ export default function Layout(userOptions: UserOptions = {}): Plugin {
         const clientCode = getClientCode(importCode, options)
 
         debug('Client code: %O', clientCode)
-        return clientCode
+        return { code: clientCode, moduleType: 'js' as const }
       }
     },
   }
@@ -142,14 +140,15 @@ export function ClientSideLayout(options?: clientSideOptions): Plugin {
       if (id === MODULE_ID)
         return `\0${MODULE_ID}`
     },
-    load(id) {
+    async load(id) {
       if (id === `\0${MODULE_ID}`) {
-        return createVirtualModuleCode({
+        const code = await createVirtualModuleCode({
           layoutDir,
           importMode,
           defaultLayout,
           inheritDefaultLayout,
         })
+        return { code, moduleType: 'js' as const }
       }
     },
   }

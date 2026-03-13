@@ -1,6 +1,8 @@
 import type { FileContainer, ResolvedOptions } from './types'
 import { join, parse } from 'node:path'
 
+const REGEX_BACKSLASH = /\\/g
+
 export function getImportCode(files: FileContainer[], options: ResolvedOptions) {
   const imports: string[] = []
   const head: string[] = []
@@ -10,7 +12,7 @@ export function getImportCode(files: FileContainer[], options: ResolvedOptions) 
     for (const file of __.files) {
       const path = __.path.startsWith('/') ? `${__.path}/${file}` : `/${__.path}/${file}`
       const parsed = parse(file)
-      const name = join(parsed.dir, parsed.name).replace(/\\/g, '/')
+      const name = join(parsed.dir, parsed.name).replace(REGEX_BACKSLASH, '/')
       if (options.importMode(name) === 'sync') {
         const variable = `__layout_${id}`
         head.push(`import ${variable} from '${path}'`)
