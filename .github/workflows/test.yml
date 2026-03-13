@@ -27,7 +27,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Install Vite ${{ matrix.VITE_VERSION }}
-        run: pnpm add -D vite@${{ matrix.VITE_VERSION }}
+        run: pnpm add -D vite@^${{ matrix.VITE_VERSION }}
 
       - name: Run tests
         run: pnpm run test
