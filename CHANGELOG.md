@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.1.0] - 2026-03-18
+
+### Added
+
+- Support Vite 8 ([#26](https://github.com/loicduong/vite-plugin-vue-layouts-next/issues/26))
+
 ## [2.0.1] - 2025-02-12
 
 ### Fixed
@@ -17,7 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Support Vue Router 5 (#22)
+- Support Vue Router 5 ([#22](https://github.com/loicduong/vite-plugin-vue-layouts-next/issues/22))
 
 ## [1.3.0] - 2025-11-25
 
@@ -182,7 +188,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial releases
 
-[Unreleased]: https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v2.0.1...HEAD
+[Unreleased]: https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v2.1.0...HEAD
+[2.1.0]: https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v2.0.1...v2.1.0
 [2.0.1]: https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v1.3.0...v2.0.0
 [1.3.0]: https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v1.2.0...v1.3.0
