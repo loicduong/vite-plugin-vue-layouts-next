@@ -36,15 +36,28 @@ function assertLoadReturnShape(result: unknown) {
   expect(obj.moduleType).toBe('js')
 }
 
-function findLayoutAncestors(routes: any[], targetLayout: string, ancestors: string[] = []): string[][] {
+interface TestRoute {
+  path: string
+  component?: string
+  name?: string
+  meta?: {
+    title?: string
+    layout?: string | false
+    isLayout?: boolean
+  }
+  children?: TestRoute[]
+}
+
+function findLayoutAncestors(routes: TestRoute[], targetLayout: string, ancestors: string[] = []): string[][] {
   const matches: string[][] = []
   for (const route of routes) {
     const nextAncestors = route.component ? [...ancestors, route.component] : ancestors
     if (route.component === targetLayout) {
       matches.push(ancestors)
     }
-    if (route.children?.length > 0) {
-      matches.push(...findLayoutAncestors(route.children, targetLayout, nextAncestors))
+    const children = route.children ?? []
+    if (children.length > 0) {
+      matches.push(...findLayoutAncestors(children, targetLayout, nextAncestors))
     }
   }
   return matches
@@ -109,10 +122,10 @@ const layouts = {
     } as ResolvedOptions
 
     const code = getClientCode(importCode, options)
-    const executable = code.replaceAll('export ', '')
+    const executable = code.replace(/^export\s+/gm, '')
     const sandbox: Record<string, unknown> = {}
     vm.runInNewContext(`${executable}; globalThis.__setupLayouts = setupLayouts`, sandbox)
-    const setupLayouts = sandbox.__setupLayouts as (routes: any[]) => any[]
+    const setupLayouts = sandbox.__setupLayouts as (routes: TestRoute[]) => TestRoute[]
 
     const routes = [{
       path: '/config',
