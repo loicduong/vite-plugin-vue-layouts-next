@@ -77,7 +77,7 @@ export async function createVirtualModuleCode(
           : false
 
         if (route.children?.length > 0) {
-          route.children = deepSetupLayout(route.children, false)
+          route.children = deepSetupLayout(route.children, top && !route.component)
         }
 
         if (top) {
@@ -85,6 +85,11 @@ export async function createVirtualModuleCode(
           const skipLayout = !route.component && route.children?.find(r => (r.path === '' || r.path === '/') && r.meta?.isLayout)
 
           if (skipLayout) {
+            return route
+          }
+
+          // Keep grouping routes unwrapped so children can apply their own layouts independently.
+          if (!route.component && route.children?.length > 0 && route.meta?.layout == null) {
             return route
           }
 
