@@ -11,7 +11,7 @@
     "type": "git",
     "url": "git+https://github.com/loicduong/vite-plugin-vue-layouts-next.git"
   },
-  "bugs": "https://github.com/loicduong/vite-plugin-vue-layouts-next",
+  "bugs": "https://github.com/loicduong/vite-plugin-vue-layouts-next/issues",
   "keywords": [
     "typescript",
     "vite-plugin",
