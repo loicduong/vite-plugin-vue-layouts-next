@@ -9,8 +9,6 @@ Vite 8、Vue 3 および Vue Router 5 用のルーターベースのレイアウ
 
 [vite-plugin-vue-layouts][vite-plugin-vue-layouts] のフォークで、いくつかの改善と修正を加え、Vite 8、Vue 3 および Vue Router 5 をサポートしています。
 
-このプラグインは [vite-plugin-pages](https://github.com/hannoeru/vite-plugin-pages) と組み合わせて使用すると最適に動作します。
-
 レイアウトはデフォルトで `/src/layouts` フォルダに保存され、テンプレートに `<router-view></router-view>` を含む標準的な Vue コンポーネントとして定義されます。
 
 レイアウトが指定されていないページは、デフォルトで `default.vue` をレイアウトとして使用します。
@@ -57,32 +55,15 @@ pnpm add -D vite-plugin-vue-layouts-next
 ```js
 import Vue from '@vitejs/plugin-vue'
 import { defineConfig } from 'vite'
-import Pages from 'vite-plugin-pages'
 import Layouts from 'vite-plugin-vue-layouts-next'
+import VueRouter from 'vue-router/vite'
 
 export default defineConfig({
-  plugins: [Vue(), Pages(), Layouts()],
+  plugins: [VueRouter(), Vue(), Layouts()],
 })
 ```
 
-`main.ts` では、生成されたコードをインポートしてレイアウトを設定するために、いくつかの行を追加してください。
-
-### vite-plugin-pages
-
-```js
-import { setupLayouts } from 'virtual:generated-layouts'
-import { createRouter } from 'vue-router'
-import generatedRoutes from '~pages'
-
-const routes = setupLayouts(generatedRoutes)
-
-const router = createRouter({
-  // ...
-  routes,
-})
-```
-
-### vue-router 5
+`main.ts` では、Vue Router 5 が生成するファイルベースルートをインポートしてレイアウトを設定してください。
 
 ```js
 import { setupLayouts } from 'virtual:generated-layouts'
@@ -188,7 +169,7 @@ export default defineConfig({
 
 ### inheritDefaultLayout
 
-ネストされたルートが親ルートからデフォルトレイアウトを継承するかどうかを制御します。`false` に設定すると、子ルートに独自のレイアウトがある場合、親ルートはデフォルトレイアウトを使用しません。これにより、子ルートが独自のレイアウトを指定した場合のレイアウトの二重ラッピングを防ぎます。このオプションは vue-router 5 の Auto Route でのみ機能します。[vite-plugin-pages](https://github.com/hannoeru/vite-plugin-pages) を使用している場合は効果がありません。これは、`vite-plugin-pages` がネストされた親子関係のないフラットなルート構造を生成するのに対し、vue-router 5 の Auto Route は `children` 配列を持つネストされたルート構造を生成するためです。このオプションは、プラグイン設定でグローバルにのみ設定できます。
+ネストされたルートが親ルートからデフォルトレイアウトを継承するかどうかを制御します。`false` に設定すると、子ルートに独自のレイアウトがある場合、親ルートはデフォルトレイアウトを使用しません。これにより、子ルートが独自のレイアウトを指定した場合のレイアウトの二重ラッピングを防ぎます。このオプションは、`children` 配列を持つネストされたルート構造を生成する Vue Router 5 のファイルベースルートに適用されます。このオプションは、プラグイン設定でグローバルにのみ設定できます。
 
 **デフォルト:** `true`
 
@@ -251,7 +232,7 @@ router: [
 
 ページで状態を設定し、レイアウトでそれを使用したい場合は、ルートの `meta` プロパティに追加のプロパティを追加します。これは、ビルド時に状態がわかっている場合にのみ機能します。
 
-[vite-plugin-pages](https://github.com/hannoeru/vite-plugin-pages) を使用している場合は、`<route>` ブロックを使用できます。
+Vue Router 5 のファイルベースルーティングでは、`<route>` ブロックを使用できます。
 
 `page.vue` で：
 

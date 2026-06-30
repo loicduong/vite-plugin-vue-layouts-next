@@ -58,41 +58,6 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
-    '/deep/': RouteRecordInfo<
-      '/deep/',
-      '/deep',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/deep/deeper/': RouteRecordInfo<
-      '/deep/deeper/',
-      '/deep/deeper',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/deep/deeper/deepest/': RouteRecordInfo<
-      '/deep/deeper/deepest/',
-      '/deep/deeper/deepest',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/inherit/[id]': RouteRecordInfo<
-      '/inherit/[id]',
-      '/inherit/:id',
-      { id: ParamValue<true> },
-      { id: ParamValue<false> },
-      | never
-    >,
-    '/inherit/deep/[id]': RouteRecordInfo<
-      '/inherit/deep/[id]',
-      '/inherit/deep/:id',
-      { id: ParamValue<true> },
-      { id: ParamValue<false> },
-      | never
-    >,
     '/module1': RouteRecordInfo<
       '/module1',
       '/module1',
@@ -184,36 +149,6 @@ declare module 'vue-router/auto-routes' {
     'src/pages/about/who/me.vue': {
       routes:
         | 'who-me-override'
-      views:
-        | never
-    }
-    'src/pages/deep/index.vue': {
-      routes:
-        | '/deep/'
-      views:
-        | never
-    }
-    'src/pages/deep/deeper/index.vue': {
-      routes:
-        | '/deep/deeper/'
-      views:
-        | never
-    }
-    'src/pages/deep/deeper/deepest/index.vue': {
-      routes:
-        | '/deep/deeper/deepest/'
-      views:
-        | never
-    }
-    'src/pages/inherit/[id].vue': {
-      routes:
-        | '/inherit/[id]'
-      views:
-        | never
-    }
-    'src/pages/inherit/deep/[id].vue': {
-      routes:
-        | '/inherit/deep/[id]'
       views:
         | never
     }
