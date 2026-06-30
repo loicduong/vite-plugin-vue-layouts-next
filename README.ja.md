@@ -93,7 +93,6 @@ const router = createRouter({
 ```ts
 interface UserOptions {
   layoutsDirs?: string | string[]
-  pagesDirs?: string | string[] | null
   extensions?: string[]
   exclude?: string[]
   defaultLayout?: string
@@ -115,7 +114,6 @@ export default defineConfig({
   plugins: [
     Layouts({
       layoutsDirs: 'src/mylayouts',
-      pagesDirs: 'src/pages',
       defaultLayout: 'myDefault'
     }),
   ],
@@ -135,25 +133,15 @@ export default defineConfig({
 
 **デフォルト:** `'src/layouts'`
 
-### pagesDirs
-
-プロジェクト内の任意の場所で追加または削除されたすべてのファイルに対して HMR のリロードを避けるため、ページディレクトリを定義します。
-
-ページディレクトリへの相対パスです。v0.8.0 以前のようにすべてのファイルを監視したい場合は、null に設定してください。
-
-ページディレクトリの配列にすることも、`**` グロブパターンを使用することもできます。
-
-**デフォルト:** `'src/pages'`
-
 ### extensions
 
-ページコンポーネントの有効なファイル拡張子です。
+レイアウトコンポーネントの有効なファイル拡張子です。
 
 **デフォルト:** `['vue']`
 
 ### exclude
 
-ページを解決する際に除外するパスグロブのリストです。
+レイアウトを解決する際に除外するパスグロブのリストです。
 
 ### defaultLayout
 

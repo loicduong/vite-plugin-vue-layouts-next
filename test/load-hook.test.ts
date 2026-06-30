@@ -1,7 +1,7 @@
 import type { Plugin } from 'vite'
 import { resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import Layout, { ClientSideLayout } from '../src/index'
 
 const MODULE_ID_VIRTUAL = '/@vite-plugin-vue-layouts-next/generated-layouts'
@@ -55,7 +55,7 @@ describe('load hook return shape', () => {
     it('returns object with code (string) and moduleType === "js" only', async () => {
       const plugin = Layout({
         layoutsDirs: resolve(fixturesRoot, 'layouts'),
-        pagesDirs: resolve(fixturesRoot, 'pages'),
+        extensions: ['vue'],
       }) as Plugin & { configResolved: (config: { root: string }) => void }
       const mockConfig = { root: fixturesRoot }
       plugin.configResolved!(mockConfig)
@@ -68,12 +68,57 @@ describe('load hook return shape', () => {
     it('returns undefined for other module ids', async () => {
       const plugin = Layout({
         layoutsDirs: resolve(fixturesRoot, 'layouts'),
-        pagesDirs: resolve(fixturesRoot, 'pages'),
+        extensions: ['vue'],
       }) as Plugin & { configResolved: (config: { root: string }) => void }
       plugin.configResolved!({ root: fixturesRoot })
       const load = getLoadFunction(plugin)
       expect(load).toBeTypeOf('function')
       expect(await load!('other-id')).toBeUndefined()
+    })
+  })
+})
+
+describe('dev server watcher', () => {
+  it('invalidates generated layouts only for layout file changes', () => {
+    const plugin = Layout({
+      layoutsDirs: resolve(fixturesRoot, 'layouts'),
+      extensions: ['vue'],
+    }) as Plugin & {
+      configResolved: (config: { root: string }) => void
+      configureServer: (server: unknown) => void
+    }
+
+    plugin.configResolved!({ root: fixturesRoot })
+
+    const handlers = new Map<string, (path: string) => void>()
+    const invalidateModule = vi.fn()
+    const send = vi.fn()
+    const layoutModule = {}
+    const server = {
+      watcher: {
+        add: vi.fn(),
+        on: vi.fn((event: string, handler: (path: string) => void) => {
+          handlers.set(event, handler)
+        }),
+      },
+      moduleGraph: {
+        getModuleById: vi.fn(() => layoutModule),
+        invalidateModule,
+      },
+      ws: { send },
+    }
+
+    plugin.configureServer!(server)
+
+    handlers.get('change')!(resolve(fixturesRoot, 'src/pages/index.vue'))
+    expect(invalidateModule).not.toHaveBeenCalled()
+    expect(send).not.toHaveBeenCalled()
+
+    handlers.get('change')!(resolve(fixturesRoot, 'layouts/default.vue'))
+    expect(invalidateModule).toHaveBeenCalledWith(layoutModule)
+    expect(send).toHaveBeenCalledWith({
+      path: '*',
+      type: 'full-reload',
     })
   })
 })
