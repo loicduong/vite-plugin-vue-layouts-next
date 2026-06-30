@@ -47,7 +47,7 @@ Example-app commands exposed from the root:
 - `pnpm spa:dev`, `pnpm spa:build`, `pnpm spa:preview`
 - `pnpm ssg:dev`, `pnpm ssg:build`, `pnpm ssg:preview`
 - `pnpm cli:dev`, `pnpm cli:build`, `pnpm cli:preview`
-- `pnpm nested:dev`, `pnpm nested:build`, `pnpm nested:preview`
+- `pnpm ner:dev`, `pnpm ner:build`, `pnpm ner:preview`
 
 Use the root wrappers instead of running inside `examples/*` unless you are debugging an example package directly.
 
