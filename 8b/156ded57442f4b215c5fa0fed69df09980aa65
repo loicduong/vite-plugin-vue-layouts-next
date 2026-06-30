@@ -1,0 +1,32 @@
+README.md
+  s_98e28bb21bc503::t_ebae6c801981b6 138,144
+test/load-hook.test.ts
+  s_98e28bb21bc503::t_777254a2012c2f 113
+  s_98e28bb21bc503::t_8726407fb1662c 80-84,86-112,114-124
+  s_98e28bb21bc503::t_5a83d1cab8ddff 4
+  s_98e28bb21bc503::t_281c64053af9e5 85
+  s_98e28bb21bc503::t_551538c76cdbcb 58,71
+src/types.ts
+  s_98e28bb21bc503::t_c3700ac820c6a4 11,16
+  s_98e28bb21bc503::t_ebae6c801981b6 6
+README.ja.md
+  s_98e28bb21bc503::t_d36de63058bdbe 138,144
+src/index.ts
+  s_98e28bb21bc503::t_c3700ac820c6a4 75
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.4",
+  "base_commit_sha": "8b156ded57442f4b215c5fa0fed69df09980aa65",
+  "prompts": {},
+  "sessions": {
+    "s_98e28bb21bc503": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f18ee-e156-70e3-a9b6-32cb73301c4c",
+        "model": "gpt-5.5"
+      },
+      "human_author": "loicduong <mikhailcolt@gmail.com>"
+    }
+  }
+}
