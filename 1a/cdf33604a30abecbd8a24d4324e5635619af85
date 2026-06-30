@@ -1,0 +1,25 @@
+examples/nested-routes/typed-router.d.ts
+  s_98e28bb21bc503::t_649179950c5554 1-284
+AGENTS.md
+  s_98e28bb21bc503::t_8c1479b5a29096 5,50
+package.json
+  s_98e28bb21bc503::t_8c1479b5a29096 52-54
+pnpm-lock.yaml
+  s_98e28bb21bc503::t_89697b6857fa53 119
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.4",
+  "base_commit_sha": "1acdf33604a30abecbd8a24d4324e5635619af85",
+  "prompts": {},
+  "sessions": {
+    "s_98e28bb21bc503": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f18ee-e156-70e3-a9b6-32cb73301c4c",
+        "model": "gpt-5.5"
+      },
+      "human_author": "loicduong <mikhailcolt@gmail.com>"
+    }
+  }
+}
