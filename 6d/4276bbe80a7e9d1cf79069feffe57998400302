@@ -1,0 +1,49 @@
+examples/client-side/src/main.ts
+  s_98e28bb21bc503::t_b8b8ae10c3ab17 4,9
+examples/ssg/src/shims-vue.d.ts
+  s_98e28bb21bc503::t_b8b8ae10c3ab17 1-3
+examples/client-side/src/shims-vue.d.ts
+  s_98e28bb21bc503::t_b8b8ae10c3ab17 1-2
+examples/ssg/src/main.ts
+  s_98e28bb21bc503::t_b8b8ae10c3ab17 3,6
+examples/client-side/typed-router.d.ts
+  s_98e28bb21bc503::t_388432147a6563 1-180
+examples/spa/src/shims-vue.d.ts
+  s_98e28bb21bc503::t_b8b8ae10c3ab17 1-3
+examples/spa/typed-router.d.ts
+  s_98e28bb21bc503::t_388432147a6563 1-219
+examples/ssg/vite.config.ts
+  s_98e28bb21bc503::t_b8b8ae10c3ab17 5,9-11
+README.md
+  s_98e28bb21bc503::t_80bbec83bdfdc2 59,62,66,172,235
+README.ja.md
+  s_98e28bb21bc503::t_66dd876febf41e 59,62,66,172,235
+examples/spa/src/main.ts
+  s_98e28bb21bc503::t_b8b8ae10c3ab17 4,9
+examples/spa/vite.config.ts
+  s_98e28bb21bc503::t_b8b8ae10c3ab17 5,9-11
+examples/client-side/vite.config.ts
+  s_98e28bb21bc503::t_b8b8ae10c3ab17 5,9-11
+examples/auto-routes/typed-router.d.ts
+  s_98e28bb21bc503::t_388432147a6563 17-19,23-24
+examples/ssg/typed-router.d.ts
+  s_98e28bb21bc503::t_b66e691add2f0a 1-167
+pnpm-lock.yaml
+  s_98e28bb21bc503::t_b1d8d3e34e2a14 84,99,151,188,225,268,3045,3049-3050,3052-3055,3058-3059,3061-3067,3069-3077,3082,3114,3195,3197,3199,3315,3318,3321,3323,3328,3332,3334,3525,3527,3529,3586,3589,3591-3592,3594,3602,3609,3614,3621,3644,3646,3648,3650,3676,3680,3682,3718,3724,3726,3730,3735,3737,3741,3800,3803-3804,3806,4125,4235,4237,4240,4242-4243,4250,4252,4256,4258,4260,4262,4264,4267,4269-4270,4272,4275,4279,4281,4283-4284,4286,4288,4290,4298,4310,4312,4317-4318,4325,4327,4329-4330,4342,4344-4345,4351,4354,4362,4364,4367,4373,4379,4384,4387,4392,4404,4406,4408,4410,4412-4413,4418,4421-4422,4424,4432,4438,4441,4456,4458,4460,5696,5778,5854,5857
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.4",
+  "base_commit_sha": "6d4276bbe80a7e9d1cf79069feffe57998400302",
+  "prompts": {},
+  "sessions": {
+    "s_98e28bb21bc503": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f18ee-e156-70e3-a9b6-32cb73301c4c",
+        "model": "gpt-5.5"
+      },
+      "human_author": "loicduong <mikhailcolt@gmail.com>"
+    }
+  }
+}
