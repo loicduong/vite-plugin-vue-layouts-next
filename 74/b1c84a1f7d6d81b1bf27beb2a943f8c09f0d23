@@ -1,0 +1,21 @@
+AGENTS.md
+  s_98e28bb21bc503::t_6c77254e58d804 50
+package.json
+  s_98e28bb21bc503::t_6c77254e58d804 52-54
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.4",
+  "base_commit_sha": "74b1c84a1f7d6d81b1bf27beb2a943f8c09f0d23",
+  "prompts": {},
+  "sessions": {
+    "s_98e28bb21bc503": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f18ee-e156-70e3-a9b6-32cb73301c4c",
+        "model": "gpt-5.5"
+      },
+      "human_author": "loicduong <mikhailcolt@gmail.com>"
+    }
+  }
+}
