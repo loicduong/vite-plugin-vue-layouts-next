@@ -26,6 +26,7 @@ meta:
 
 - [インストール](#インストール)
 - [使用方法](#使用方法)
+- [マイグレーション](#マイグレーション)
 - [API](#api)
 - [動作の仕組み](#動作の仕組み)
 - [一般的なパターン](#一般的なパターン)
@@ -87,6 +88,44 @@ const router = createRouter({
   }
 }
 ```
+
+## マイグレーション
+
+古い設定から移行する場合は、Vue Router 5 のファイルベースルーティングをルートの生成元として使用し、このプラグインはレイアウトのみを扱うようにしてください。
+
+1. 古いページルート用プラグインの依存関係と型参照を削除します：
+
+```diff
+- import Pages from 'vite-plugin-pages'
+- /// <reference types="vite-plugin-pages/client" />
+```
+
+2. Vue Router 5 の Vite プラグインを Vue より前に追加します：
+
+```diff
+ import Vue from '@vitejs/plugin-vue'
++import VueRouter from 'vue-router/vite'
+ import Layouts from 'vite-plugin-vue-layouts-next'
+
+ export default defineConfig({
+-  plugins: [Vue(), Pages(), Layouts()],
++  plugins: [VueRouter(), Vue(), Layouts()],
+ })
+```
+
+3. 生成されたページルートの import を Vue Router 5 の auto routes に置き換えます：
+
+```diff
+ import { setupLayouts } from 'virtual:generated-layouts'
+-import generatedRoutes from 'virtual:generated-pages'
+-import generatedRoutes from '~pages'
++import { routes } from 'vue-router/auto-routes'
+
+-const routes = setupLayouts(generatedRoutes)
++const layoutRoutes = setupLayouts(routes)
+```
+
+4. `Layouts()` オプションから `pagesDirs` を削除します。ページ検出とルート HMR は Vue Router 5 が担当し、このプラグインはレイアウトの監視と解決のみを担当します。
 
 ## API
 
