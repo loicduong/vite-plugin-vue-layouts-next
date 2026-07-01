@@ -1,5 +1,8 @@
 catalogMode: prefer
 cleanupUnusedCatalogs: true
+minimumReleaseAgeExclude:
+  - vite@8.1.2
+
 shellEmulator: true
 trustPolicy: no-downgrade
 packages:
@@ -34,9 +37,6 @@ catalog:
 
 onlyBuiltDependencies:
   - esbuild
-
-minimumReleaseAgeExclude:
-  - vite@8.1.2
 
 allowBuilds:
   esbuild: true
