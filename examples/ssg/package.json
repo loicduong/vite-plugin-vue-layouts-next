@@ -21,7 +21,6 @@
     "unplugin-vue-markdown": "catalog:",
     "vite": "catalog:",
     "vite-plugin-inspect": "catalog:",
-    "vite-plugin-pages": "catalog:",
     "vite-plugin-vue-layouts-next": "workspace:*",
     "vite-ssg": "catalog:"
   },

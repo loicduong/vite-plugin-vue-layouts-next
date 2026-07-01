@@ -9,8 +9,6 @@ Vite 8、Vue 3 および Vue Router 5 用のルーターベースのレイアウ
 
 [vite-plugin-vue-layouts][vite-plugin-vue-layouts] のフォークで、いくつかの改善と修正を加え、Vite 8、Vue 3 および Vue Router 5 をサポートしています。
 
-このプラグインは [vite-plugin-pages](https://github.com/hannoeru/vite-plugin-pages) と組み合わせて使用すると最適に動作します。
-
 レイアウトはデフォルトで `/src/layouts` フォルダに保存され、テンプレートに `<router-view></router-view>` を含む標準的な Vue コンポーネントとして定義されます。
 
 レイアウトが指定されていないページは、デフォルトで `default.vue` をレイアウトとして使用します。
@@ -28,6 +26,7 @@ meta:
 
 - [インストール](#インストール)
 - [使用方法](#使用方法)
+- [マイグレーション](#マイグレーション)
 - [API](#api)
 - [動作の仕組み](#動作の仕組み)
 - [一般的なパターン](#一般的なパターン)
@@ -57,32 +56,15 @@ pnpm add -D vite-plugin-vue-layouts-next
 ```js
 import Vue from '@vitejs/plugin-vue'
 import { defineConfig } from 'vite'
-import Pages from 'vite-plugin-pages'
 import Layouts from 'vite-plugin-vue-layouts-next'
+import VueRouter from 'vue-router/vite'
 
 export default defineConfig({
-  plugins: [Vue(), Pages(), Layouts()],
+  plugins: [VueRouter(), Vue(), Layouts()],
 })
 ```
 
-`main.ts` では、生成されたコードをインポートしてレイアウトを設定するために、いくつかの行を追加してください。
-
-### vite-plugin-pages
-
-```js
-import { setupLayouts } from 'virtual:generated-layouts'
-import { createRouter } from 'vue-router'
-import generatedRoutes from '~pages'
-
-const routes = setupLayouts(generatedRoutes)
-
-const router = createRouter({
-  // ...
-  routes,
-})
-```
-
-### vue-router 5
+`main.ts` では、Vue Router 5 が生成するファイルベースルートをインポートしてレイアウトを設定してください。
 
 ```js
 import { setupLayouts } from 'virtual:generated-layouts'
@@ -107,12 +89,49 @@ const router = createRouter({
 }
 ```
 
+## マイグレーション
+
+古い設定から移行する場合は、Vue Router 5 のファイルベースルーティングをルートの生成元として使用し、このプラグインはレイアウトのみを扱うようにしてください。
+
+1. 古いページルート用プラグインの依存関係と型参照を削除します：
+
+```diff
+- import Pages from 'vite-plugin-pages'
+- /// <reference types="vite-plugin-pages/client" />
+```
+
+2. Vue Router 5 の Vite プラグインを Vue より前に追加します：
+
+```diff
+ import Vue from '@vitejs/plugin-vue'
++import VueRouter from 'vue-router/vite'
+ import Layouts from 'vite-plugin-vue-layouts-next'
+
+ export default defineConfig({
+-  plugins: [Vue(), Pages(), Layouts()],
++  plugins: [VueRouter(), Vue(), Layouts()],
+ })
+```
+
+3. 生成されたページルートの import を Vue Router 5 の auto routes に置き換えます：
+
+```diff
+ import { setupLayouts } from 'virtual:generated-layouts'
+-import generatedRoutes from 'virtual:generated-pages'
+-import generatedRoutes from '~pages'
++import { routes } from 'vue-router/auto-routes'
+
+-const routes = setupLayouts(generatedRoutes)
++const layoutRoutes = setupLayouts(routes)
+```
+
+4. `Layouts()` オプションから `pagesDirs` を削除します。ページ検出とルート HMR は Vue Router 5 が担当し、このプラグインはレイアウトの監視と解決のみを担当します。
+
 ## API
 
 ```ts
 interface UserOptions {
   layoutsDirs?: string | string[]
-  pagesDirs?: string | string[] | null
   extensions?: string[]
   exclude?: string[]
   defaultLayout?: string
@@ -134,7 +153,6 @@ export default defineConfig({
   plugins: [
     Layouts({
       layoutsDirs: 'src/mylayouts',
-      pagesDirs: 'src/pages',
       defaultLayout: 'myDefault'
     }),
   ],
@@ -154,25 +172,15 @@ export default defineConfig({
 
 **デフォルト:** `'src/layouts'`
 
-### pagesDirs
-
-プロジェクト内の任意の場所で追加または削除されたすべてのファイルに対して HMR のリロードを避けるため、ページディレクトリを定義します。
-
-ページディレクトリへの相対パスです。v0.8.0 以前のようにすべてのファイルを監視したい場合は、null に設定してください。
-
-ページディレクトリの配列にすることも、`**` グロブパターンを使用することもできます。
-
-**デフォルト:** `'src/pages'`
-
 ### extensions
 
-ページコンポーネントの有効なファイル拡張子です。
+レイアウトコンポーネントの有効なファイル拡張子です。
 
 **デフォルト:** `['vue']`
 
 ### exclude
 
-ページを解決する際に除外するパスグロブのリストです。
+レイアウトを解決する際に除外するパスグロブのリストです。
 
 ### defaultLayout
 
@@ -188,7 +196,7 @@ export default defineConfig({
 
 ### inheritDefaultLayout
 
-ネストされたルートが親ルートからデフォルトレイアウトを継承するかどうかを制御します。`false` に設定すると、子ルートに独自のレイアウトがある場合、親ルートはデフォルトレイアウトを使用しません。これにより、子ルートが独自のレイアウトを指定した場合のレイアウトの二重ラッピングを防ぎます。このオプションは vue-router 5 の Auto Route でのみ機能します。[vite-plugin-pages](https://github.com/hannoeru/vite-plugin-pages) を使用している場合は効果がありません。これは、`vite-plugin-pages` がネストされた親子関係のないフラットなルート構造を生成するのに対し、vue-router 5 の Auto Route は `children` 配列を持つネストされたルート構造を生成するためです。このオプションは、プラグイン設定でグローバルにのみ設定できます。
+ネストされたルートが親ルートからデフォルトレイアウトを継承するかどうかを制御します。`false` に設定すると、子ルートに独自のレイアウトがある場合、親ルートはデフォルトレイアウトを使用しません。これにより、子ルートが独自のレイアウトを指定した場合のレイアウトの二重ラッピングを防ぎます。このオプションは、`children` 配列を持つネストされたルート構造を生成する Vue Router 5 のファイルベースルートに適用されます。このオプションは、プラグイン設定でグローバルにのみ設定できます。
 
 **デフォルト:** `true`
 
@@ -251,7 +259,7 @@ router: [
 
 ページで状態を設定し、レイアウトでそれを使用したい場合は、ルートの `meta` プロパティに追加のプロパティを追加します。これは、ビルド時に状態がわかっている場合にのみ機能します。
 
-[vite-plugin-pages](https://github.com/hannoeru/vite-plugin-pages) を使用している場合は、`<route>` ブロックを使用できます。
+Vue Router 5 のファイルベースルーティングでは、`<route>` ブロックを使用できます。
 
 `page.vue` で：
 

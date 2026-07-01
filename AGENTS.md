@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-`vite-plugin-vue-layouts-next` is a Vite plugin for Vue 3 and Vue Router that generates layout-aware routes from files in `src/layouts`. It is published as an ESM TypeScript package and includes multiple example apps used to validate behavior across SPA, SSG, client-side, and auto-routes setups.
+`vite-plugin-vue-layouts-next` is a Vite plugin for Vue 3 and Vue Router that generates layout-aware routes from files in `src/layouts`. It is published as an ESM TypeScript package and includes multiple example apps used to validate behavior across SPA, SSG, client-side, and nested-routes setups.
 
 Core implementation areas:
 
@@ -47,7 +47,7 @@ Example-app commands exposed from the root:
 - `pnpm spa:dev`, `pnpm spa:build`, `pnpm spa:preview`
 - `pnpm ssg:dev`, `pnpm ssg:build`, `pnpm ssg:preview`
 - `pnpm cli:dev`, `pnpm cli:build`, `pnpm cli:preview`
-- `pnpm aur:dev`, `pnpm aur:build`, `pnpm aur:preview`
+- `pnpm ner:dev`, `pnpm ner:build`, `pnpm ner:preview`
 
 Use the root wrappers instead of running inside `examples/*` unless you are debugging an example package directly.
 

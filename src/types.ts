@@ -3,22 +3,17 @@
  */
 interface Options {
   /**
-   * Relative path to the directory to search for page components.
+   * Relative path to the directory to search for layout components.
    * @default 'src/layouts'
    */
   layoutsDirs: string | string[]
   /**
-   * Relative path to the pages directory.
-   * @default 'src/pages'
-   */
-  pagesDirs: string | string[] | null
-  /**
-   * Valid file extensions for page components.
+   * Valid file extensions for layout components.
    * @default ['vue']
    */
   extensions: string[]
   /**
-   * List of path globs to exclude when resolving pages.
+   * List of path globs to exclude when resolving layouts.
    */
   exclude: string[]
   /**

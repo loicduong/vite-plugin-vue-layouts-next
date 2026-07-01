@@ -23,7 +23,6 @@ function resolveOptions(userOptions: UserOptions): ResolvedOptions {
   return {
     defaultLayout: 'default',
     layoutsDirs: 'src/layouts',
-    pagesDirs: 'src/pages',
     extensions: ['vue'],
     exclude: [],
     importMode: defaultImportMode,
@@ -47,7 +46,6 @@ export default function Layout(userOptions: UserOptions = {}): Plugin {
   const options: ResolvedOptions = resolveOptions(userOptions)
 
   let layoutsDirs: string[]
-  let pagesDirs: string[]
 
   return {
     name: 'vite-plugin-vue-layouts-next',
@@ -55,7 +53,6 @@ export default function Layout(userOptions: UserOptions = {}): Plugin {
     configResolved(_config) {
       config = _config
       layoutsDirs = resolveDirs(options.layoutsDirs, config.root)
-      pagesDirs = resolveDirs(options.pagesDirs, config.root)
     },
     configureServer({ moduleGraph, watcher, ws }) {
       watcher.add(options.layoutsDirs)
@@ -75,9 +72,7 @@ export default function Layout(userOptions: UserOptions = {}): Plugin {
       const updateVirtualModule = (path: string) => {
         path = normalizePath(path)
 
-        if (pagesDirs.length === 0
-          || pagesDirs.some(dir => path.startsWith(dir))
-          || layoutsDirs.some(dir => path.startsWith(dir))) {
+        if (layoutsDirs.some(dir => path.startsWith(dir))) {
           debug('reload', path)
           const module = moduleGraph.getModuleById(MODULE_ID_VIRTUAL)
           reloadModule(module)

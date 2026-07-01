@@ -9,8 +9,6 @@ Router based layout plugin for Vite 8, Vue 3 and Vue Router 5.
 
 A fork of [vite-plugin-vue-layouts][vite-plugin-vue-layouts] with some improvements and fixes, supports Vite 8, Vue 3 and Vue Router 5.
 
-This works best along with the [vite-plugin-pages](https://github.com/hannoeru/vite-plugin-pages).
-
 Layouts are stored in the `/src/layouts` folder by default and are standard Vue components with a `<router-view></router-view>` in the template.
 
 Pages without a layout specified use `default.vue` for their layout.
@@ -28,6 +26,7 @@ meta:
 
 - [Install](#install)
 - [Usage](#usage)
+- [Migration](#migration)
 - [API](#api)
 - [How it works](#how-it-works)
 - [Common patterns](#common-patterns)
@@ -57,32 +56,15 @@ Add to your `vite.config.ts`:
 ```js
 import Vue from '@vitejs/plugin-vue'
 import { defineConfig } from 'vite'
-import Pages from 'vite-plugin-pages'
 import Layouts from 'vite-plugin-vue-layouts-next'
+import VueRouter from 'vue-router/vite'
 
 export default defineConfig({
-  plugins: [Vue(), Pages(), Layouts()],
+  plugins: [VueRouter(), Vue(), Layouts()],
 })
 ```
 
-In main.ts, you need to add a few lines to import the generated code and setup the layouts.
-
-### vite-plugin-pages
-
-```js
-import { setupLayouts } from 'virtual:generated-layouts'
-import { createRouter } from 'vue-router'
-import generatedRoutes from '~pages'
-
-const routes = setupLayouts(generatedRoutes)
-
-const router = createRouter({
-  // ...
-  routes,
-})
-```
-
-### vue-router 5
+In main.ts, import Vue Router 5's generated file-based routes and setup the layouts.
 
 ```js
 import { setupLayouts } from 'virtual:generated-layouts'
@@ -107,12 +89,49 @@ If you want type definition of `virtual:generated-layouts`, add `vite-plugin-vue
 }
 ```
 
+## Migration
+
+If you are migrating an older setup, use Vue Router 5 file-based routing as the route source and let this plugin handle layouts only.
+
+1. Remove legacy page-route plugin dependencies and types:
+
+```diff
+- import Pages from 'vite-plugin-pages'
+- /// <reference types="vite-plugin-pages/client" />
+```
+
+2. Add Vue Router 5's Vite plugin before Vue:
+
+```diff
+ import Vue from '@vitejs/plugin-vue'
++import VueRouter from 'vue-router/vite'
+ import Layouts from 'vite-plugin-vue-layouts-next'
+
+ export default defineConfig({
+-  plugins: [Vue(), Pages(), Layouts()],
++  plugins: [VueRouter(), Vue(), Layouts()],
+ })
+```
+
+3. Replace generated page-route imports with Vue Router 5 auto routes:
+
+```diff
+ import { setupLayouts } from 'virtual:generated-layouts'
+-import generatedRoutes from 'virtual:generated-pages'
+-import generatedRoutes from '~pages'
++import { routes } from 'vue-router/auto-routes'
+
+-const routes = setupLayouts(generatedRoutes)
++const layoutRoutes = setupLayouts(routes)
+```
+
+4. Remove `pagesDirs` from `Layouts()` options. Vue Router 5 owns page discovery and route HMR; this plugin only watches and resolves layouts.
+
 ## API
 
 ```ts
 interface UserOptions {
   layoutsDirs?: string | string[]
-  pagesDirs?: string | string[] | null
   extensions?: string[]
   exclude?: string[]
   defaultLayout?: string
@@ -134,7 +153,6 @@ export default defineConfig({
   plugins: [
     Layouts({
       layoutsDirs: 'src/mylayouts',
-      pagesDirs: 'src/pages',
       defaultLayout: 'myDefault'
     }),
   ],
@@ -154,25 +172,15 @@ Any files named `__*__.vue` will be excluded, and you can specify any additional
 
 **Default:** `'src/layouts'`
 
-### pagesDirs
-
-Defines the pages dir to avoid HMR reloading for all added or deleted files anywhere in the project.
-
-Relative path to the pages directory. If you want it to watch for all files, like in v0.8.0 or earlier, set to null.
-
-Can also be an array of layout dirs or use `**` glob patterns
-
-**Default:** `'src/pages'`
-
 ### extensions
 
-Valid file extensions for page components.
+Valid file extensions for layout components.
 
 **Default:** `['vue']`
 
 ### exclude
 
-List of path globs to exclude when resolving pages.
+List of path globs to exclude when resolving layouts.
 
 ### defaultLayout
 
@@ -188,7 +196,7 @@ Mode for importing layouts.
 
 ### inheritDefaultLayout
 
-Whether nested routes should inherit the default layout from parent routes. When `false`, if a child route has its own layout, the parent route won't use the default layout. This prevents double-wrapping layouts when child routes specify their own layout. This option only works with vue-router 5 auto routes. It has no effect when using [vite-plugin-pages](https://github.com/hannoeru/vite-plugin-pages) because `vite-plugin-pages` generates flat route structures without nested parent-child relationships, while vue-router 5 auto routes generates nested route structures with `children` arrays. This option can only be set globally in the plugin configuration.
+Whether nested routes should inherit the default layout from parent routes. When `false`, if a child route has its own layout, the parent route won't use the default layout. This prevents double-wrapping layouts when child routes specify their own layout. This option applies to Vue Router 5 file-based routes, which generate nested route structures with `children` arrays. This option can only be set globally in the plugin configuration.
 
 **Default:** `true`
 
@@ -251,7 +259,7 @@ If you want to send data *down* from the layout to the page, use props
 
 If you want to set state in your page and do something with it in your layout, add additional properties to a route's `meta` property. Doing so only works if you know the state at build-time.
 
-You can use the `<route>` block if you work with [vite-plugin-pages](https://github.com/hannoeru/vite-plugin-pages).
+With Vue Router 5 file-based routing, you can use the `<route>` block.
 
 In `page.vue`:
 

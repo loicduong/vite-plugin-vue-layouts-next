@@ -14,10 +14,14 @@ import type {
   ParamValueZeroOrMore,
   ParamValueZeroOrOne,
 } from 'vue-router'
+import type {
+  _ExtractParamParserType,
+} from 'vue-router/experimental'
 
 declare module 'vue-router' {
   interface TypesConfig {
-    ParamParsers: never
+    ParamParsers:
+      | never
   }
 }
 
@@ -54,55 +58,6 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
-    '/deep/': RouteRecordInfo<
-      '/deep/',
-      '/deep',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/deep/deeper/': RouteRecordInfo<
-      '/deep/deeper/',
-      '/deep/deeper',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/deep/deeper/deepest/': RouteRecordInfo<
-      '/deep/deeper/deepest/',
-      '/deep/deeper/deepest',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/inherit/[id]': RouteRecordInfo<
-      '/inherit/[id]',
-      '/inherit/:id',
-      { id: ParamValue<true> },
-      { id: ParamValue<false> },
-      | never
-    >,
-    '/inherit/deep/[id]': RouteRecordInfo<
-      '/inherit/deep/[id]',
-      '/inherit/deep/:id',
-      { id: ParamValue<true> },
-      { id: ParamValue<false> },
-      | never
-    >,
-    '/module1': RouteRecordInfo<
-      '/module1',
-      '/module1',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/module2': RouteRecordInfo<
-      '/module2',
-      '/module2',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
     '/news': RouteRecordInfo<
       '/news',
       '/news',
@@ -121,20 +76,6 @@ declare module 'vue-router/auto-routes' {
     'named-news-page': RouteRecordInfo<
       'named-news-page',
       '/news/Today',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/nolayout': RouteRecordInfo<
-      '/nolayout',
-      '/nolayout',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/second/': RouteRecordInfo<
-      '/second/',
-      '/second',
       Record<never, never>,
       Record<never, never>,
       | never
@@ -183,48 +124,6 @@ declare module 'vue-router/auto-routes' {
       views:
         | never
     }
-    'src/pages/deep/index.vue': {
-      routes:
-        | '/deep/'
-      views:
-        | never
-    }
-    'src/pages/deep/deeper/index.vue': {
-      routes:
-        | '/deep/deeper/'
-      views:
-        | never
-    }
-    'src/pages/deep/deeper/deepest/index.vue': {
-      routes:
-        | '/deep/deeper/deepest/'
-      views:
-        | never
-    }
-    'src/pages/inherit/[id].vue': {
-      routes:
-        | '/inherit/[id]'
-      views:
-        | never
-    }
-    'src/pages/inherit/deep/[id].vue': {
-      routes:
-        | '/inherit/deep/[id]'
-      views:
-        | never
-    }
-    'src/pages/module1.vue': {
-      routes:
-        | '/module1'
-      views:
-        | never
-    }
-    'src/pages/module2.vue': {
-      routes:
-        | '/module2'
-      views:
-        | never
-    }
     'src/pages/news.vue': {
       routes:
         | '/news'
@@ -242,18 +141,6 @@ declare module 'vue-router/auto-routes' {
     'src/pages/news/Today.vue': {
       routes:
         | 'named-news-page'
-      views:
-        | never
-    }
-    'src/pages/nolayout.vue': {
-      routes:
-        | '/nolayout'
-      views:
-        | never
-    }
-    'src/pages/second/index.vue': {
-      routes:
-        | '/second/'
       views:
         | never
     }
