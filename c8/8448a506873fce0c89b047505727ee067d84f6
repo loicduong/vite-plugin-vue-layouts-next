@@ -1,0 +1,23 @@
+README.ja.md
+  s_98e28bb21bc503::t_54274e1fd24498 29,92-128
+  s_98e28bb21bc503::t_f057115ec4d9ec 129
+README.md
+  s_98e28bb21bc503::t_54274e1fd24498 29,92-128
+  s_98e28bb21bc503::t_521226d3df6496 129
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.6",
+  "base_commit_sha": "c88448a506873fce0c89b047505727ee067d84f6",
+  "prompts": {},
+  "sessions": {
+    "s_98e28bb21bc503": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f18ee-e156-70e3-a9b6-32cb73301c4c",
+        "model": "gpt-5.5"
+      },
+      "human_author": "loicduong <mikhailcolt@gmail.com>"
+    }
+  }
+}
