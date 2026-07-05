@@ -1,0 +1,22 @@
+test/layout-name.test.ts
+  s_2d2ec12690ae58::t_c568b7bcf73a67 2-3,6-16,42-63
+  s_2d2ec12690ae58::t_0c430a916c67fb 64-65
+src/importCode.ts
+  s_2d2ec12690ae58::t_537bbd3acd29e1 2,12
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "8f86b2af224a4fe83ccf215b68aa7268f979111b",
+  "prompts": {},
+  "sessions": {
+    "s_2d2ec12690ae58": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f3259-a1c6-79d0-ad43-a78d89067bcd",
+        "model": "gpt-5.5"
+      },
+      "human_author": "loicduong <mikhailcolt@gmail.com>"
+    }
+  }
+}
