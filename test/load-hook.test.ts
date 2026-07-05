@@ -91,6 +91,10 @@ describe('load hook return shape', () => {
       expect(normalizeLayoutName('desktop/index.vue')).toBe('desktop')
       expect(normalizeLayoutName('desktop/DesktopDefault.vue')).toBe('desktop-default')
       expect(normalizeLayoutName('sub/layoutsub.vue')).toBe('sub-layoutsub')
+      expect(normalizeLayoutName('APIClientLayout.vue')).toBe('api-client-layout')
+      expect(normalizeLayoutName('ALink.vue')).toBe('a-link')
+      expect(normalizeLayoutName('LMap.vue')).toBe('l-map')
+      expect(normalizeLayoutName('URLParser.vue')).toBe('url-parser')
     })
   })
 

@@ -18,6 +18,10 @@ describe('layout name normalization', () => {
   it.each([
     ['default', 'default'],
     ['someLayout', 'some-layout'],
+    ['APIClientLayout', 'api-client-layout'],
+    ['ALink', 'a-link'],
+    ['LMap', 'l-map'],
+    ['URLParser', 'url-parser'],
     ['DesktopDefault', 'desktop-default'],
     ['desktop-base', 'desktop-base'],
     ['layout_v2', 'layout-v2'],
@@ -28,6 +32,10 @@ describe('layout name normalization', () => {
   it.each([
     ['default.vue', 'default'],
     ['someLayout.vue', 'some-layout'],
+    ['APIClientLayout.vue', 'api-client-layout'],
+    ['ALink.vue', 'a-link'],
+    ['LMap.vue', 'l-map'],
+    ['URLParser.vue', 'url-parser'],
     ['desktop/default.vue', 'desktop-default'],
     ['desktop/index.vue', 'desktop'],
     ['desktop/Desktop.vue', 'desktop'],
