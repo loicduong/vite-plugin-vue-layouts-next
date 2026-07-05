@@ -1,0 +1,27 @@
+src/types.ts
+  s_2d2ec12690ae58::t_5c28fcb5d8fb58 20-21,52-53
+examples/nested-routes/src/pages/sublayout.vue
+  s_2d2ec12690ae58::t_5c28fcb5d8fb58 9
+examples/client-side/src/pages/sublayout.vue
+  s_2d2ec12690ae58::t_5ff192ac9cafe7 9
+examples/spa/src/pages/sublayout.vue
+  s_2d2ec12690ae58::t_899c309ca91f03 9
+examples/ssg/src/pages/sublayout.vue
+  s_2d2ec12690ae58::t_14ab3733c99cf5 9
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "8e4a68f7807987a1fd3c52dbf38205abcd0a5933",
+  "prompts": {},
+  "sessions": {
+    "s_2d2ec12690ae58": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f3259-a1c6-79d0-ad43-a78d89067bcd",
+        "model": "gpt-5.5"
+      },
+      "human_author": "loicduong <mikhailcolt@gmail.com>"
+    }
+  }
+}
