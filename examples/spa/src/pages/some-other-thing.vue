@@ -1,12 +1,12 @@
 <template>
   <div>
-    <p>sublayout</p>
+    <p>nested index layout</p>
   </div>
 </template>
 
 <route>
 {meta: {
-  layout: "sub-layoutsub"
+  layout: "some-other-thing"
 }
 }
 </route>

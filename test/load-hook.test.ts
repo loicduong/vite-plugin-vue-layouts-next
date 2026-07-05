@@ -1,6 +1,7 @@
 import type { Plugin } from 'vite'
 import { resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { runInNewContext } from 'node:vm'
 import { describe, expect, it, vi } from 'vitest'
 import Layout, { ClientSideLayout } from '../src/index'
 
@@ -33,6 +34,21 @@ function assertLoadReturnShape(result: unknown) {
   expect(obj.moduleType).toBe('js')
 }
 
+function getNormalizeLayoutName(code: string) {
+  const start = code.indexOf('const REGEX_BACKSLASH')
+  const end = code.indexOf('export const setupLayouts')
+
+  expect(start).toBeGreaterThanOrEqual(0)
+  expect(end).toBeGreaterThan(start)
+
+  const helperCode = code.slice(start, end)
+  return runInNewContext(`
+    'use strict'
+    ${helperCode}
+    normalizeLayoutName
+  `, Object.create(null)) as (file: string) => string
+}
+
 describe('load hook return shape', () => {
   describe('clientSideLayout', () => {
     it('returns object with code (string) and moduleType === "js" only', async () => {
@@ -48,6 +64,41 @@ describe('load hook return shape', () => {
       const load = getLoadFunction(plugin)
       expect(load).toBeTypeOf('function')
       expect(await load!('other-id')).toBeUndefined()
+    })
+
+    it('normalizes client-side layout keys with Nuxt-compatible names', async () => {
+      const plugin = ClientSideLayout({ layoutDir: 'src/layouts' }) as Plugin
+      const load = getLoadFunction(plugin)
+      expect(load).toBeTypeOf('function')
+
+      const result = await load!(MODULE_ID_NULL) as { code: string }
+
+      expect(result.code).toContain('function normalizeLayoutName(file)')
+      expect(result.code).toContain('let key = normalizeLayoutName(name.replace("/src/layouts/", \'\'))')
+      expect(result.code).not.toContain('let key = normalizeLayoutName(name.replace("/src/layouts/", \'\').replace(\'.vue\', \'\'))')
+      expect(result.code).not.toContain('let key = name.replace("/src/layouts/", \'\').replace(\'.vue\', \'\')')
+    })
+
+    it('emits helper that normalizes representative layout paths', async () => {
+      const plugin = ClientSideLayout({ layoutDir: 'src/layouts' }) as Plugin
+      const load = getLoadFunction(plugin)
+      expect(load).toBeTypeOf('function')
+
+      const result = await load!(MODULE_ID_NULL) as { code: string }
+      const normalizeLayoutName = getNormalizeLayoutName(result.code)
+
+      expect(normalizeLayoutName('index.vue')).toBe('index')
+      expect(normalizeLayoutName('desktop/default.vue')).toBe('desktop-default')
+      expect(normalizeLayoutName('desktop/index.vue')).toBe('desktop')
+      expect(normalizeLayoutName('desktop/DesktopDefault.vue')).toBe('desktop-default')
+      expect(normalizeLayoutName('sub/layoutsub.vue')).toBe('sub-layoutsub')
+      expect(normalizeLayoutName('SomeOther/Thing/Index.vue')).toBe('some-other-thing')
+      expect(normalizeLayoutName('thing/thing/thing.vue')).toBe('thing')
+      expect(normalizeLayoutName('foo/foo/foo.vue')).toBe('foo')
+      expect(normalizeLayoutName('APIClientLayout.vue')).toBe('api-client-layout')
+      expect(normalizeLayoutName('ALink.vue')).toBe('a-link')
+      expect(normalizeLayoutName('LMap.vue')).toBe('l-map')
+      expect(normalizeLayoutName('URLParser.vue')).toBe('url-parser')
     })
   })
 

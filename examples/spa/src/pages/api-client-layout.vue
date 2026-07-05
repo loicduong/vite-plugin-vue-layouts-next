@@ -1,12 +1,12 @@
 <template>
   <div>
-    <p>sublayout</p>
+    <p>api client layout</p>
   </div>
 </template>
 
 <route>
 {meta: {
-  layout: "sub-layoutsub"
+  layout: "api-client-layout"
 }
 }
 </route>

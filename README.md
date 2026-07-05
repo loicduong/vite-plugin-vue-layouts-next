@@ -127,6 +127,19 @@ If you are migrating an older setup, use Vue Router 5 file-based routing as the 
 
 4. Remove `pagesDirs` from `Layouts()` options. Vue Router 5 owns page discovery and route HMR; this plugin only watches and resolves layouts.
 
+### Layout name normalization
+
+v3 uses Nuxt-compatible layout names. Nested layout names no longer use slash-separated paths.
+
+```diff
+ definePage({
+   meta: {
+-    layout: 'sub/layoutsub',
++    layout: 'sub-layoutsub',
+   },
+ })
+```
+
 ## API
 
 ```ts
@@ -153,7 +166,7 @@ export default defineConfig({
   plugins: [
     Layouts({
       layoutsDirs: 'src/mylayouts',
-      defaultLayout: 'myDefault'
+      defaultLayout: 'my-default'
     }),
   ],
 })
@@ -184,9 +197,25 @@ List of path globs to exclude when resolving layouts.
 
 ### defaultLayout
 
-Filename of default layout (".vue" is not needed).
+Normalized layout name to use when a route does not specify `meta.layout`. For example, `myDefault.vue` is named `my-default`, so use `defaultLayout: 'my-default'`.
 
 **Default:** `'default'`
+
+### Layout names
+
+Layout names are normalized using Nuxt-compatible rules.
+
+| File | Layout name |
+| --- | --- |
+| `src/layouts/default.vue` | `default` |
+| `src/layouts/someLayout.vue` | `some-layout` |
+| `src/layouts/desktop/default.vue` | `desktop-default` |
+| `src/layouts/desktop/index.vue` | `desktop` |
+| `src/layouts/desktop/Desktop.vue` | `desktop` |
+| `src/layouts/desktop/DesktopDefault.vue` | `desktop-default` |
+| `src/layouts/desktop-base/DesktopBase.vue` | `desktop-base` |
+
+For clarity, prefer filenames that match the final layout name, such as `DesktopDefault.vue`, `DesktopBase.vue`, and `Desktop.vue`.
 
 ### importMode
 
@@ -337,7 +366,7 @@ export default defineConfig({
   plugins: [
     ClientSideLayout({
       layoutsDir: 'src/mylayouts', // default to 'src/layouts'
-      defaultLayout: 'myDefault', // default to 'default', no need '.vue'
+      defaultLayout: 'my-default', // default to 'default', matches myDefault.vue
       importMode: 'sync' // The default will automatically detect -> ssg is sync，other is async
     }),
   ],

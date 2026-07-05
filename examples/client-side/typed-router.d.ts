@@ -20,8 +20,9 @@ import type {
 
 declare module 'vue-router' {
   interface TypesConfig {
-    ParamParsers:
-      | never
+    _ParamParsers: {}
+    RouteNamedMap: import('vue-router/auto-routes').RouteNamedMap
+    _RouteFileInfoMap: import('vue-router/auto-routes')._RouteFileInfoMap
   }
 }
 
@@ -54,6 +55,13 @@ declare module 'vue-router/auto-routes' {
     'who-me-override': RouteRecordInfo<
       'who-me-override',
       '/about/who/me',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/api-client-layout': RouteRecordInfo<
+      '/api-client-layout',
+      '/api-client-layout',
       Record<never, never>,
       Record<never, never>,
       | never
@@ -112,23 +120,39 @@ declare module 'vue-router/auto-routes' {
         | 'name-override'
       views:
         | never
+      pathParamNames:
+        | never
     }
     'src/pages/[...all].vue': {
       routes:
         | '/[...all]'
       views:
         | never
+      pathParamNames:
+        | 'all'
     }
     'src/pages/about/index.vue': {
       routes:
         | '/about/'
       views:
         | never
+      pathParamNames:
+        | never
     }
     'src/pages/about/who/me.vue': {
       routes:
         | 'who-me-override'
       views:
+        | never
+      pathParamNames:
+        | never
+    }
+    'src/pages/api-client-layout.vue': {
+      routes:
+        | '/api-client-layout'
+      views:
+        | never
+      pathParamNames:
         | never
     }
     'src/pages/news.vue': {
@@ -138,11 +162,15 @@ declare module 'vue-router/auto-routes' {
         | 'named-news-page'
       views:
         | 'default'
+      pathParamNames:
+        | never
     }
     'src/pages/news/index.vue': {
       routes:
         | '/news/'
       views:
+        | never
+      pathParamNames:
         | never
     }
     'src/pages/news/Today.vue': {
@@ -150,17 +178,23 @@ declare module 'vue-router/auto-routes' {
         | 'named-news-page'
       views:
         | never
+      pathParamNames:
+        | never
     }
     'src/pages/nolayout.vue': {
       routes:
         | '/nolayout'
       views:
         | never
+      pathParamNames:
+        | never
     }
     'src/pages/sublayout.vue': {
       routes:
         | '/sublayout'
       views:
+        | never
+      pathParamNames:
         | never
     }
   }

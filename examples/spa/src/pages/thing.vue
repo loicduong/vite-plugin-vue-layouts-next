@@ -1,12 +1,12 @@
 <template>
   <div>
-    <p>sublayout</p>
+    <p>deduped layout</p>
   </div>
 </template>
 
 <route>
 {meta: {
-  layout: "sub-layoutsub"
+  layout: "thing"
 }
 }
 </route>

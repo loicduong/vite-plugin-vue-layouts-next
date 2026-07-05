@@ -37,6 +37,21 @@
         second level layout
       </router-link>
     </p>
+    <p>
+      <router-link to="/api-client-layout">
+        API client layout
+      </router-link>
+    </p>
+    <p>
+      <router-link to="/some-other-thing">
+        nested index layout
+      </router-link>
+    </p>
+    <p>
+      <router-link to="/thing">
+        deduped layout
+      </router-link>
+    </p>
   </div>
 </template>
 
