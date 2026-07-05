@@ -1,0 +1,19 @@
+src/layoutName.ts
+  s_2d2ec12690ae58::t_7fcde030f593e3 6
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "087870061244a42a6f78cf6e0a192dea850e5020",
+  "prompts": {},
+  "sessions": {
+    "s_2d2ec12690ae58": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f3259-a1c6-79d0-ad43-a78d89067bcd",
+        "model": "gpt-5.5"
+      },
+      "human_author": "loicduong <mikhailcolt@gmail.com>"
+    }
+  }
+}
