@@ -38,6 +38,63 @@ export async function createVirtualModuleCode(
       return () => routes.filter(route => !route.meta.isLayout)
   }
 
+  const REGEX_BACKSLASH = /\\\\/g
+  const REGEX_CAMEL_CASE = /([a-z0-9])([A-Z])/g
+  const REGEX_SEPARATORS = /[\\s_.]+/g
+  const REGEX_NON_ALPHANUMERIC = /[^a-z0-9-]+/gi
+  const REGEX_REPEATED_DASH = /-+/g
+  const REGEX_EDGE_DASH = /^-|-$/g
+
+  function kebabCaseSegment(value) {
+    return value
+      .replace(REGEX_CAMEL_CASE, '$1-$2')
+      .replace(REGEX_SEPARATORS, '-')
+      .replace(REGEX_NON_ALPHANUMERIC, '-')
+      .replace(REGEX_REPEATED_DASH, '-')
+      .replace(REGEX_EDGE_DASH, '')
+      .toLowerCase()
+  }
+
+  function removeOverlappingPrefix(parentSegments, fileSegments) {
+    let overlap = 0
+    const maxOverlap = Math.min(parentSegments.length, fileSegments.length)
+
+    for (let length = maxOverlap; length > 0; length -= 1) {
+      const parentTail = parentSegments.slice(parentSegments.length - length)
+      const fileHead = fileSegments.slice(0, length)
+
+      if (parentTail.join('-') === fileHead.join('-')) {
+        overlap = length
+        break
+      }
+    }
+
+    return fileSegments.slice(overlap)
+  }
+
+  function normalizeLayoutName(file) {
+    const normalizedFile = file.replace(REGEX_BACKSLASH, '/')
+    const slashIndex = normalizedFile.lastIndexOf('/')
+    const dir = slashIndex === -1 ? '' : normalizedFile.slice(0, slashIndex)
+    const basename = slashIndex === -1 ? normalizedFile : normalizedFile.slice(slashIndex + 1)
+    const dotIndex = basename.lastIndexOf('.')
+    const name = dotIndex === -1 ? basename : basename.slice(0, dotIndex)
+    const parentSegments = dir
+      .split('/')
+      .filter(Boolean)
+      .map(kebabCaseSegment)
+      .flatMap(segment => segment.split('-'))
+      .filter(Boolean)
+
+    if (name === 'index')
+      return parentSegments.join('-') || 'index'
+
+    const fileSegments = kebabCaseSegment(name).split('-').filter(Boolean)
+    const dedupedFileSegments = removeOverlappingPrefix(parentSegments, fileSegments)
+
+    return [...parentSegments, ...dedupedFileSegments].join('-')
+  }
+
   export const setupLayouts = routes => {
       const layouts = {}
       const inheritDefaultLayout = ${inheritDefaultLayout}
@@ -48,7 +105,7 @@ export async function createVirtualModuleCode(
       )}
 
       Object.entries(modules).forEach(([name, module]) => {
-          let key = name.replace("${normalizedTarget}/", '').replace('.vue', '')
+          let key = normalizeLayoutName(name.replace("${normalizedTarget}/", '').replace('.vue', ''))
           layouts[key] = ${isSync ? 'module.default' : 'module'}
       })
 

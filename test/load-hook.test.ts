@@ -49,6 +49,18 @@ describe('load hook return shape', () => {
       expect(load).toBeTypeOf('function')
       expect(await load!('other-id')).toBeUndefined()
     })
+
+    it('normalizes client-side layout keys with Nuxt-compatible names', async () => {
+      const plugin = ClientSideLayout({ layoutDir: 'src/layouts' }) as Plugin
+      const load = getLoadFunction(plugin)
+      expect(load).toBeTypeOf('function')
+
+      const result = await load!(MODULE_ID_NULL) as { code: string }
+
+      expect(result.code).toContain('function normalizeLayoutName(file)')
+      expect(result.code).toContain('let key = normalizeLayoutName(name.replace("/src/layouts/", \'\').replace(\'.vue\', \'\'))')
+      expect(result.code).not.toContain('let key = name.replace("/src/layouts/", \'\').replace(\'.vue\', \'\')')
+    })
   })
 
   describe('layout (server/resolved)', () => {
