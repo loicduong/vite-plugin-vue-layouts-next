@@ -87,6 +87,7 @@ describe('load hook return shape', () => {
       const result = await load!(MODULE_ID_NULL) as { code: string }
       const normalizeLayoutName = getNormalizeLayoutName(result.code)
 
+      expect(normalizeLayoutName('index.vue')).toBe('index')
       expect(normalizeLayoutName('desktop/default.vue')).toBe('desktop-default')
       expect(normalizeLayoutName('desktop/index.vue')).toBe('desktop')
       expect(normalizeLayoutName('desktop/DesktopDefault.vue')).toBe('desktop-default')

@@ -158,7 +158,7 @@ export async function createVirtualModuleCode(
     const dotIndex = basename.lastIndexOf('.')
     const name = dotIndex === -1 ? basename : basename.slice(0, dotIndex)
     const prefixParts = splitByCase(dir)
-    const fileName = name.toLowerCase() === 'index' ? '' : name
+    const fileName = dir && name.toLowerCase() === 'index' ? '' : name
     const segments = resolveLayoutNameSegments(fileName, prefixParts).filter(Boolean)
 
     return kebabCaseSegments(segments)

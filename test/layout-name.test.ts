@@ -30,6 +30,7 @@ describe('layout name normalization', () => {
   })
 
   it.each([
+    ['index.vue', 'index'],
     ['default.vue', 'default'],
     ['someLayout.vue', 'some-layout'],
     ['APIClientLayout.vue', 'api-client-layout'],

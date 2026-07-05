@@ -116,7 +116,7 @@ export function normalizeLayoutName(file: string): string {
   const normalizedFile = file.replace(REGEX_BACKSLASH, '/')
   const parsed = parse(normalizedFile)
   const prefixParts = splitByCase(parsed.dir)
-  const fileName = parsed.name.toLowerCase() === 'index' ? '' : parsed.name
+  const fileName = parsed.dir && parsed.name.toLowerCase() === 'index' ? '' : parsed.name
   const segments = resolveLayoutNameSegments(fileName, prefixParts).filter(Boolean)
 
   return kebabCaseSegments(segments)
