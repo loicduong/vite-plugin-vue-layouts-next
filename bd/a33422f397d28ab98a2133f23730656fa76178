@@ -1,0 +1,19 @@
+README.md
+  s_2d2ec12690ae58::t_db06dcc2abad74 132,169,200,369
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "bda33422f397d28ab98a2133f23730656fa76178",
+  "prompts": {},
+  "sessions": {
+    "s_2d2ec12690ae58": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f3259-a1c6-79d0-ad43-a78d89067bcd",
+        "model": "gpt-5.5"
+      },
+      "human_author": "loicduong <mikhailcolt@gmail.com>"
+    }
+  }
+}
