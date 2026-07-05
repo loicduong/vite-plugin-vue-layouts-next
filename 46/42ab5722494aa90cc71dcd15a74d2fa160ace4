@@ -1,0 +1,20 @@
+README.md
+  s_2d2ec12690ae58::t_a3bd35e696cc9a 130-142,204-218
+  s_2d2ec12690ae58::t_166297556ff8e6 219
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "4642ab5722494aa90cc71dcd15a74d2fa160ace4",
+  "prompts": {},
+  "sessions": {
+    "s_2d2ec12690ae58": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f3259-a1c6-79d0-ad43-a78d89067bcd",
+        "model": "gpt-5.5"
+      },
+      "human_author": "loicduong <mikhailcolt@gmail.com>"
+    }
+  }
+}
