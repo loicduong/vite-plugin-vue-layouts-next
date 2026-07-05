@@ -80,7 +80,7 @@ import { parse } from 'node:path'
 const REGEX_BACKSLASH = /\\/g
 const REGEX_CAMEL_CASE = /([a-z0-9])([A-Z])/g
 const REGEX_SEPARATORS = /[\s_.]+/g
-const REGEX_NON_ALPHANUMERIC = /[^a-zA-Z0-9-]+/g
+const REGEX_NON_ALPHANUMERIC = /[^a-z0-9-]+/gi
 const REGEX_REPEATED_DASH = /-+/g
 const REGEX_EDGE_DASH = /^-|-$/g
 
@@ -187,12 +187,12 @@ describe('layout import code', () => {
       createOptions(),
     )
 
-    expect(code).toContain("'desktop-default': () => import('/project/src/layouts/desktop/default.vue'),")
-    expect(code).toContain("'desktop-base': () => import('/project/src/layouts/desktop-base/DesktopBase.vue'),")
-    expect(code).toContain("'sub-layoutsub': () => import('/project/src/layouts/sub/layoutsub.vue'),")
-    expect(code).not.toContain("'desktop/default'")
-    expect(code).not.toContain("'desktop/DesktopDefault'")
-    expect(code).not.toContain("'sub/layoutsub'")
+    expect(code).toContain(`'desktop-default': () => import('/project/src/layouts/desktop/default.vue'),`)
+    expect(code).toContain(`'desktop-base': () => import('/project/src/layouts/desktop-base/DesktopBase.vue'),`)
+    expect(code).toContain(`'sub-layoutsub': () => import('/project/src/layouts/sub/layoutsub.vue'),`)
+    expect(code).not.toContain(`'desktop/default'`)
+    expect(code).not.toContain(`'desktop/DesktopDefault'`)
+    expect(code).not.toContain(`'sub/layoutsub'`)
   })
 })
 ```
@@ -275,17 +275,17 @@ git commit -m "feat: normalize generated layout keys"
 Add this test inside `describe('clientSideLayout', () => { ... })` in `test/load-hook.test.ts`:
 
 ```ts
-    it('normalizes client-side layout keys with Nuxt-compatible names', async () => {
-      const plugin = ClientSideLayout({ layoutDir: 'src/layouts' }) as Plugin
-      const load = getLoadFunction(plugin)
-      expect(load).toBeTypeOf('function')
+it('normalizes client-side layout keys with Nuxt-compatible names', async () => {
+  const plugin = ClientSideLayout({ layoutDir: 'src/layouts' }) as Plugin
+  const load = getLoadFunction(plugin)
+  expect(load).toBeTypeOf('function')
 
-      const result = await load!(MODULE_ID_NULL) as { code: string }
+  const result = await load!(MODULE_ID_NULL) as { code: string }
 
-      expect(result.code).toContain('function normalizeLayoutName(file)')
-      expect(result.code).toContain("let key = normalizeLayoutName(name.replace(\"/src/layouts/\", '').replace('.vue', ''))")
-      expect(result.code).not.toContain("let key = name.replace(\"/src/layouts/\", '').replace('.vue', '')")
-    })
+  expect(result.code).toContain('function normalizeLayoutName(file)')
+  expect(result.code).toContain(`let key = normalizeLayoutName(name.replace("/src/layouts/", '').replace('.vue', ''))`)
+  expect(result.code).not.toContain(`let key = name.replace("/src/layouts/", '').replace('.vue', '')`)
+})
 ```
 
 - [ ] **Step 2: Run test to verify it fails**
@@ -304,7 +304,7 @@ Add equivalent helper functions inside the returned virtual module string before
 
 Update the `Object.entries(modules)` block to:
 
-```ts
+```text
       Object.entries(modules).forEach(([name, module]) => {
           let key = normalizeLayoutName(name.replace("${normalizedTarget}/", '').replace('.vue', ''))
           layouts[key] = ${isSync ? 'module.default' : 'module'}
