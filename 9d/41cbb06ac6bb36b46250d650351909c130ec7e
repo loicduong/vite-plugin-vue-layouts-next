@@ -1,0 +1,27 @@
+src/layoutName.ts
+  s_2d2ec12690ae58::t_fd26058d1b275c 4,76-83,122
+  s_2d2ec12690ae58::t_fb6cc7640839f5 85-106,108-109,112,118-120
+test/layout-name.test.ts
+  s_2d2ec12690ae58::t_c009a1f5858b17 45-47
+test/load-hook.test.ts
+  s_2d2ec12690ae58::t_8a619407f3b13a 94-96
+src/clientSide.ts
+  s_2d2ec12690ae58::t_1acc56141082a9 123-144,146-147,150,160-162
+  s_2d2ec12690ae58::t_6cd8576628bc2f 42,114-121,164
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "9d41cbb06ac6bb36b46250d650351909c130ec7e",
+  "prompts": {},
+  "sessions": {
+    "s_2d2ec12690ae58": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f3259-a1c6-79d0-ad43-a78d89067bcd",
+        "model": "gpt-5.5"
+      },
+      "human_author": "loicduong <mikhailcolt@gmail.com>"
+    }
+  }
+}
