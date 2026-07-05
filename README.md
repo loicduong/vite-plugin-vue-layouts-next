@@ -127,6 +127,19 @@ If you are migrating an older setup, use Vue Router 5 file-based routing as the 
 
 4. Remove `pagesDirs` from `Layouts()` options. Vue Router 5 owns page discovery and route HMR; this plugin only watches and resolves layouts.
 
+### Layout name normalization
+
+v3 uses Nuxt-compatible layout names by default. Nested layout names no longer use slash-separated paths.
+
+```diff
+ definePage({
+   meta: {
+-    layout: 'sub/layoutsub',
++    layout: 'sub-layoutsub',
+   },
+ })
+```
+
 ## API
 
 ```ts
@@ -187,6 +200,22 @@ List of path globs to exclude when resolving layouts.
 Filename of default layout (".vue" is not needed).
 
 **Default:** `'default'`
+
+### Layout names
+
+Layout names are normalized using Nuxt-compatible rules.
+
+| File | Layout name |
+| --- | --- |
+| `src/layouts/default.vue` | `default` |
+| `src/layouts/someLayout.vue` | `some-layout` |
+| `src/layouts/desktop/default.vue` | `desktop-default` |
+| `src/layouts/desktop/index.vue` | `desktop` |
+| `src/layouts/desktop/Desktop.vue` | `desktop` |
+| `src/layouts/desktop/DesktopDefault.vue` | `desktop-default` |
+| `src/layouts/desktop-base/DesktopBase.vue` | `desktop-base` |
+
+For clarity, prefer filenames that match the final layout name, such as `DesktopDefault.vue`, `DesktopBase.vue`, and `Desktop.vue`.
 
 ### importMode
 
