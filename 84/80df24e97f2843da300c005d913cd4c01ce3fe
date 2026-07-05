@@ -1,0 +1,19 @@
+docs/superpowers/plans/2026-07-05-nuxt-layout-name-normalization.md
+  s_2d2ec12690ae58::t_5beb2cc3320758 1-457
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "8480df24e97f2843da300c005d913cd4c01ce3fe",
+  "prompts": {},
+  "sessions": {
+    "s_2d2ec12690ae58": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f3259-a1c6-79d0-ad43-a78d89067bcd",
+        "model": "gpt-5.5"
+      },
+      "human_author": "loicduong <mikhailcolt@gmail.com>"
+    }
+  }
+}
