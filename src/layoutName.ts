@@ -3,7 +3,7 @@ import { parse } from 'node:path'
 const REGEX_BACKSLASH = /\\/g
 const REGEX_CAMEL_CASE = /([a-z0-9])([A-Z])/g
 const REGEX_SEPARATORS = /[\s_.]+/g
-const REGEX_NON_ALPHANUMERIC = /[^a-zA-Z0-9-]+/g
+const REGEX_NON_ALPHANUMERIC = /[^a-z0-9-]+/gi
 const REGEX_REPEATED_DASH = /-+/g
 const REGEX_EDGE_DASH = /^-|-$/g
 
