@@ -1,0 +1,41 @@
+examples/client-side/src/pages/api-client-layout.vue
+  s_2d2ec12690ae58::t_09586be43334c8 1-12
+examples/spa/src/pages/api-client-layout.vue
+  s_2d2ec12690ae58::t_09586be43334c8 1-12
+examples/spa/src/layouts/thing/thing/thing.vue
+  s_2d2ec12690ae58::t_09586be43334c8 1-8
+examples/spa/src/pages/some-other-thing.vue
+  s_2d2ec12690ae58::t_09586be43334c8 1-12
+examples/spa/src/layouts/APIClientLayout.vue
+  s_2d2ec12690ae58::t_09586be43334c8 1-8
+examples/spa/src/pages/thing.vue
+  s_2d2ec12690ae58::t_09586be43334c8 1-12
+examples/client-side/src/pages/index.vue
+  s_2d2ec12690ae58::t_09586be43334c8 25-29
+examples/spa/src/pages/index.vue
+  s_2d2ec12690ae58::t_09586be43334c8 40-54
+examples/client-side/src/layouts/APIClientLayout.vue
+  s_2d2ec12690ae58::t_09586be43334c8 1-8
+examples/client-side/typed-router.d.ts
+  s_2d2ec12690ae58::t_85473110d74139 23-25,62-68,123-124,131-132,139-140,147-156,165-166,173-174,181-182,189-190,197-198
+examples/spa/typed-router.d.ts
+  s_2d2ec12690ae58::t_85473110d74139 23-25,62-68,119-125,133-139,158-159,166-167,174-175,182-191,198-199,206-207,216-217,224-225,232-233,240-241,248-257,264-273
+examples/spa/src/layouts/SomeOther/Thing/Index.vue
+  s_2d2ec12690ae58::t_09586be43334c8 1-8
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "cb6dcd9f2d1290410eb199c5f197051447ea2c40",
+  "prompts": {},
+  "sessions": {
+    "s_2d2ec12690ae58": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f3259-a1c6-79d0-ad43-a78d89067bcd",
+        "model": "gpt-5.5"
+      },
+      "human_author": "loicduong <mikhailcolt@gmail.com>"
+    }
+  }
+}
