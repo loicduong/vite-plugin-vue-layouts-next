@@ -129,7 +129,7 @@ If you are migrating an older setup, use Vue Router 5 file-based routing as the 
 
 ### Layout name normalization
 
-v3 uses Nuxt-compatible layout names by default. Nested layout names no longer use slash-separated paths.
+v3 uses Nuxt-compatible layout names. Nested layout names no longer use slash-separated paths.
 
 ```diff
  definePage({
@@ -166,7 +166,7 @@ export default defineConfig({
   plugins: [
     Layouts({
       layoutsDirs: 'src/mylayouts',
-      defaultLayout: 'myDefault'
+      defaultLayout: 'my-default'
     }),
   ],
 })
@@ -197,7 +197,7 @@ List of path globs to exclude when resolving layouts.
 
 ### defaultLayout
 
-Filename of default layout (".vue" is not needed).
+Normalized layout name to use when a route does not specify `meta.layout`. For example, `myDefault.vue` is named `my-default`, so use `defaultLayout: 'my-default'`.
 
 **Default:** `'default'`
 
@@ -366,7 +366,7 @@ export default defineConfig({
   plugins: [
     ClientSideLayout({
       layoutsDir: 'src/mylayouts', // default to 'src/layouts'
-      defaultLayout: 'myDefault', // default to 'default', no need '.vue'
+      defaultLayout: 'my-default', // default to 'default', matches myDefault.vue
       importMode: 'sync' // The default will automatically detect -> ssg is sync，other is async
     }),
   ],
