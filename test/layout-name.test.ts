@@ -1,5 +1,5 @@
-import { describe, expect, it } from 'vitest'
 import type { ResolvedOptions } from '../src/types'
+import { describe, expect, it } from 'vitest'
 import { getImportCode } from '../src/importCode'
 import { kebabCaseSegment, normalizeLayoutName } from '../src/layoutName'
 
@@ -55,11 +55,33 @@ describe('layout import code', () => {
       createOptions(),
     )
 
-    expect(code).toContain("'desktop-default': () => import('/project/src/layouts/desktop/default.vue'),")
-    expect(code).toContain("'desktop-base': () => import('/project/src/layouts/desktop-base/DesktopBase.vue'),")
-    expect(code).toContain("'sub-layoutsub': () => import('/project/src/layouts/sub/layoutsub.vue'),")
-    expect(code).not.toContain("'desktop/default'")
-    expect(code).not.toContain("'desktop/DesktopDefault'")
-    expect(code).not.toContain("'sub/layoutsub'")
+    expect(code).toContain('\'desktop-default\': () => import(\'/project/src/layouts/desktop/default.vue\'),')
+    expect(code).toContain('\'desktop-base\': () => import(\'/project/src/layouts/desktop-base/DesktopBase.vue\'),')
+    expect(code).toContain('\'sub-layoutsub\': () => import(\'/project/src/layouts/sub/layoutsub.vue\'),')
+    expect(code).not.toContain('\'desktop/default\'')
+    expect(code).not.toContain('\'desktop/DesktopDefault\'')
+    expect(code).not.toContain('\'sub/layoutsub\'')
+  })
+
+  it('passes normalized layout names to importMode', () => {
+    const importModeNames: string[] = []
+    const options: ResolvedOptions = {
+      ...createOptions(),
+      importMode: (name) => {
+        importModeNames.push(name)
+        return 'async'
+      },
+    }
+
+    getImportCode(
+      [{
+        path: '/project/src/layouts',
+        files: ['desktop/default.vue'],
+      }],
+      options,
+    )
+
+    expect(importModeNames).toContain('desktop-default')
+    expect(importModeNames).not.toContain('desktop/default')
   })
 })
