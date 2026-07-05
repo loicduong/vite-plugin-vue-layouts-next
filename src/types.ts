@@ -17,7 +17,8 @@ interface Options {
    */
   exclude: string[]
   /**
-   * Filename of default layout (".vue" is not needed)
+   * Normalized layout name/key to use as the default layout
+   * (for example, myDefault.vue -> my-default)
    * @default 'default'
    */
   defaultLayout: string
@@ -48,7 +49,8 @@ export interface clientSideOptions {
    */
   layoutDir?: string
   /**
-   * default layout
+   * normalized layout name/key to use as the default layout
+   * (for example, myDefault.vue -> my-default)
    * @default "default"
    */
   defaultLayout?: string

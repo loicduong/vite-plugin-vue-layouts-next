@@ -6,7 +6,7 @@
 
 <route>
 {meta: {
-  layout: "sub/layoutsub"
+  layout: "sub-layoutsub"
 }
 }
 </route>
