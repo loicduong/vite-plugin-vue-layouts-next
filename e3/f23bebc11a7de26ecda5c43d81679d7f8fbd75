@@ -1,0 +1,22 @@
+src/layoutName.ts
+  s_2d2ec12690ae58::t_e4cd93a7430076 1-43,45-54
+  s_2d2ec12690ae58::t_5122bb79e5dc0a 44
+test/layout-name.test.ts
+  s_2d2ec12690ae58::t_9e0e514134e931 1-28
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "e3f23bebc11a7de26ecda5c43d81679d7f8fbd75",
+  "prompts": {},
+  "sessions": {
+    "s_2d2ec12690ae58": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f3259-a1c6-79d0-ad43-a78d89067bcd",
+        "model": "gpt-5.5"
+      },
+      "human_author": "loicduong <mikhailcolt@gmail.com>"
+    }
+  }
+}
