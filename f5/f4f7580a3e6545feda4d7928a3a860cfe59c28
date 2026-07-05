@@ -1,0 +1,25 @@
+test/load-hook.test.ts
+  s_2d2ec12690ae58::t_25d0d80ec68238 94-97
+src/clientSide.ts
+  s_2d2ec12690ae58::t_c98db33b9ebd1d 46-103,106-107
+test/layout-name.test.ts
+  s_2d2ec12690ae58::t_de302c457fb17d 21-24,35-38
+src/layoutName.ts
+  s_2d2ec12690ae58::t_e6fde538a10215 8-65,68-69
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "f5f4f7580a3e6545feda4d7928a3a860cfe59c28",
+  "prompts": {},
+  "sessions": {
+    "s_2d2ec12690ae58": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019f3259-a1c6-79d0-ad43-a78d89067bcd",
+        "model": "gpt-5.5"
+      },
+      "human_author": "loicduong <mikhailcolt@gmail.com>"
+    }
+  }
+}
