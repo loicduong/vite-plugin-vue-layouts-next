@@ -42,6 +42,9 @@ describe('layout name normalization', () => {
     ['desktop/DesktopDefault.vue', 'desktop-default'],
     ['desktop-base/base.vue', 'desktop-base'],
     ['desktop-base/DesktopBase.vue', 'desktop-base'],
+    ['SomeOther/Thing/Index.vue', 'some-other-thing'],
+    ['thing/thing/thing.vue', 'thing'],
+    ['foo/foo/foo.vue', 'foo'],
     ['sub/layoutsub.vue', 'sub-layoutsub'],
   ])('normalizes layout path %s to %s', (input, expected) => {
     expect(normalizeLayoutName(input)).toBe(expected)

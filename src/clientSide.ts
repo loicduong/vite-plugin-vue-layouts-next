@@ -39,7 +39,7 @@ export async function createVirtualModuleCode(
   }
 
   const REGEX_BACKSLASH = /\\\\/g
-  const REGEX_SEPARATORS = /[\\s_.]+/g
+  const REGEX_SEPARATORS = /[-_/.\\s]+/g
   const REGEX_NON_ALPHANUMERIC = /[^a-z0-9-]+/gi
   const REGEX_REPEATED_DASH = /-+/g
   const REGEX_EDGE_DASH = /^-|-$/g
@@ -111,21 +111,43 @@ export async function createVirtualModuleCode(
       .toLowerCase()
   }
 
-  function removeOverlappingPrefix(parentSegments, fileSegments) {
-    let overlap = 0
-    const maxOverlap = Math.min(parentSegments.length, fileSegments.length)
+  function kebabCaseSegments(segments) {
+    return segments
+      .map(segment => segment.toLowerCase())
+      .join('-')
+      .replace(REGEX_NON_ALPHANUMERIC, '-')
+      .replace(REGEX_REPEATED_DASH, '-')
+      .replace(REGEX_EDGE_DASH, '')
+  }
 
-    for (let length = maxOverlap; length > 0; length -= 1) {
-      const parentTail = parentSegments.slice(parentSegments.length - length)
-      const fileHead = fileSegments.slice(0, length)
+  function resolveLayoutNameSegments(fileName, prefixParts) {
+    const fileNameParts = splitByCase(fileName)
+    const fileNamePartsContent = fileNameParts.join('/').toLowerCase()
+    const layoutNameParts = prefixParts.flatMap(part => splitByCase(part))
+    const matchedSuffix = []
+    let index = prefixParts.length - 1
 
-      if (parentTail.join('-') === fileHead.join('-')) {
-        overlap = length
-        break
+    while (index >= 0) {
+      const prefixPart = prefixParts[index]
+      matchedSuffix.unshift(...splitByCase(prefixPart).map(part => part.toLowerCase()))
+      const matchedSuffixContent = matchedSuffix.join('/')
+
+      if (
+        fileNamePartsContent === matchedSuffixContent
+        || fileNamePartsContent.startsWith(\`\${matchedSuffixContent}/\`)
+        || (
+          prefixPart.toLowerCase() === fileNamePartsContent
+          && prefixParts[index + 1]
+          && prefixParts[index] === prefixParts[index + 1]
+        )
+      ) {
+        layoutNameParts.length = index
       }
+
+      index -= 1
     }
 
-    return fileSegments.slice(overlap)
+    return [...layoutNameParts, ...fileNameParts]
   }
 
   function normalizeLayoutName(file) {
@@ -135,20 +157,11 @@ export async function createVirtualModuleCode(
     const basename = slashIndex === -1 ? normalizedFile : normalizedFile.slice(slashIndex + 1)
     const dotIndex = basename.lastIndexOf('.')
     const name = dotIndex === -1 ? basename : basename.slice(0, dotIndex)
-    const parentSegments = dir
-      .split('/')
-      .filter(Boolean)
-      .map(kebabCaseSegment)
-      .flatMap(segment => segment.split('-'))
-      .filter(Boolean)
+    const prefixParts = splitByCase(dir)
+    const fileName = name.toLowerCase() === 'index' ? '' : name
+    const segments = resolveLayoutNameSegments(fileName, prefixParts).filter(Boolean)
 
-    if (name === 'index')
-      return parentSegments.join('-') || 'index'
-
-    const fileSegments = kebabCaseSegment(name).split('-').filter(Boolean)
-    const dedupedFileSegments = removeOverlappingPrefix(parentSegments, fileSegments)
-
-    return [...parentSegments, ...dedupedFileSegments].join('-')
+    return kebabCaseSegments(segments)
   }
 
   export const setupLayouts = routes => {
