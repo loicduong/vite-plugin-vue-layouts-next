@@ -1,5 +1,18 @@
 import { describe, expect, it } from 'vitest'
+import type { ResolvedOptions } from '../src/types'
+import { getImportCode } from '../src/importCode'
 import { kebabCaseSegment, normalizeLayoutName } from '../src/layoutName'
+
+function createOptions(): ResolvedOptions {
+  return {
+    defaultLayout: 'default',
+    layoutsDirs: 'src/layouts',
+    extensions: ['vue'],
+    exclude: [],
+    importMode: () => 'async',
+    inheritDefaultLayout: true,
+  }
+}
 
 describe('layout name normalization', () => {
   it.each([
@@ -24,5 +37,29 @@ describe('layout name normalization', () => {
     ['sub/layoutsub.vue', 'sub-layoutsub'],
   ])('normalizes layout path %s to %s', (input, expected) => {
     expect(normalizeLayoutName(input)).toBe(expected)
+  })
+})
+
+describe('layout import code', () => {
+  it('uses Nuxt-compatible names as layout map keys', () => {
+    const code = getImportCode(
+      [{
+        path: '/project/src/layouts',
+        files: [
+          'desktop/default.vue',
+          'desktop/DesktopDefault.vue',
+          'desktop-base/DesktopBase.vue',
+          'sub/layoutsub.vue',
+        ],
+      }],
+      createOptions(),
+    )
+
+    expect(code).toContain("'desktop-default': () => import('/project/src/layouts/desktop/default.vue'),")
+    expect(code).toContain("'desktop-base': () => import('/project/src/layouts/desktop-base/DesktopBase.vue'),")
+    expect(code).toContain("'sub-layoutsub': () => import('/project/src/layouts/sub/layoutsub.vue'),")
+    expect(code).not.toContain("'desktop/default'")
+    expect(code).not.toContain("'desktop/DesktopDefault'")
+    expect(code).not.toContain("'sub/layoutsub'")
   })
 })
