@@ -15,9 +15,6 @@ const config = defineConfig({
     Layouts(),
     Markdown({}),
   ],
-  ssgOptions: {
-    formatting: 'prettify',
-  },
 })
 
 export default config
