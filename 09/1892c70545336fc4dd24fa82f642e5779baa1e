@@ -1,0 +1,14 @@
+pnpm-workspace.yaml
+  h_24f77c45d425ff 11,30-32
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "091892c70545336fc4dd24fa82f642e5779baa1e",
+  "prompts": {},
+  "humans": {
+    "h_24f77c45d425ff": {
+      "author": "loicduong <mikhailcolt@gmail.com>"
+    }
+  }
+}
