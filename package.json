@@ -1,7 +1,7 @@
 {
   "name": "vite-plugin-vue-layouts-next",
   "type": "module",
-  "version": "2.1.0",
+  "version": "3.0.0",
   "packageManager": "pnpm@11.25.0",
   "description": "Router based layout plugin for Vite 8, Vue 3 and Vue Router 5.",
   "author": "loicduong",
