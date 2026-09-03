@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.0.0] - 2026-09-03
+
+### Added
+
+- Nuxt-compatible layout name normalization ([#32](https://github.com/loicduong/vite-plugin-vue-layouts-next/issues/32))
+
+### Changed
+
+- **Breaking:** nested layout names no longer use slash-separated paths. Use `sub-layoutsub` instead of `sub/layoutsub`
+
+### Removed
+
+- **Breaking:** remove `vite-plugin-pages` support and the `pagesDirs` option. Use Vue Router 5 file-based routing as the route source ([#30](https://github.com/loicduong/vite-plugin-vue-layouts-next/issues/30))
+
+### Fixed
+
+- Fix npm `bugs` metadata ([#28](https://github.com/loicduong/vite-plugin-vue-layouts-next/issues/28))
+
 ## [2.1.0] - 2026-03-18
 
 ### Added
@@ -188,7 +206,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial releases
 
-[Unreleased]: https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v2.1.0...HEAD
+[Unreleased]: https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v3.0.0...HEAD
+[3.0.0]: https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v2.1.0...v3.0.0
 [2.1.0]: https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v2.0.1...v2.1.0
 [2.0.1]: https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v1.3.0...v2.0.0
