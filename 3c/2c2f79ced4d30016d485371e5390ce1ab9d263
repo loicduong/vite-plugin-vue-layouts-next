@@ -1,0 +1,19 @@
+vitest.config.ts
+  s_301440ce60b23c::t_f95424db82cf81 11
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "3c2c2f79ced4d30016d485371e5390ce1ab9d263",
+  "prompts": {},
+  "sessions": {
+    "s_301440ce60b23c": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a067ad-9020-7942-991d-66d49d39550b",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "loicduong <mikhailcolt@gmail.com>"
+    }
+  }
+}
