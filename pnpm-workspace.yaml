@@ -1,42 +1,53 @@
 catalogMode: prefer
 cleanupUnusedCatalogs: true
+
+minimumReleaseAgeExcludePrune: true
 minimumReleaseAgeExclude:
   - vite@8.1.2
+  - '@vitest/mocker@5.0.0'
+  - '@vitest/spy@5.0.0'
+  - vitest@5.0.0
 
 shellEmulator: true
+
 trustPolicy: no-downgrade
 packages:
   - 'examples/*'
 
 overrides:
   typescript: 'catalog:'
+  undici@>=7.0.0 <7.24.0: ^7.24.0
+  undici@>=7.0.0 <7.28.0: ^7.28.0
+  undici@>=7.0.0 <7.29.0: ^7.29.0
+  undici@>=7.17.0 <7.24.0: ^7.24.0
+  unhead@<2.1.13: ^2.1.13
+  unhead@<=2.1.10: ^2.1.11
   vite: 'catalog:'
-
-catalog:
-  '@antfu/eslint-config': ^9.1.0
-  '@types/debug': ^4.1.13
-  '@types/node': ^26.1.0
-  '@vitejs/plugin-vue': ^6.0.7
-  '@vue/compiler-sfc': ^3.5.39
-  '@vue/server-renderer': ^3.5.39
-  '@vueuse/head': ^2.0.0
-  cross-env: ^10.1.0
-  debug: ^4.4.3
-  eslint: ^10.6.0
-  fast-glob: ^3.3.3
-  nodemon: ^3.1.14
-  tsdown: ^0.22.3
-  typescript: ^6.0.3
-  unplugin-vue-markdown: ^32.0.0
-  vite: ^8.1.3
-  vite-plugin-inspect: ^11.4.1
-  vite-ssg: ^28.3.0
-  vitest: ^4.1.9
-  vue: ^3.5.39
-  vue-router: ^5.1.0
-
-onlyBuiltDependencies:
-  - esbuild
 
 allowBuilds:
   esbuild: true
+
+catalog:
+  '@antfu/eslint-config': ^9.5.1
+  '@types/debug': ^4.1.13
+  '@types/node': ^26.4.1
+  '@vitejs/plugin-vue': ^6.0.8
+  '@vue/compiler-sfc': ^3.5.42
+  '@vue/server-renderer': ^3.5.42
+  '@vueuse/head': ^2.0.0
+  cross-env: ^10.1.0
+  debug: ^4.4.3
+  eslint: ^10.9.1
+  fast-glob: ^3.3.3
+  nodemon: ^3.1.14
+  tsdown: ^0.22.14
+  typescript: ^6.0.3
+  unplugin-vue-markdown: ^32.1.1
+  vite: ^8.2.2
+  vite-plugin-inspect: ^12.0.2
+  vite-ssg: ^28.3.0
+  vitest: ^5.0.0
+  vue: ^3.5.42
+  vue-router: ^5.3.1
+onlyBuiltDependencies:
+  - esbuild
