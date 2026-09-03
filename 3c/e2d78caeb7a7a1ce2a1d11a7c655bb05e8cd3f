@@ -1,0 +1,14 @@
+package.json
+  h_24f77c45d425ff 4
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "3ce2d78caeb7a7a1ce2a1d11a7c655bb05e8cd3f",
+  "prompts": {},
+  "humans": {
+    "h_24f77c45d425ff": {
+      "author": "loicduong <mikhailcolt@gmail.com>"
+    }
+  }
+}
