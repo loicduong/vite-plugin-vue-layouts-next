@@ -1,0 +1,23 @@
+pnpm-workspace.yaml
+  s_301440ce60b23c::t_38cd5019dec384 3-4,7-9,12,19-24,27-28
+  s_301440ce60b23c::t_53022fa54a6c16 29,31,33-36,40,43,45-47,49-51
+package.json
+  s_301440ce60b23c::t_721576c12e0e97 5
+  s_301440ce60b23c::t_39f6f40d1a6dd9 85
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "72c27be080c602be04cd5109be77137ec01c5d5e",
+  "prompts": {},
+  "sessions": {
+    "s_301440ce60b23c": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a067ad-9020-7942-991d-66d49d39550b",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "loicduong <mikhailcolt@gmail.com>"
+    }
+  }
+}
