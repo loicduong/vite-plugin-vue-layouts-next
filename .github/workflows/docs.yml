@@ -24,11 +24,12 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    # Runs pull-request code, so it stays read-only: no Pages credentials
+    # are handed to a job that executes a contributor's install scripts and
+    # docs config. Enabling Pages happens in `deploy`, which never runs on a
+    # pull request.
     permissions:
       contents: read
-      # `enablement` below turns Pages on through the API when the repository
-      # has not had it enabled by hand yet.
-      pages: write
     steps:
       - uses: actions/checkout@v7
 
@@ -42,11 +43,6 @@ jobs:
       - run: pnpm install --frozen-lockfile
 
       - run: pnpm docs:build
-
-      - uses: actions/configure-pages@v6
-        if: github.event_name != 'pull_request'
-        with:
-          enablement: true
 
       - uses: actions/upload-pages-artifact@v5
         if: github.event_name != 'pull_request'
@@ -64,5 +60,11 @@ jobs:
       pages: write
       id-token: write
     steps:
+      # `enablement` turns Pages on through the API when the repository has
+      # not had it enabled by hand yet.
+      - uses: actions/configure-pages@v6
+        with:
+          enablement: true
+
       - id: deployment
         uses: actions/deploy-pages@v5
