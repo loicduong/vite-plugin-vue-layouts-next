@@ -1,6 +1,10 @@
 import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { defineConfig } from 'vitepress'
+import {
+  groupIconMdPlugin,
+  groupIconVitePlugin,
+} from 'vitepress-plugin-group-icons'
 import llmstxt from 'vitepress-plugin-llms'
 
 const packageJson = JSON.parse(
@@ -40,6 +44,8 @@ export default defineConfig({
   ],
 
   themeConfig: {
+    siteTitle: 'vue-layouts-next',
+
     search: {
       provider: 'local',
     },
@@ -128,8 +134,19 @@ export default defineConfig({
     },
   },
 
+  markdown: {
+    config(md) {
+      md.use(groupIconMdPlugin, {
+        titleBar: {
+          includeSnippet: true,
+        },
+      })
+    },
+  },
+
   vite: {
     plugins: [
+      groupIconVitePlugin(),
       llmstxt({
         ignoreFiles: ['index.md', 'superpowers/**'],
         description: ogDescription,

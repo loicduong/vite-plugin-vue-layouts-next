@@ -1,14 +1,11 @@
 name: Docs
 
 on:
+  # Deploy only on release tags, matching the release workflow.
   push:
-    branches:
-      - main
-    paths:
-      - docs/**
-      - pnpm-workspace.yaml
-      - pnpm-lock.yaml
-      - .github/workflows/docs.yml
+    tags:
+      - '*'
+  # Build (but never deploy) on PRs, so dead links are caught before merge.
   pull_request:
     paths:
       - docs/**
