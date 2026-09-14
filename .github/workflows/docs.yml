@@ -24,12 +24,18 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    # Runs pull-request code, so it stays read-only: no Pages credentials
+    # are handed to a job that executes a contributor's install scripts and
+    # docs config. Enabling Pages happens in `deploy`, which never runs on a
+    # pull request.
+    permissions:
+      contents: read
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v6
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: pnpm
@@ -38,10 +44,7 @@ jobs:
 
       - run: pnpm docs:build
 
-      - uses: actions/configure-pages@v5
-        if: github.event_name != 'pull_request'
-
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v5
         if: github.event_name != 'pull_request'
         with:
           path: docs/.vitepress/dist
@@ -57,5 +60,11 @@ jobs:
       pages: write
       id-token: write
     steps:
+      # `enablement` turns Pages on through the API when the repository has
+      # not had it enabled by hand yet.
+      - uses: actions/configure-pages@v6
+        with:
+          enablement: true
+
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
