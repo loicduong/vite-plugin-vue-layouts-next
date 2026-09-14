@@ -22,6 +22,10 @@ meta:
 </route>
 ```
 
+> [!NOTE]
+> 最新のドキュメントは英語版のドキュメントサイトで公開されています: <https://loicduong.github.io/vite-plugin-vue-layouts-next/>
+> この日本語 README はまだサイトへ移行されていないため、内容が古くなっている場合があります。
+
 ## 目次
 
 - [インストール](#インストール)

@@ -22,15 +22,13 @@ meta:
 </route>
 ```
 
+📖 **[Read the documentation][docs]**
+
 ## Table of Contents
 
 - [Install](#install)
 - [Usage](#usage)
-- [Migration](#migration)
-- [API](#api)
-- [How it works](#how-it-works)
-- [Common patterns](#common-patterns)
-- [ClientSideLayout](#clientsidelayout)
+- [Documentation](#documentation)
 - [Maintainer](#maintainer)
 - [Thanks](#thanks)
 - [Contributing](#contributing)
@@ -77,300 +75,25 @@ const router = createRouter({
 })
 ```
 
-### Client Types
+See [Getting Started][docs-getting-started] for client types and per-page layouts.
 
-If you want type definition of `virtual:generated-layouts`, add `vite-plugin-vue-layouts-next/client` to `compilerOptions.types` of your `tsconfig`:
+## Documentation
 
-```json
-{
-  "compilerOptions": {
-    "types": ["vite-plugin-vue-layouts-next/client"]
-  }
-}
-```
+Full documentation lives at **[loicduong.github.io/vite-plugin-vue-layouts-next][docs]**:
 
-## Migration
+- [Getting Started][docs-getting-started] — install, usage and client types
+- [How it works][docs-how-it-works] — what `setupLayouts` does to your routes
+- [Migration][docs-migration] — upgrading to v3, including layout name normalization
+- [Config][docs-config] — every plugin option
+- [Common patterns][docs-transitions] — transitions and passing data between layouts and pages
+- [ClientSideLayout][docs-client-side-layout] — the lighter, glob-import based variant
+- [Examples][docs-examples] — runnable SPA, SSG, client-side and nested-routes setups
 
-If you are migrating an older setup, use Vue Router 5 file-based routing as the route source and let this plugin handle layouts only.
+The docs site is built with VitePress and lives in [`docs/`](./docs). To work on it locally:
 
-1. Remove legacy page-route plugin dependencies and types:
-
-```diff
-- import Pages from 'vite-plugin-pages'
-- /// <reference types="vite-plugin-pages/client" />
-```
-
-2. Add Vue Router 5's Vite plugin before Vue:
-
-```diff
- import Vue from '@vitejs/plugin-vue'
-+import VueRouter from 'vue-router/vite'
- import Layouts from 'vite-plugin-vue-layouts-next'
-
- export default defineConfig({
--  plugins: [Vue(), Pages(), Layouts()],
-+  plugins: [VueRouter(), Vue(), Layouts()],
- })
-```
-
-3. Replace generated page-route imports with Vue Router 5 auto routes:
-
-```diff
- import { setupLayouts } from 'virtual:generated-layouts'
--import generatedRoutes from 'virtual:generated-pages'
--import generatedRoutes from '~pages'
-+import { routes } from 'vue-router/auto-routes'
-
--const routes = setupLayouts(generatedRoutes)
-+const layoutRoutes = setupLayouts(routes)
-```
-
-4. Remove `pagesDirs` from `Layouts()` options. Vue Router 5 owns page discovery and route HMR; this plugin only watches and resolves layouts.
-
-### Layout name normalization
-
-v3 uses Nuxt-compatible layout names. Nested layout names no longer use slash-separated paths.
-
-```diff
- definePage({
-   meta: {
--    layout: 'sub/layoutsub',
-+    layout: 'sub-layoutsub',
-   },
- })
-```
-
-## API
-
-```ts
-interface UserOptions {
-  layoutsDirs?: string | string[]
-  extensions?: string[]
-  exclude?: string[]
-  defaultLayout?: string
-  importMode?: (name: string) => 'sync' | 'async'
-  inheritDefaultLayout?: boolean
-}
-```
-
-### Using configuration
-
-To use custom configuration, pass your options to Layouts when instantiating the plugin:
-
-```js
-// vite.config.ts
-import { defineConfig } from 'vite'
-import Layouts from 'vite-plugin-vue-layouts-next'
-
-export default defineConfig({
-  plugins: [
-    Layouts({
-      layoutsDirs: 'src/mylayouts',
-      defaultLayout: 'my-default'
-    }),
-  ],
-})
-```
-
-### layoutsDirs
-
-Relative path to the layouts directory. Supports globs.
-All .vue files in this folder are imported async into the generated code.
-
-Can also be an array of layout dirs
-
-Can use `**` to support scenarios like `module1/layouts` and `modules2/layouts` with a setting of `src/**/layouts`
-
-Any files named `__*__.vue` will be excluded, and you can specify any additional exclusions with the `exclude` option
-
-**Default:** `'src/layouts'`
-
-### extensions
-
-Valid file extensions for layout components.
-
-**Default:** `['vue']`
-
-### exclude
-
-List of path globs to exclude when resolving layouts.
-
-### defaultLayout
-
-Normalized layout name to use when a route does not specify `meta.layout`. For example, `myDefault.vue` is named `my-default`, so use `defaultLayout: 'my-default'`.
-
-**Default:** `'default'`
-
-### Layout names
-
-Layout names are normalized using Nuxt-compatible rules.
-
-| File | Layout name |
-| --- | --- |
-| `src/layouts/default.vue` | `default` |
-| `src/layouts/someLayout.vue` | `some-layout` |
-| `src/layouts/desktop/default.vue` | `desktop-default` |
-| `src/layouts/desktop/index.vue` | `desktop` |
-| `src/layouts/desktop/Desktop.vue` | `desktop` |
-| `src/layouts/desktop/DesktopDefault.vue` | `desktop-default` |
-| `src/layouts/desktop-base/DesktopBase.vue` | `desktop-base` |
-
-For clarity, prefer filenames that match the final layout name, such as `DesktopDefault.vue`, `DesktopBase.vue`, and `Desktop.vue`.
-
-### importMode
-
-Mode for importing layouts.
-
-**Default:** ssg is `'sync'`, other is `'async'`
-
-### inheritDefaultLayout
-
-Whether nested routes should inherit the default layout from parent routes. When `false`, if a child route has its own layout, the parent route won't use the default layout. This prevents double-wrapping layouts when child routes specify their own layout. This option applies to Vue Router 5 file-based routes, which generate nested route structures with `children` arrays. This option can only be set globally in the plugin configuration.
-
-**Default:** `true`
-
-## How it works
-
-`setupLayouts` transforms the original `router` by
-
-1. Replacing every page with its specified layout
-2. Appending the original page in the `children` property.
-
-Simply put, layouts are [nested routes](https://next.router.vuejs.org/guide/essentials/nested-routes.html#nested-routes) with the same path.
-
-Before:
-
-```text
-router: [ page1, page2, page3 ]
-```
-
-After `setupLayouts()`:
-
-```text
-router: [
-  layoutA: page1,
-  layoutB: page2,
-  layoutA: page3,
-]
-```
-
-That means you have the full flexibility of the [vue-router API](https://next.router.vuejs.org/api/) at your disposal.
-
-## Common patterns
-
-### Transitions
-
-Layouts and Transitions work as expected and explained in the [vue-router docs](https://next.router.vuejs.org/guide/advanced/transitions.html) only as long as `Component` changes on each route. So if you want a transition between pages with the same layout *and* a different layout, you have to mutate `:key` on `<component>` (for a detailed example, see the vue docs about [transitions between elements](https://v3.vuejs.org/guide/transitions-enterleave.html#transitioning-between-elements)).
-
-`App.vue`
-
-```html
-<template>
-  <router-view v-slot="{ Component, route }">
-    <transition name="slide">
-      <component :is="Component" :key="route" />
-    </transition>
-  </router-view>
-</template>
-```
-
-Now Vue will always trigger a transition if you change the route.
-
-### Data from layout to page
-
-If you want to send data *down* from the layout to the page, use props
-
-```html
-<router-view foo="bar" />
-```
-
-### Set static data at the page
-
-If you want to set state in your page and do something with it in your layout, add additional properties to a route's `meta` property. Doing so only works if you know the state at build-time.
-
-With Vue Router 5 file-based routing, you can use the `<route>` block.
-
-In `page.vue`:
-
-```html
-<template><div>Content</div></template>
-<route lang="yaml">
-meta:
-  layout: default
-  bgColor: yellow
-</route>
-```
-
-Now you can read `bgColor` in `layout.vue`:
-
-```html
-<script setup lang="ts">
-import { useRouter } from 'vue-router'
-</script>
-<template>
-  <div :style="`background: ${useRouter().currentRoute.value.meta.bgColor};`">
-    <router-view />
-  </div>
-</template>
-```
-
-### Data dynamically from page to layout
-
-If you need to set `bgColor` dynamically at run-time, you can use [custom events](https://v3.vuejs.org/guide/component-custom-events.html#custom-events).
-
-Emit the event in `page.vue`:
-
-```html
-<script setup lang="ts">
-import { defineEmit } from 'vue'
-const emit = defineEmit(['setColor'])
-
-if (2 + 2 === 4)
-  emit('setColor', 'green')
-else
-  emit('setColor', 'red')
-</script>
-```
-
-Listen for `setColor` custom-event in `layout.vue`:
-
-```html
-<script setup lang="ts">
-import { ref } from 'vue'
-
-const bgColor = ref('yellow')
-const setBg = (color) => {
-  bgColor.value = color
-}
-</script>
-
-<template>
-  <main :style="`background: ${bgColor};`">
-    <router-view @set-color="setBg" />
-  </main>
-</template>
-```
-
-## ClientSideLayout
-
-The clientSideLayout uses a simpler [virtual file](https://vitejs.dev/guide/api-plugin.html#importing-a-virtual-file) + [glob import](https://vitejs.dev/guide/features.html#glob-import) scheme, This means that its hmr is faster and more accurate, but also more limited
-
-### Usage
-
-```js
-// vite.config.ts
-import { defineConfig } from 'vite'
-import { ClientSideLayout } from 'vite-plugin-vue-layouts-next'
-
-export default defineConfig({
-  plugins: [
-    ClientSideLayout({
-      layoutsDir: 'src/mylayouts', // default to 'src/layouts'
-      defaultLayout: 'my-default', // default to 'default', matches myDefault.vue
-      importMode: 'sync' // The default will automatically detect -> ssg is sync，other is async
-    }),
-  ],
-})
+```bash
+pnpm install
+pnpm docs:dev
 ```
 
 ## Maintainer
@@ -400,3 +123,11 @@ PRs accepted. [Open an issue][open-an-issue] or submit PRs for any improvements.
 [license]: ./LICENSE
 [open-an-issue]: https://github.com/loicduong/vite-plugin-vue-layouts-next/issues/new
 [vite-plugin-vue-layouts]: https://github.com/JohnCampionJr/vite-plugin-vue-layouts
+[docs]: https://loicduong.github.io/vite-plugin-vue-layouts-next/
+[docs-getting-started]: https://loicduong.github.io/vite-plugin-vue-layouts-next/guide/getting-started
+[docs-how-it-works]: https://loicduong.github.io/vite-plugin-vue-layouts-next/guide/how-it-works
+[docs-migration]: https://loicduong.github.io/vite-plugin-vue-layouts-next/guide/migration
+[docs-config]: https://loicduong.github.io/vite-plugin-vue-layouts-next/config/
+[docs-transitions]: https://loicduong.github.io/vite-plugin-vue-layouts-next/guide/patterns/transitions
+[docs-client-side-layout]: https://loicduong.github.io/vite-plugin-vue-layouts-next/guide/client-side-layout
+[docs-examples]: https://loicduong.github.io/vite-plugin-vue-layouts-next/examples
