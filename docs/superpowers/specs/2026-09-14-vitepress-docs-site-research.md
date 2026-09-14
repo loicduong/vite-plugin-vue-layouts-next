@@ -1,91 +1,94 @@
-# Research: Bổ sung trang web tài liệu VitePress
+# Research: VitePress Documentation Site
 
-> Tài liệu nghiên cứu (research), **chưa phải** kế hoạch triển khai. Mục tiêu: đánh giá tính khả thi, các ràng buộc kỹ thuật và đưa ra khuyến nghị cho việc thêm một site tài liệu VitePress cho `vite-plugin-vue-layouts-next`.
+> Research notes, not an implementation plan. Goal: assess feasibility, technical constraints, and options for adding a VitePress documentation site to `vite-plugin-vue-layouts-next`.
 
-## 1. Bối cảnh & hiện trạng
+**Status:** Phase 1 shipped. The decisions listed in [Decisions](#decisions-to-settle-before-implementing) were resolved as: VitePress 2 (`next`), root at `docs/` with option A (keep `docs/superpowers/` and exclude it), GitHub Pages, README trimmed down to a quickstart. Phases 2 and 3 are still open.
 
-- Toàn bộ tài liệu người dùng hiện nằm trong hai file README dài:
-  - `README.md` (~11 KB, 13 mục cấp 2, ~25 heading)
-  - `README.ja.md` (~12 KB, bản dịch tiếng Nhật, đã lệch nhẹ so với bản EN — ví dụ EN có mục `### Layout name normalization` và `### Layout names` mà JA chưa có)
-- Repo **chưa có** site tài liệu, chưa có `homepage` trỏ tới docs (`package.json.homepage` đang trỏ về GitHub repo).
-- Thư mục `docs/` **đã tồn tại** nhưng đang dùng cho tài liệu nội bộ của quy trình phát triển:
+## 1. Context and current state
+
+- All user-facing documentation currently lives in two long README files:
+  - `README.md` (~11 KB, 13 level-2 sections, ~25 headings)
+  - `README.ja.md` (~12 KB, Japanese translation, already slightly out of sync with the English version — for example, EN has `### Layout name normalization` and `### Layout names`, which JA lacks)
+- The repo has **no** documentation site, and no `homepage` pointing at docs (`package.json.homepage` points back at the GitHub repo).
+- A `docs/` directory **already exists**, but holds internal development-process documentation:
   - `docs/superpowers/plans/*.md`
   - `docs/superpowers/specs/*.md`
-- `.github/workflows/` chỉ có `release.yml` (conventional-github-releaser theo tag). **Không có** workflow CI cho lint/test, cũng không có workflow deploy Pages.
-- Monorepo pnpm: `pnpm-workspace.yaml` khai báo `packages: ['examples/*']`, dùng `catalog:` cho hầu hết dependency, `catalogMode: prefer`.
+- `.github/workflows/` contains only `release.yml` (conventional-github-releaser on tags). There is **no** CI workflow for lint/test, and no Pages deployment workflow.
+- pnpm monorepo: `pnpm-workspace.yaml` declares `packages: ['examples/*']`, uses `catalog:` for most dependencies, and sets `catalogMode: prefer`.
 
-## 2. Ràng buộc lớn nhất: xung đột phiên bản Vite
+## 2. The main constraint: Vite version conflict
 
-Đây là phát hiện quan trọng nhất của nghiên cứu này.
+This is the most important finding of this research.
 
-`pnpm-workspace.yaml` có:
+`pnpm-workspace.yaml` contains:
 
 ```yaml
 overrides:
   vite: 'catalog:'   # catalog: vite ^8.2.2
 ```
 
-`overrides` áp dụng cho **toàn bộ** dependency graph của workspace, kể cả dependency lồng bên trong VitePress. Do đó:
+`overrides` applies to the **entire** workspace dependency graph, including dependencies nested inside VitePress. Therefore:
 
-| Lựa chọn | Vite mà VitePress phụ thuộc | Tương thích với override `vite@^8.2.2`? |
+| Option | Vite that VitePress depends on | Compatible with the `vite@^8.2.2` override? |
 | --- | --- | --- |
-| `vitepress@1.6.4` (dist-tag `latest`) | `vite ^5.4.14`, `@vitejs/plugin-vue ^5.2.1` | ❌ Bị ép lên Vite 8 → gần như chắc chắn hỏng runtime/build |
-| `vitepress@2.0.0-alpha.20` (dist-tag `next`) | `vite ^8.2.1`, `@vitejs/plugin-vue ^6.0.8`, `vue ^3.5.41` | ✅ Khớp chính xác catalog hiện tại |
+| `vitepress@1.6.4` (dist-tag `latest`) | `vite ^5.4.14`, `@vitejs/plugin-vue ^5.2.1` | No — forced up to Vite 8, almost certainly breaking runtime/build |
+| `vitepress@2.0.0-alpha.20` (dist-tag `next`) | `vite ^8.2.1`, `@vitejs/plugin-vue ^6.0.8`, `vue ^3.5.41` | Yes — matches the current catalog exactly |
 
-**Kết luận:** nếu làm docs site cho repo này thì phải dùng **VitePress 2.x (`next`)**. Dùng VitePress 1.x sẽ buộc phải thêm ngoại lệ cho `overrides`/`resolutions`, làm phức tạp workspace và đi ngược định hướng "Vite 8 first" của package.
+**Conclusion:** a docs site for this repo has to use **VitePress 2.x (`next`)**. VitePress 1.x would force an exception in `overrides`/`resolutions`, complicating the workspace and working against the package's Vite-8-first direction.
 
-**Đánh đổi khi dùng v2 alpha:**
-- API cấu hình có thể thay đổi giữa các bản alpha (breaking changes không theo semver).
-- Một số theme/plugin cộng đồng chưa hỗ trợ v2.
-- Cần thêm `vitepress` vào `minimumReleaseAgeExclude` trong `pnpm-workspace.yaml` (giống cách `vite@8.1.2`, `vitest@5.0.0` đang được xử lý) vì bản alpha mới phát hành sẽ bị chặn bởi `minimumReleaseAge`.
-- `trustPolicy: no-downgrade` cần được kiểm tra lại khi cập nhật alpha.
+**Trade-offs of the v2 alpha:**
 
-## 3. Vị trí thư mục
+- The config API may change between alpha releases (breaking changes outside semver).
+- Some community themes and plugins do not support v2 yet.
+- `vitepress` needs an entry in `minimumReleaseAgeExclude` in `pnpm-workspace.yaml` (the same treatment `vite@8.1.2` and `vitest@5.0.0` already get), since a freshly published alpha would otherwise be blocked by `minimumReleaseAge`.
+- `trustPolicy: no-downgrade` needs re-checking on each alpha bump.
 
-Ba phương án:
+## 3. Directory location
 
-| Phương án | Ưu | Nhược |
+Three options:
+
+| Option | Pros | Cons |
 | --- | --- | --- |
-| **A. VitePress root = `docs/`**, giữ `docs/superpowers/` và loại nó khỏi build bằng `srcExclude` | Quy ước phổ biến nhất, deploy Pages quen thuộc, đường dẫn ngắn | `docs/` lẫn lộn hai loại tài liệu (người dùng vs nội bộ); dev server watch cả file nội bộ |
-| **B. VitePress root = `docs/`**, **di chuyển** `docs/superpowers/` → `.superpowers/` hoặc `notes/` | Tách bạch rõ ràng, không cần `srcExclude` | Phải sửa đường dẫn trong các plan/spec hiện có; là một thay đổi cấu trúc riêng |
-| **C. VitePress root = `website/`** (hoặc `site/`) | Không đụng gì tới `docs/` hiện tại | Lệch quy ước, người đóng góp dễ tìm nhầm |
+| **A. VitePress root = `docs/`**, keep `docs/superpowers/` and drop it from the build via `srcExclude` | Most common convention, familiar Pages deployment, short paths | `docs/` mixes two kinds of documentation (user-facing vs internal); the dev server also watches internal files |
+| **B. VitePress root = `docs/`**, **move** `docs/superpowers/` to `.superpowers/` or `notes/` | Clean separation, no `srcExclude` needed | Paths inside existing plans/specs need updating; it is a structural change of its own |
+| **C. VitePress root = `website/`** (or `site/`) | Leaves the current `docs/` untouched | Off-convention; contributors are likely to look in the wrong place |
 
-**Khuyến nghị: Phương án B**, hoặc A nếu muốn thay đổi tối thiểu. Cả hai đều cần package riêng để tham gia workspace:
+**Recommendation: option B**, or A for the smallest possible change. Either way, a separate package is needed so the site joins the workspace:
 
 ```yaml
 # pnpm-workspace.yaml
 packages:
   - 'examples/*'
-  - 'docs'        # (hoặc 'website')
+  - docs        # (or 'website')
 ```
 
-Lưu ý `docs/` hiện **không** phải một package — thêm nó vào `packages` đồng nghĩa phải tạo `docs/package.json` (`private: true`, giống các `examples/*`).
+Note that `docs/` is currently **not** a package — adding it to `packages` means creating `docs/package.json` (`private: true`, mirroring `examples/*`).
 
-## 4. Kiến trúc thông tin (IA) đề xuất
+## 4. Proposed information architecture
 
-Bóc tách trực tiếp từ heading của `README.md`:
+Derived directly from the headings in `README.md`:
 
 ```
-/                         → Home (hero + features, lấy từ phần mở đầu README)
-/guide/getting-started    ← Install + Usage + Client Types
-/guide/how-it-works       ← How it works
-/guide/migration          ← Migration + Layout name normalization
-/guide/client-side-layout ← ClientSideLayout
-/guide/patterns/          ← Common patterns
-    transitions           ← Transitions
-    layout-to-page        ← Data from layout to page + Set static data at the page
-    page-to-layout        ← Data dynamically from page to layout
-/config/                  ← API
+/                         -> Home (hero + features, from the README intro)
+/guide/getting-started    <- Install + Usage + Client Types
+/guide/how-it-works       <- How it works
+/guide/migration          <- Migration + Layout name normalization
+/guide/client-side-layout <- ClientSideLayout
+/guide/patterns/          <- Common patterns
+    transitions           <- Transitions
+    layout-to-page        <- Data from layout to page + Set static data at the page
+    page-to-layout        <- Data dynamically from page to layout
+/config/                  <- API
     layouts-dirs, extensions, exclude, default-layout,
     layout-names, import-mode, inherit-default-layout
-/examples                 ← liên kết tới examples/spa | ssg | client-side | nested-routes
+/examples                 -> links to examples/spa | ssg | client-side | nested-routes
 ```
 
-Các mục `Maintainer`, `Thanks`, `Contributing`, `License` nên **giữ lại ở README** chứ không đưa lên site.
+The `Maintainer`, `Thanks`, `Contributing`, and `License` sections should **stay in the README** rather than moving onto the site.
 
 ## 5. i18n
 
-`README.ja.md` cho thấy dự án đã có nhu cầu đa ngôn ngữ. VitePress hỗ trợ i18n sẵn qua `locales`:
+`README.ja.md` shows the project already has a multi-language need. VitePress supports i18n natively through `locales`:
 
 ```
 docs/
@@ -96,64 +99,67 @@ docs/
     guide/...
 ```
 
-**Khuyến nghị:** giai đoạn 1 chỉ làm tiếng Anh, để sẵn cấu trúc `locales` nhưng chưa bật `ja`. Lý do: bản JA hiện đã lệch nội dung so với EN; port song song sẽ nhân đôi khối lượng dịch và nợ kỹ thuật. Port JA là một giai đoạn riêng.
+**Recommendation:** ship English only in phase 1, leaving the `locales` structure in place but with `ja` disabled. Reason: the Japanese version has already drifted from the English one; porting both in parallel would double the translation work and the accumulated debt. Porting JA is its own phase.
 
-## 6. Thay đổi cần thiết ở cấp repo
+## 6. Repo-level changes required
 
 1. `pnpm-workspace.yaml`
-   - thêm `docs` vào `packages`
-   - thêm `vitepress` vào `catalog` (vì `catalogMode: prefer`)
-   - thêm `vitepress@2.0.0-alpha.x` vào `minimumReleaseAgeExclude`
-2. `package.json` (root) — thêm scripts theo đúng phong cách hiện có (`npm -C <dir> run <script>`):
+   - add `docs` to `packages`
+   - add `vitepress` to `catalog` (required by `catalogMode: prefer`)
+   - add `vitepress@2.0.0-alpha.x` to `minimumReleaseAgeExclude`
+2. `package.json` (root) — add scripts in the existing style (`npm -C <dir> run <script>`):
    ```json
    "docs:dev": "npm -C docs run dev",
    "docs:build": "npm -C docs run build",
    "docs:preview": "npm -C docs run preview"
    ```
-   Có thể cân nhắc cập nhật `homepage` sang URL của site sau khi deploy.
+   Consider updating `homepage` to the site URL once it is deployed.
 3. `docs/package.json` — `private: true`, deps `vitepress: catalog:`, `vue: catalog:`.
-4. `.gitignore` — bổ sung `docs/.vitepress/cache` và `docs/.vitepress/dist`.
-5. `tsconfig.json` — hiện `exclude` chỉ có `**/dist`, `**/node_modules`; `pnpm typecheck` sẽ quét cả `docs/.vitepress/config.ts`. Cần kiểm tra lại hoặc thêm exclude.
-6. `eslint.config.js` — `antfu()` mặc định lint cả Markdown; ~30 code block trong docs sẽ bị lint. Có thể cần `ignores` cho `docs/**/*.md` hoặc chấp nhận sửa code block cho đạt lint.
+4. `.gitignore` — add `docs/.vitepress/cache` and `docs/.vitepress/dist`.
+5. `tsconfig.json` — `exclude` currently only lists `**/dist` and `**/node_modules`, so `pnpm typecheck` will pick up `docs/.vitepress/config.ts`. Verify it passes, or add an exclude.
+6. `eslint.config.js` — `antfu()` lints Markdown by default; roughly 30 code fences in the docs will be linted. This may need an `ignores` entry for `docs/**/*.md`, or the code fences will have to be made lint-clean.
 
 ## 7. CI/CD
 
-Chưa có workflow Pages. Cần thêm `.github/workflows/docs.yml`:
+There is no Pages workflow yet. A `.github/workflows/docs.yml` is needed:
 
-- trigger: `push` vào `main` (giới hạn `paths: docs/**`), cộng `workflow_dispatch`
-- dùng `actions/configure-pages`, `actions/upload-pages-artifact`, `actions/deploy-pages`
+- trigger: `push` to `main` (scoped with `paths: docs/**`), plus `workflow_dispatch`
+- use `actions/configure-pages`, `actions/upload-pages-artifact`, `actions/deploy-pages`
 - permissions: `pages: write`, `id-token: write`
-- setup pnpm + Node 22 (khớp `volta.node: 22.18.0`)
-- **quan trọng:** phải `pnpm build` (tsdown) trước khi build docs nếu trang docs có demo import trực tiếp từ `dist/`
+- set up pnpm + Node 22 (matching `volta.node: 22.18.0`)
+- **important:** run `pnpm build` (tsdown) before building the docs if any docs page imports directly from `dist/`
 
-Nếu docs được host ở `https://<user>.github.io/<repo>/` thì phải đặt `base: '/vite-plugin-vue-layouts-next/'` trong config. Dùng custom domain hoặc Netlify/Vercel/Cloudflare Pages thì không cần.
+If the docs are hosted at `https://<user>.github.io/<repo>/`, the config must set `base: '/vite-plugin-vue-layouts-next/'`. A custom domain or Netlify/Vercel/Cloudflare Pages does not need it.
 
-Cũng nên cân nhắc thêm bước build docs vào CI cho pull request để phát hiện dead link (VitePress fail build khi có dead link nội bộ — đây là một lợi ích phụ đáng kể).
+Also worth adding a docs build step for pull requests to catch dead links — VitePress fails the build on broken internal links, which is a significant side benefit.
 
-## 8. Lợi ích & chi phí
+## 8. Benefits and costs
 
-**Lợi ích**
-- README hiện đã quá dài để điều hướng; bảng `Table of Contents` thủ công là dấu hiệu rõ của việc này.
-- Có search (local search của VitePress đủ dùng, không cần Algolia).
-- Trang riêng cho Migration v2 → v3 (layout name normalization) dễ liên kết từ release notes.
-- Kiểm tra dead link tự động khi build.
-- Có chỗ đặt tài liệu i18n đúng cách thay vì file README song song.
+**Benefits**
 
-**Chi phí**
-- Phụ thuộc vào VitePress alpha (rủi ro breaking change).
-- Phát sinh nguy cơ tài liệu bị lệch: README vs site. Nên **thu gọn README** thành phần giới thiệu + quickstart + link tới site, thay vì duy trì cả hai bản đầy đủ.
-- Thêm surface area cho CI và bảo trì.
+- The README is already too long to navigate; the hand-maintained `Table of Contents` is a clear symptom.
+- Search becomes available (VitePress local search is sufficient; Algolia is not needed).
+- A dedicated Migration page for v2 to v3 (layout name normalization) that release notes can link to.
+- Automatic dead-link checking at build time.
+- A proper home for i18n content instead of parallel README files.
 
-## 9. Khuyến nghị
+**Costs**
 
-Nên làm, theo lộ trình 3 giai đoạn:
+- A dependency on a VitePress alpha (risk of breaking changes).
+- A new risk of documentation drift: README vs site. The README should be **trimmed** to an intro, a quickstart, and a link to the site, rather than maintaining two full copies.
+- Extra surface area for CI and maintenance.
 
-1. **Giai đoạn 1 — khung site (EN)**: dựng `docs/` VitePress 2 alpha, port nội dung README sang IA ở mục 4, thu gọn README, thêm workflow Pages. Ước lượng: vừa phải, chủ yếu là công port nội dung chứ không phải code.
-2. **Giai đoạn 2 — chất lượng**: local search, dead-link check trong CI, trang Examples liên kết tới `examples/*`, có thể nhúng playground.
-3. **Giai đoạn 3 — i18n**: bật locale `ja`, đồng bộ lại nội dung đang lệch giữa EN và JA, xoá `README.ja.md` (thay bằng link).
+## 9. Recommendation
 
-**Quyết định cần chốt trước khi triển khai:**
-- VitePress 2 alpha (khuyến nghị) hay giữ v1 kèm ngoại lệ override Vite?
-- Vị trí: `docs/` (di chuyển `superpowers/`) hay `website/`?
-- Host: GitHub Pages (cần `base`) hay Netlify/Vercel/Cloudflare?
-- README sau khi có site: thu gọn hay giữ nguyên đầy đủ?
+Worth doing, in three phases:
+
+1. **Phase 1 — site skeleton (EN):** set up `docs/` on VitePress 2 alpha, port the README into the IA from section 4, trim the README, add the Pages workflow. Estimate: moderate — mostly content porting rather than code.
+2. **Phase 2 — quality:** local search, dead-link checking in CI, an Examples page linking to `examples/*`, possibly an embedded playground.
+3. **Phase 3 — i18n:** enable the `ja` locale, resync the content that has drifted between EN and JA, and remove `README.ja.md` in favor of a link.
+
+### Decisions to settle before implementing
+
+- VitePress 2 alpha (recommended), or stay on v1 with a Vite override exception?
+- Location: `docs/` (moving `superpowers/`), or `website/`?
+- Hosting: GitHub Pages (needs `base`), or Netlify/Vercel/Cloudflare?
+- The README once the site exists: trim it, or keep it complete?
