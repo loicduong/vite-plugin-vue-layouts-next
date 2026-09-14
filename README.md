@@ -90,6 +90,8 @@ Full documentation lives at **[loicduong.github.io/vite-plugin-vue-layouts-next]
 - [ClientSideLayout][docs-client-side-layout] — the lighter, glob-import based variant
 - [Examples][docs-examples] — runnable SPA, SSG, client-side and nested-routes setups
 
+The site also publishes [`llms.txt`][docs-llms] and `llms-full.txt` for LLM consumption.
+
 The docs site is built with VitePress and lives in [`docs/`](./docs). To work on it locally:
 
 ```bash
@@ -133,3 +135,4 @@ PRs accepted. [Open an issue][open-an-issue] or submit PRs for any improvements.
 [docs-patterns]: https://loicduong.github.io/vite-plugin-vue-layouts-next/guide/patterns
 [docs-client-side-layout]: https://loicduong.github.io/vite-plugin-vue-layouts-next/guide/client-side-layout
 [docs-examples]: https://loicduong.github.io/vite-plugin-vue-layouts-next/guide/examples
+[docs-llms]: https://loicduong.github.io/vite-plugin-vue-layouts-next/llms.txt

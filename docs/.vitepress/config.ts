@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { defineConfig } from 'vitepress'
+import llmstxt from 'vitepress-plugin-llms'
 
 const packageJson = JSON.parse(
   readFileSync(fileURLToPath(new URL('../../package.json', import.meta.url)), 'utf-8'),
@@ -108,13 +109,6 @@ export default defineConfig({
             { text: 'ClientSideLayout Options', link: '/config/client-side-options' },
           ],
         },
-        {
-          text: 'Guide',
-          items: [
-            { text: 'Getting Started', link: '/guide/' },
-            { text: 'How it works', link: '/guide/how-it-works' },
-          ],
-        },
       ],
     },
 
@@ -132,6 +126,28 @@ export default defineConfig({
       message: 'Released under the MIT License.',
       copyright: 'Copyright © 2024-present Loic Duong',
     },
+  },
+
+  vite: {
+    plugins: [
+      llmstxt({
+        ignoreFiles: ['index.md', 'superpowers/**'],
+        description: ogDescription,
+        details: `\
+- 🧩 Layouts as standard Vue components in \`src/layouts\`
+- 🗂️ Per-page layout selection through \`meta.layout\`
+- 🔤 Nuxt-compatible layout name normalization
+- 🧵 Compiles down to plain vue-router nested routes
+- ⚡️ A lighter \`ClientSideLayout\` variant built on \`import.meta.glob\`
+
+\`vite-plugin-vue-layouts-next\` gives Vue Router 5 file-based routes a layout system. It consists of two parts:
+
+- A Vite plugin that scans your layouts directory and generates the \`virtual:generated-layouts\` module.
+- A \`setupLayouts\` helper that rewrites your route records so each page becomes a child of its layout.
+
+Pages that do not choose a layout use \`default.vue\`. Pages that do choose one name it through \`meta.layout\`, using a normalized layout name.`,
+      }),
+    ],
   },
 
   transformHead(ctx) {
