@@ -1,13 +1,26 @@
 # ClientSideLayout
 
-The `ClientSideLayout` uses a simpler [virtual file](https://vite.dev/guide/api-plugin.html#importing-a-virtual-file) +
-[glob import](https://vite.dev/guide/features.html#glob-import) scheme. This means that its HMR is faster and more
+`ClientSideLayout` is an alternative to the default `Layouts()` plugin. It uses a simpler
+[virtual file](https://vite.dev/guide/api-plugin.html#importing-a-virtual-file) +
+[glob import](https://vite.dev/guide/features.html#glob-import) scheme, which means its HMR is faster and more
 accurate, but also more limited.
+
+## When to Use It
+
+| | `Layouts()` | `ClientSideLayout()` |
+| --- | --- | --- |
+| Layout resolution | Build time, explicit generated imports | Run time, `import.meta.glob` |
+| HMR | Regenerates the virtual module | Faster and more accurate |
+| `layoutsDirs` | One or many directories, globs supported | A single directory |
+| `importMode` | Per-layout function | One mode for all layouts |
+| `exclude` / `extensions` | Supported | Not supported |
+
+Reach for `ClientSideLayout` when you have a single flat layouts directory and want the tightest dev feedback loop.
+Stay on `Layouts()` when you need multiple layout directories, glob paths, or per-layout import modes.
 
 ## Usage
 
-```js
-// vite.config.ts
+```js [vite.config.js]
 import { defineConfig } from 'vite'
 import { ClientSideLayout } from 'vite-plugin-vue-layouts-next'
 
@@ -22,12 +35,7 @@ export default defineConfig({
 })
 ```
 
-## Options
+`setupLayouts` is imported from `virtual:generated-layouts` exactly as with the default plugin, and layout names follow
+the same [normalization rules](/config/layout-names).
 
-| Option | Default | Description |
-| --- | --- | --- |
-| `layoutsDir` | `'src/layouts'` | Directory to scan for layout components. Unlike `layoutsDirs`, this is a single directory. |
-| `defaultLayout` | `'default'` | Normalized layout name used when a route has no `meta.layout`. |
-| `importMode` | `'sync'` for SSG, `'async'` otherwise | How layout components are imported. |
-
-Layout names follow the same [normalization rules](/config/layout-names) as the main plugin.
+See [ClientSideLayout Options](/config/client-side-options) for the full reference.

@@ -1,4 +1,6 @@
 ---
+title: vite-plugin-vue-layouts-next
+titleTemplate: Router based layouts for Vue
 layout: home
 
 hero:
@@ -8,7 +10,7 @@ hero:
   actions:
     - theme: brand
       text: Get Started
-      link: /guide/getting-started
+      link: /guide/
     - theme: alt
       text: Config Reference
       link: /config/
@@ -43,4 +45,4 @@ meta:
 </route>
 ```
 
-Head to [Getting Started](/guide/getting-started) to install it.
+Head to [Getting Started](/guide/) to install it, or [Why](/guide/why) for the rationale behind the fork.

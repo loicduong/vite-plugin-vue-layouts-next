@@ -82,10 +82,11 @@ See [Getting Started][docs-getting-started] for client types and per-page layout
 Full documentation lives at **[loicduong.github.io/vite-plugin-vue-layouts-next][docs]**:
 
 - [Getting Started][docs-getting-started] — install, usage and client types
+- [Why][docs-why] — the rationale, and how this fork differs
 - [How it works][docs-how-it-works] — what `setupLayouts` does to your routes
 - [Migration][docs-migration] — upgrading to v3, including layout name normalization
-- [Config][docs-config] — every plugin option
-- [Common patterns][docs-transitions] — transitions and passing data between layouts and pages
+- [Config][docs-config] — plugin options, layout names and ClientSideLayout options
+- [Common Patterns][docs-patterns] — transitions and passing data between layouts and pages
 - [ClientSideLayout][docs-client-side-layout] — the lighter, glob-import based variant
 - [Examples][docs-examples] — runnable SPA, SSG, client-side and nested-routes setups
 
@@ -124,10 +125,11 @@ PRs accepted. [Open an issue][open-an-issue] or submit PRs for any improvements.
 [open-an-issue]: https://github.com/loicduong/vite-plugin-vue-layouts-next/issues/new
 [vite-plugin-vue-layouts]: https://github.com/JohnCampionJr/vite-plugin-vue-layouts
 [docs]: https://loicduong.github.io/vite-plugin-vue-layouts-next/
-[docs-getting-started]: https://loicduong.github.io/vite-plugin-vue-layouts-next/guide/getting-started
+[docs-getting-started]: https://loicduong.github.io/vite-plugin-vue-layouts-next/guide/
+[docs-why]: https://loicduong.github.io/vite-plugin-vue-layouts-next/guide/why
 [docs-how-it-works]: https://loicduong.github.io/vite-plugin-vue-layouts-next/guide/how-it-works
 [docs-migration]: https://loicduong.github.io/vite-plugin-vue-layouts-next/guide/migration
 [docs-config]: https://loicduong.github.io/vite-plugin-vue-layouts-next/config/
-[docs-transitions]: https://loicduong.github.io/vite-plugin-vue-layouts-next/guide/patterns/transitions
+[docs-patterns]: https://loicduong.github.io/vite-plugin-vue-layouts-next/guide/patterns
 [docs-client-side-layout]: https://loicduong.github.io/vite-plugin-vue-layouts-next/guide/client-side-layout
-[docs-examples]: https://loicduong.github.io/vite-plugin-vue-layouts-next/examples
+[docs-examples]: https://loicduong.github.io/vite-plugin-vue-layouts-next/guide/examples

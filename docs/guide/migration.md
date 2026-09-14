@@ -12,7 +12,7 @@ layouts only.
 
 ## 2. Add Vue Router 5's Vite plugin before Vue
 
-```diff
+```diff [vite.config.js]
  import Vue from '@vitejs/plugin-vue'
 +import VueRouter from 'vue-router/vite'
  import Layouts from 'vite-plugin-vue-layouts-next'

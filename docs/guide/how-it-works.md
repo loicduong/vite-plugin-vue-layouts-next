@@ -26,5 +26,5 @@ router: [
 
 That means you have the full flexibility of the [vue-router API](https://next.router.vuejs.org/api/) at your disposal.
 
-For nested routes, [`inheritDefaultLayout`](/config/inherit-default-layout) controls whether a parent route still
+For nested routes, [`inheritDefaultLayout`](/config/plugin-options#inheritdefaultlayout) controls whether a parent route still
 receives the default layout when a child route declares its own.

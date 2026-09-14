@@ -1,44 +1,63 @@
-# Config
+---
+title: Configuring the Plugin
+---
 
-```ts
-interface UserOptions {
-  layoutsDirs?: string | string[]
-  extensions?: string[]
-  exclude?: string[]
-  defaultLayout?: string
-  importMode?: (name: string) => 'sync' | 'async'
-  inheritDefaultLayout?: boolean
-}
-```
+# Configuring the Plugin
 
-## Using configuration
+The plugin is configured by passing an options object to `Layouts()` inside your Vite config. With no options, layouts
+are read from `src/layouts` and pages fall back to `default.vue`.
 
-To use custom configuration, pass your options to `Layouts` when instantiating the plugin:
-
-```js
-// vite.config.ts
+```js [vite.config.js]
+import Vue from '@vitejs/plugin-vue'
 import { defineConfig } from 'vite'
 import Layouts from 'vite-plugin-vue-layouts-next'
+import VueRouter from 'vue-router/vite'
 
 export default defineConfig({
   plugins: [
+    VueRouter(),
+    Vue(),
     Layouts({
       layoutsDirs: 'src/mylayouts',
-      defaultLayout: 'my-default'
+      defaultLayout: 'my-default',
     }),
   ],
 })
 ```
 
-## Options
+## Config Intellisense
 
-| Option | Type | Default |
-| --- | --- | --- |
-| [`layoutsDirs`](/config/layouts-dirs) | `string \| string[]` | `'src/layouts'` |
-| [`extensions`](/config/extensions) | `string[]` | `['vue']` |
-| [`exclude`](/config/exclude) | `string[]` | `[]` |
-| [`defaultLayout`](/config/default-layout) | `string` | `'default'` |
-| [`importMode`](/config/import-mode) | `(name: string) => 'sync' \| 'async'` | sync for SSG, async otherwise |
-| [`inheritDefaultLayout`](/config/inherit-default-layout) | `boolean` | `true` |
+The plugin ships with TypeScript typings, so options are checked when your Vite config is a `.ts` file. In a plain
+JavaScript config you can get the same completion through a JSDoc type hint:
 
-See also [Layout names](/config/layout-names) for how filenames are normalized into layout names.
+```js [vite.config.js]
+/** @type {import('vite-plugin-vue-layouts-next').UserOptions} */
+const layoutsOptions = {
+  // ...
+}
+```
+
+## Client Types
+
+To type the `virtual:generated-layouts` module, add `vite-plugin-vue-layouts-next/client` to `compilerOptions.types`
+of your `tsconfig`:
+
+```json [tsconfig.json]
+{
+  "compilerOptions": {
+    "types": ["vite-plugin-vue-layouts-next/client"]
+  }
+}
+```
+
+That declares `setupLayouts` and the generated `layouts` map:
+
+```ts
+import { setupLayouts } from 'virtual:generated-layouts'
+```
+
+## Options Reference
+
+- [Plugin Options](/config/plugin-options) — every option accepted by `Layouts()`
+- [Layout Names](/config/layout-names) — how filenames become layout names
+- [ClientSideLayout Options](/config/client-side-options) — options for the lighter `ClientSideLayout` variant
