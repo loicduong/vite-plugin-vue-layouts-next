@@ -1,0 +1,19 @@
+{
+  "name": "@vite-plugin-vue-layouts-next/docs",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "vitepress dev",
+    "build": "vitepress build",
+    "preview": "vitepress preview"
+  },
+  "devDependencies": {
+    "vitepress": "catalog:",
+    "vitepress-plugin-group-icons": "catalog:",
+    "vitepress-plugin-llms": "catalog:",
+    "vue": "catalog:"
+  },
+  "volta": {
+    "node": "22.18.0"
+  }
+}
