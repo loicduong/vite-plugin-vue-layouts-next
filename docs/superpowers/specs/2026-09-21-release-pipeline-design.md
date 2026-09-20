@@ -41,14 +41,19 @@ adopts that model.
 `package.json` scripts:
 
 ```json
-"release": "bumpp --commit \"release: v%s\" --tag --push --execute \"pnpm changelog\"",
+"release": "bumpp --all --commit \"release: v%s\" --tag --push --execute \"pnpm changelog\"",
 "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s"
 ```
 
 `bumpp` prompts for the version, writes `package.json`, runs `--execute`
 (generates the changelog entry for the new version at the top of
-`CHANGELOG.md`), commits everything as `release: vX.Y.Z`, tags `vX.Y.Z` on that
-commit and pushes the branch and the tag. No local publish.
+`CHANGELOG.md`), commits as `release: vX.Y.Z`, tags `vX.Y.Z` on that commit
+and pushes the branch and the tag. No local publish. `bumpp` only stages the
+files it bumps by default, so without `--all` the changelog written by the
+`--execute` hook would be left out of the commit; `--all` is what sweeps it
+in. Because `--all` stages the entire working tree, the maintainer must start
+the release from a clean tree (`git status` clean) or unrelated local changes
+end up in the release commit.
 
 Dev dependencies added through the catalog: `bumpp`, `conventional-changelog-cli`.
 `npx bumpp` (uncached download) is replaced by the pinned dev dependency.
@@ -145,6 +150,11 @@ from the squash commit `feat: dynamic layouts (setPageLayout, useLayout) and sha
 
 - `pnpm changelog` on a scratch clone with a fake tag produces a new section at
   the top and leaves the converted history untouched.
+- On a scratch clone (`git clone` + `pnpm install --frozen-lockfile`), running
+  `pnpm exec bumpp --all --commit "release: v%s" --tag --no-push --execute "pnpm changelog"`
+  produces a `release: vX.Y.Z` commit whose `git show --stat HEAD` lists both
+  `CHANGELOG.md` and `package.json`, and the tagged `CHANGELOG.md` starts with
+  the new version heading (`git show vX.Y.Z:CHANGELOG.md | head -1`).
 - `ci.yml` green on the PR.
 - After merge: `pnpm release` for 3.1.0 → tag pushed → `release.yml` publishes
   3.1.0 with provenance and creates the GitHub Release with the 3.1.0 notes.

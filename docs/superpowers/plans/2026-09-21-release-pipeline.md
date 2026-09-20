@@ -6,7 +6,7 @@
 
 **Architecture:** `bumpp --execute "pnpm changelog"` produces one release commit whose changelog entry comes from `conventional-changelog` (angular preset). Three workflows: `ci.yml` (reusable test job), `semantic-pr.yml` (PR title lint), `release.yml` (tag → ci → publish via OIDC → `gh release create` with notes from the same generator). `CHANGELOG.md` is converted once to the generated format, merging the hand-written history.
 
-**Tech Stack:** pnpm 11 (catalog), bumpp 12, conventional-changelog-cli 5 (angular preset), GitHub Actions (`actions/checkout@v7`, `pnpm/action-setup@v6`, `actions/setup-node@v7`, `amannn/action-semantic-pull-request@v6`), npm ≥ 11.5 Trusted Publishing, `gh` CLI (preinstalled on runners).
+**Tech Stack:** pnpm 12 (catalog), bumpp 12, conventional-changelog-cli 5 (angular preset), GitHub Actions (`actions/checkout@v7`, `pnpm/action-setup@v6`, `actions/setup-node@v7`, `amannn/action-semantic-pull-request@v6`), npm ≥ 11.5 Trusted Publishing, `gh` CLI (preinstalled on runners).
 
 **Spec:** `docs/superpowers/specs/2026-09-21-release-pipeline-design.md`
 
@@ -59,7 +59,7 @@ In `package.json` `devDependencies` add `"bumpp": "catalog:"` and `"conventional
 
 ```json
 "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s",
-"release": "bumpp --commit \"release: v%s\" --tag --push --execute \"pnpm changelog\"",
+"release": "bumpp --all --commit \"release: v%s\" --tag --push --execute \"pnpm changelog\"",
 ```
 
 Then run: `pnpm install`
