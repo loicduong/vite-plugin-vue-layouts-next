@@ -5,7 +5,7 @@ import process from 'node:process'
 import { createVirtualModuleCode } from './clientSide'
 import { getFilesFromPath } from './files'
 import { getImportCode } from './importCode'
-import getClientCode from './RouteLayout'
+import getClientCode, { RUNTIME_ID } from './RouteLayout'
 
 import { debug, normalizePath, resolveDirs } from './utils'
 
@@ -50,6 +50,9 @@ export default function Layout(userOptions: UserOptions = {}): Plugin {
   return {
     name: 'vite-plugin-vue-layouts-next',
     enforce: 'pre',
+    config() {
+      return { optimizeDeps: { include: [RUNTIME_ID] } }
+    },
     configResolved(_config) {
       config = _config
       layoutsDirs = resolveDirs(options.layoutsDirs, config.root)

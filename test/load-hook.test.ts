@@ -126,6 +126,24 @@ describe('load hook return shape', () => {
       expect(load).toBeTypeOf('function')
       expect(await load!('other-id')).toBeUndefined()
     })
+
+    it('wires the runtime wrapper into the generated module', async () => {
+      const plugin = Layout({
+        layoutsDirs: resolve(fixturesRoot, 'layouts'),
+        extensions: ['vue'],
+        defaultLayout: 'main',
+        inheritDefaultLayout: false,
+      }) as Plugin & { configResolved: (config: { root: string }) => void }
+      plugin.configResolved!({ root: fixturesRoot })
+      const load = getLoadFunction(plugin)
+      const result = await load!(MODULE_ID_VIRTUAL) as { code: string }
+
+      expect(result.code).toContain('from \'vite-plugin-vue-layouts-next/runtime\'')
+      expect(result.code).toContain('export { createGetRoutes, setPageLayout, useLayout }')
+      expect(result.code).toContain('const LayoutWrapper = createLayoutWrapper(layouts, \'main\')')
+      expect(result.code).toContain('export const setupLayouts = createSetupLayouts(LayoutWrapper, { inheritDefaultLayout: false })')
+      expect(result.code).not.toContain('function deepSetupLayout')
+    })
   })
 })
 
