@@ -1,5 +1,6 @@
 // @vitest-environment happy-dom
 import type { Component } from 'vue'
+import type { RouteRecordRaw } from 'vue-router'
 import { flushPromises, mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { defineComponent, h, nextTick } from 'vue'
@@ -15,8 +16,12 @@ function layout(name: string): Component {
 
 const Default = layout('default')
 const Admin = layout('admin')
+const Second = layout('second')
+const A = layout('a')
+const B = layout('b')
 const Lazy = layout('lazy')
-const lazyFactory = vi.fn(() => Promise.resolve({ default: Lazy }))
+// Resolves on a macrotask, like a real chunk: an unresolved async component renders empty until then.
+const lazyFactory = vi.fn(() => new Promise<{ default: Component }>(resolve => setTimeout(resolve, 0, { default: Lazy })))
 
 function page(text: string): Component {
   return defineComponent({
@@ -27,28 +32,53 @@ function page(text: string): Component {
   })
 }
 
+/** A page that has children of its own and renders them through its own `RouterView`. */
+function parentPage(text: string): Component {
+  return defineComponent({
+    setup() {
+      const current = useLayout()
+      return () => h('div', { 'data-page': text, 'data-use-layout': String(current.value) }, [h(RouterView)])
+    },
+  })
+}
+
 interface AppOptions {
   inheritDefaultLayout?: boolean
   initialPath?: string
   beforeEach?: Parameters<ReturnType<typeof createRouter>['beforeEach']>[0]
+  routes?: RouteRecordRaw[]
+}
+
+function defaultRoutes(): RouteRecordRaw[] {
+  return [
+    { path: '/', component: page('home') },
+    { path: '/admin', component: page('admin'), meta: { layout: 'admin' } },
+    { path: '/lazy', component: page('lazy'), meta: { layout: 'lazy' } },
+    { path: '/missing', component: page('missing'), meta: { layout: 'nope' } },
+    { path: '/raw', component: page('raw'), meta: { layout: false } },
+    { path: '/dyn', component: page('dyn') },
+  ]
+}
+
+// Nested trees (spec case 11); `setupLayouts` mutates its input, so build fresh each time.
+function nestedRoutes(): RouteRecordRaw[] {
+  return [
+    { path: '/', component: page('home') },
+    { path: '/news', component: parentPage('news'), children: [{ path: '', component: page('news-index'), meta: { layout: 'second' } }] },
+    { path: '/ab', component: parentPage('a-page'), meta: { layout: 'a' }, children: [{ path: 'b', component: page('b-page'), meta: { layout: 'b' } }] },
+    { path: '/sec', component: parentPage('sec'), meta: { layout: 'second' }, children: [{ path: 'raw', component: page('raw'), meta: { layout: false } }] },
+  ]
 }
 
 // Navigates to `initialPath` BEFORE mounting so the router plugin does not
 // perform its own initial navigation to "/" on install.
 async function createApp(opts: AppOptions = {}) {
-  const layouts = { default: Default, admin: Admin, lazy: lazyFactory }
+  const layouts = { default: Default, admin: Admin, second: Second, a: A, b: B, lazy: lazyFactory }
   const Wrapper = createLayoutWrapper(layouts, 'default')
   const setupLayouts = createSetupLayouts(Wrapper, { inheritDefaultLayout: opts.inheritDefaultLayout ?? true })
   const router = createRouter({
     history: createMemoryHistory(),
-    routes: setupLayouts([
-      { path: '/', component: page('home') },
-      { path: '/admin', component: page('admin'), meta: { layout: 'admin' } },
-      { path: '/lazy', component: page('lazy'), meta: { layout: 'lazy' } },
-      { path: '/missing', component: page('missing'), meta: { layout: 'nope' } },
-      { path: '/raw', component: page('raw'), meta: { layout: false } },
-      { path: '/dyn', component: page('dyn') },
-    ]),
+    routes: setupLayouts(opts.routes ?? defaultRoutes()),
   })
   if (opts.beforeEach)
     router.beforeEach(opts.beforeEach)
@@ -64,6 +94,15 @@ function layoutOf(wrapper: ReturnType<typeof mount>) {
 }
 function useLayoutOf(wrapper: ReturnType<typeof mount>) {
   return wrapper.find('[data-page]').attributes('data-use-layout')
+}
+/** Waits for a macrotask (the lazy factory) and then for Vue to re-render. */
+async function flushTimers() {
+  await new Promise(resolve => setTimeout(resolve, 0))
+  await flushPromises()
+}
+/** All rendered layout names, outermost first. */
+function layoutsOf(wrapper: ReturnType<typeof mount>) {
+  return wrapper.findAll('[data-layout]').map(el => el.attributes('data-layout'))
 }
 
 afterEach(() => {
@@ -94,8 +133,10 @@ describe('layoutWrapper', () => {
   })
 
   it('resolves async layouts once per name', async () => {
+    // `/lazy` is pushed before mount, so no preload guard exists yet and the
+    // wrapper falls back to `defineAsyncComponent` (same path as an in-place `setPageLayout`).
     const { router, wrapper } = await createApp({ initialPath: '/lazy' })
-    await flushPromises()
+    await flushTimers()
     expect(layoutOf(wrapper)).toBe('lazy')
     await router.push('/')
     await router.push('/lazy')
@@ -114,6 +155,69 @@ describe('layoutWrapper', () => {
     const { wrapper } = await createApp({ initialPath: '/raw' })
     expect(layoutOf(wrapper)).toBeNull()
     expect(wrapper.find('[data-page="raw"]').exists()).toBe(true)
+  })
+
+  it('preloads lazy layouts before the navigation is confirmed', async () => {
+    const { router, wrapper } = await createApp()
+    await router.push('/lazy')
+    expect(layoutOf(wrapper)).toBe('lazy')
+    expect(wrapper.find('[data-page="lazy"]').exists()).toBe(true)
+
+    await router.push('/')
+    await router.push('/lazy')
+    expect(layoutOf(wrapper)).toBe('lazy')
+    expect(lazyFactory).toHaveBeenCalledTimes(1)
+  })
+
+  it('preloads the layout of the target route, not a stale in-place override', async () => {
+    const { router, wrapper } = await createApp()
+    setPageLayout('admin')
+    await nextTick()
+    expect(layoutOf(wrapper)).toBe('admin')
+    await router.push('/lazy') // override resets on path change; the lazy layout must be ready
+    expect(layoutOf(wrapper)).toBe('lazy')
+  })
+})
+
+describe('nested routes', () => {
+  it('parent without layout + child layout renders default > second > page', async () => {
+    const { wrapper } = await createApp({ routes: nestedRoutes(), initialPath: '/news' })
+    expect(layoutsOf(wrapper)).toEqual(['default', 'second'])
+    expect(wrapper.find('[data-layout="default"] [data-page="news"] [data-layout="second"] [data-page="news-index"]').exists()).toBe(true)
+    expect(useLayoutOf(wrapper)).toBe('second')
+  })
+
+  it('parent layout a + child layout b renders a > b > page', async () => {
+    const { wrapper } = await createApp({ routes: nestedRoutes(), initialPath: '/ab/b' })
+    expect(layoutsOf(wrapper)).toEqual(['a', 'b'])
+    expect(wrapper.find('[data-layout="a"] [data-page="a-page"] [data-layout="b"] [data-page="b-page"]').exists()).toBe(true)
+  })
+
+  it('parent layout + nested child layout: false stays inside the parent layout', async () => {
+    const { wrapper } = await createApp({ routes: nestedRoutes(), initialPath: '/sec/raw' })
+    expect(layoutsOf(wrapper)).toEqual(['second'])
+    expect(wrapper.find('[data-layout="second"] [data-page="sec"] [data-page="raw"]').exists()).toBe(true)
+  })
+
+  it('setPageLayout changes only the innermost layout', async () => {
+    const { wrapper } = await createApp({ routes: nestedRoutes(), initialPath: '/news' })
+    setPageLayout('admin')
+    await nextTick()
+    expect(layoutsOf(wrapper)).toEqual(['default', 'admin'])
+    expect(useLayoutOf(wrapper)).toBe('admin')
+  })
+
+  it('a guard assignment changes only the innermost layout', async () => {
+    const { wrapper } = await createApp({
+      routes: nestedRoutes(),
+      initialPath: '/ab/b',
+      beforeEach: (to) => {
+        if (to.path === '/ab/b')
+          to.meta.layout = 'admin'
+      },
+    })
+    expect(layoutsOf(wrapper)).toEqual(['a', 'admin'])
+    expect(useLayoutOf(wrapper)).toBe('admin')
   })
 })
 

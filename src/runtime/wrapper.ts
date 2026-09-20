@@ -1,19 +1,23 @@
 import type { Component, ComputedRef } from 'vue'
-import type { Router } from 'vue-router'
-import { computed, defineAsyncComponent, defineComponent, h, shallowRef } from 'vue'
-import { RouterView, START_LOCATION, useRoute, useRouter } from 'vue-router'
+import type { RouteLocationNormalized, Router, RouteRecordNormalized } from 'vue-router'
+import { computed, defineAsyncComponent, defineComponent, h, inject, shallowRef } from 'vue'
+import { matchedRouteKey, RouterView, START_LOCATION, useRoute, useRouter } from 'vue-router'
 
 export type LayoutName = string | false
 export type LayoutMap = Record<string, Component | (() => Promise<{ default: Component } | Component>)>
+
+/** The parts of a route location the resolution rule needs (current route or a guard's `to`). */
+type RouteLike = Pick<RouteLocationNormalized, 'matched' | 'meta'>
 
 const PREFIX = '[vite-plugin-vue-layouts-next]'
 
 /** In-place override set by `setPageLayout`; cleared on navigation to another path. */
 const override = shallowRef<LayoutName | null>(null)
 
-/** Routers that already have the override-reset guard installed. */
+/** Routers that already have the guards installed. */
 const guardedRouters = new WeakSet<Router>()
 
+/** `defaultLayout` of the last created wrapper; shared with `useLayout()`. */
 let resolvedDefaultLayout = 'default'
 
 /**
@@ -27,44 +31,89 @@ export function setPageLayout(name: LayoutName): void {
 /** Reactive name of the layout resolved for the current route (`false` when none). */
 export function useLayout(): ComputedRef<LayoutName> {
   const route = useRoute()
-  return computed(() => resolveName(route.meta.layout as LayoutName | undefined))
-}
-
-function resolveName(metaLayout: LayoutName | undefined): LayoutName {
-  if (override.value !== null)
-    return override.value
-  return metaLayout ?? resolvedDefaultLayout
-}
-
-function installResetGuard(router: Router) {
-  if (guardedRouters.has(router))
-    return
-  guardedRouters.add(router)
-  router.afterEach((to, from) => {
-    if (from !== START_LOCATION && to.path !== from.path)
-      override.value = null
+  return computed(() => {
+    const own = innermostLayoutRecord(route)
+    if (!own)
+      return route.meta.layout ?? resolvedDefaultLayout
+    return resolveNameFor(route, own, override.value)
   })
+}
+
+/** The generated parent record of the innermost wrapper of `route`, if any. */
+function innermostLayoutRecord(route: RouteLike): RouteRecordNormalized | undefined {
+  const { matched } = route
+  for (let i = matched.length - 1; i >= 0; i--) {
+    if (matched[i].meta.isLayout)
+      return matched[i]
+  }
+  return undefined
+}
+
+/**
+ * Layout name the wrapper whose generated record is `own` renders for `route`.
+ *
+ * The static name comes from the wrapped record's own meta (`||` fallback to the
+ * default, like the original algorithm), so nested trees keep one layout per level.
+ * Dynamic inputs — the `setPageLayout` override and a guard assignment to the merged
+ * `route.meta.layout` — apply only to the innermost wrapper.
+ */
+function resolveNameFor(route: RouteLike, own: RouteRecordNormalized, overrideValue: LayoutName | null): LayoutName {
+  const { matched } = route
+  const idx = matched.indexOf(own)
+  const page = matched[idx + 1]
+  const staticName: LayoutName = page?.meta.layout || resolvedDefaultLayout
+  const innermost = !matched.slice(idx + 2).some(r => r.meta.isLayout)
+  if (!innermost)
+    return staticName
+  const staticMerged = matched.reduce<LayoutName | undefined>((m, r) => r.meta.layout ?? m, undefined)
+  const guardValue = route.meta.layout !== staticMerged ? route.meta.layout : undefined
+  return overrideValue ?? guardValue ?? staticName
+}
+
+function unwrapModule(mod: any): Component {
+  return mod && typeof mod === 'object' && 'default' in mod ? mod.default : mod
 }
 
 export function createLayoutWrapper(layouts: LayoutMap, defaultLayout: string): Component {
   resolvedDefaultLayout = defaultLayout
+  /** Lazy layouts already loaded (by the `beforeResolve` preload or an async render). */
+  const resolved = new Map<string, Component>()
+  /** In-flight loads, so a layout's factory runs at most once. */
+  const pending = new Map<string, Promise<Component>>()
+  /** `defineAsyncComponent` per name, for renders that happen before the preload. */
   const asyncCache = new Map<string, Component>()
+  const warned = new Set<string>()
+
+  function load(name: string, loader: () => Promise<any>): Promise<Component> {
+    let promise = pending.get(name)
+    if (!promise) {
+      promise = Promise.resolve(loader()).then((mod) => {
+        const component = unwrapModule(mod)
+        resolved.set(name, component)
+        return component
+      }, (error) => {
+        pending.delete(name) // let the next navigation retry, like a failed route component import
+        throw error
+      })
+      pending.set(name, promise)
+    }
+    return promise
+  }
 
   function resolveComponent(name: string): Component | undefined {
+    const loaded = resolved.get(name)
+    if (loaded)
+      return loaded
     const entry = layouts[name]
     if (!entry)
       return undefined
     if (typeof entry === 'function') {
-      const cached = asyncCache.get(name)
-      if (cached)
-        return cached
-      const loader = entry as () => Promise<any>
-      const created: Component = defineAsyncComponent(() =>
-        Promise.resolve(loader()).then(mod =>
-          mod && typeof mod === 'object' && 'default' in mod ? mod.default : mod,
-        ),
-      )
-      asyncCache.set(name, created)
+      let created = asyncCache.get(name)
+      if (!created) {
+        const loader = entry as () => Promise<any>
+        created = defineAsyncComponent(() => load(name, loader))
+        asyncCache.set(name, created)
+      }
       return created
     }
     return entry
@@ -74,16 +123,47 @@ export function createLayoutWrapper(layouts: LayoutMap, defaultLayout: string): 
     const found = resolveComponent(name)
     if (found)
       return found
-    console.warn(`${PREFIX} Layout "${name}" not found, falling back to "${defaultLayout}"`)
+    if (!warned.has(name)) {
+      warned.add(name)
+      console.warn(`${PREFIX} Layout "${name}" not found, falling back to "${defaultLayout}"`)
+    }
     return resolveComponent(defaultLayout)
+  }
+
+  function installGuards(router: Router) {
+    if (guardedRouters.has(router))
+      return
+    guardedRouters.add(router)
+    router.afterEach((to, from) => {
+      if (from !== START_LOCATION && to.path !== from.path)
+        override.value = null
+    })
+    // Load lazy layouts before the navigation is confirmed, like when the
+    // `() => import()` factory was the route component itself.
+    router.beforeResolve(async (to, from) => {
+      // The override only survives this navigation if `afterEach` above keeps it.
+      const keepOverride = from === START_LOCATION || to.path === from.path
+      for (const rec of to.matched) {
+        if (!rec.meta.isLayout)
+          continue
+        const name = resolveNameFor(to, rec, keepOverride ? override.value : null)
+        if (name === false)
+          continue
+        const entry = layouts[name] ?? layouts[defaultLayout]
+        const key = layouts[name] ? name : defaultLayout
+        if (typeof entry === 'function' && !resolved.has(key))
+          await load(key, entry as () => Promise<any>)
+      }
+    })
   }
 
   return defineComponent({
     name: 'LayoutWrapper',
     setup() {
       const route = useRoute()
-      installResetGuard(useRouter())
-      const name = computed(() => resolveName(route.meta.layout as LayoutName | undefined))
+      const own = inject(matchedRouteKey)!
+      installGuards(useRouter())
+      const name = computed(() => resolveNameFor(route, own.value!, override.value))
 
       return () => {
         if (name.value === false)
