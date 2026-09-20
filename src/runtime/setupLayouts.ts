@@ -27,7 +27,7 @@ function hasChildWithLayout(route: AnyRoute): boolean {
 
   return route.children.some((child) => {
     // Check if child has layout in meta (before transformation)
-    if (child.meta?.layout && child.meta.layout !== false)
+    if (child.meta?.layout)
       return true
     // Also check if child is already a layout route (after transformation)
     if (child.meta?.isLayout)
