@@ -1,7 +1,7 @@
 import type { Component, ComputedRef } from 'vue'
 import type { NavigationGuard, RouteLocationNormalized, Router, RouteRecordNormalized } from 'vue-router'
-import { computed, defineAsyncComponent, defineComponent, h, inject, shallowRef } from 'vue'
-import { matchedRouteKey, RouterView, START_LOCATION, useRoute, useRouter } from 'vue-router'
+import { computed, defineAsyncComponent, defineComponent, h, hasInjectionContext, inject, shallowRef } from 'vue'
+import { matchedRouteKey, routerKey, RouterView, START_LOCATION, useRoute, useRouter } from 'vue-router'
 
 export type LayoutName = string | false
 
@@ -26,9 +26,6 @@ export function isLazyLayout(entry: unknown): entry is LazyLayout {
 }
 
 export type LayoutMap = Record<string, Component | LazyLayout>
-
-/** Well-known key the generated wrapper's preload guard is exposed under, so `createSetupLayouts` can attach it as `beforeEnter` without changing the generated route code. */
-export const LAYOUT_PRELOAD = Symbol.for('vite-plugin-vue-layouts-next:preload')
 
 /** The parts of a route location the resolution rule needs (current route or a guard's `to`). */
 type RouteLike = Pick<RouteLocationNormalized, 'matched' | 'meta'>
@@ -159,9 +156,9 @@ export function createLayoutWrapper(layouts: LayoutMap, defaultLayout: string): 
   }
 
   // Load lazy layouts before the navigation is confirmed, like when the
-  // `() => import()` factory was the route component itself. Attached as
-  // `beforeEnter` to every generated layout record by `createSetupLayouts`, so it
-  // also covers the initial navigation, before any wrapper has mounted.
+  // `() => import()` factory was the route component itself. Run from the wrapper's
+  // own `beforeRouteEnter` (see below), which also covers the initial navigation,
+  // before any wrapper has mounted.
   const preload: NavigationGuard = async (to, from) => {
     // The override only survives this navigation if `afterEach` below keeps it.
     const keepOverride = from === START_LOCATION || to.path === from.path
@@ -182,15 +179,15 @@ export function createLayoutWrapper(layouts: LayoutMap, defaultLayout: string): 
     if (guardedRouters.has(router))
       return
     guardedRouters.add(router)
-    // `beforeEnter` (attached per-record below) only fires when a record is entered.
-    // A guard that switches `to.meta.layout` between two params of the *same* route
-    // (e.g. `/user/1` -> `/user/2`) reuses the matched record, so `beforeEnter` never
-    // runs, the navigation would confirm before the import starts, and a rejected
-    // import could no longer abort it. That reused record was in `from.matched`, so
-    // its wrapper already mounted and reached this `setup()`, installing this global
-    // `beforeResolve` guard. It shares the `resolved`/`pending` caches with the
-    // `beforeEnter` guard, so a layout is never loaded twice: `beforeEnter` runs
-    // before `beforeResolve`, making the second pass a cache hit for entered records.
+    // A guard (route-level `beforeEnter`, `beforeRouteEnter`, or `beforeEach`) can set
+    // `to.meta.layout` to a lazy layout after this wrapper's own `beforeRouteEnter` below
+    // already ran — e.g. a page's own `beforeRouteEnter`, which Vue Router calls after the
+    // parent wrapper's, or a guard that only changes params on an already-matched record
+    // (e.g. `/user/1` -> `/user/2`, which never re-enters the wrapper). `beforeResolve`
+    // guards are read once that phase starts, so registering it here still lets it run,
+    // and still await, within the *current* navigation. It shares the `resolved`/`pending`
+    // caches with the `beforeRouteEnter` preload, so a layout already awaited there is a
+    // cache hit here.
     router.beforeResolve(preload)
     router.afterEach((to, from, failure) => {
       // A failed navigation (e.g. aborted by a guard) never reaches render; redirects
@@ -204,6 +201,27 @@ export function createLayoutWrapper(layouts: LayoutMap, defaultLayout: string): 
 
   const Wrapper = defineComponent({
     name: 'LayoutWrapper',
+    // Runs for the wrapper's own generated route on every entering navigation,
+    // including the initial one, before any wrapper has ever mounted — unlike
+    // `setup()`, which only runs once a wrapper instance is actually created. Vue
+    // Router invokes in-component guards inside `app.runWithContext` (Vue >= 3.3), so
+    // `inject` works here; `setup()` below remains the fallback for older Vue, and the
+    // guard registration is idempotent either way.
+    beforeRouteEnter(to, from) {
+      // `hasInjectionContext` avoids Vue's "inject() can only be used inside setup()"
+      // warning for a navigation that resolves before any app has ever called
+      // `app.use(router)` (so `app.runWithContext` never ran): there is then no router
+      // to install onto anyway, and `setup()` below will install it once a wrapper
+      // instance is actually created.
+      if (hasInjectionContext()) {
+        const router = inject(routerKey, null)
+        if (router)
+          installGuards(router)
+      }
+      // `next` is part of `NavigationGuard`'s call signature (deprecated, callback-style
+      // guards) but unused by `preload`, which resolves via its returned promise instead.
+      return preload(to, from, () => {})
+    },
     setup() {
       const route = useRoute()
       const own = inject(matchedRouteKey)!
@@ -221,5 +239,5 @@ export function createLayoutWrapper(layouts: LayoutMap, defaultLayout: string): 
     },
   })
 
-  return Object.assign(Wrapper, { [LAYOUT_PRELOAD]: preload })
+  return Wrapper
 }

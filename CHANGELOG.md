@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Generated layout parent routes use a shared wrapper component that resolves the layout at render time, instead of the layout component itself. `meta.isLayout` is unchanged; code that read `route.matched[n].components.default` of a layout route will now see the wrapper.
-- Lazy layouts (`importMode: 'async'`) are preloaded by a `beforeEnter` guard on the generated route, so they load before the navigation is confirmed — including the initial navigation. Because layouts are no longer route components, Options-API `beforeRouteEnter` / `beforeRouteUpdate` declared inside a *layout* component no longer run; use router-level guards or the composition guards (`onBeforeRouteUpdate`, `onBeforeRouteLeave`) instead.
+- Lazy layouts (`importMode: 'async'`) are preloaded by the wrapper's own `beforeRouteEnter` guard, which also installs a global `beforeResolve` on first use, so they load before the navigation is confirmed — including the initial navigation and layouts chosen by a page's own guards. Because layouts are no longer route components, Options-API `beforeRouteEnter` / `beforeRouteUpdate` declared inside a *layout* component no longer run; use router-level guards or the composition guards (`onBeforeRouteUpdate`, `onBeforeRouteLeave`) instead.
 
 ## [3.0.0] - 2026-09-03
 

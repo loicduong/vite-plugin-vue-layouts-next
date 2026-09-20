@@ -1,7 +1,6 @@
 import type { RouteRecordRaw } from 'vue-router'
 import { describe, expect, it } from 'vitest'
 import { createGetRoutes, createSetupLayouts } from '../src/runtime/setupLayouts'
-import { LAYOUT_PRELOAD } from '../src/runtime/wrapper'
 
 const Wrapper = { name: 'Wrapper', render: () => null }
 const Page = { name: 'Page', render: () => null }
@@ -63,19 +62,6 @@ describe('createSetupLayouts', () => {
     const child = parent.children![0]!.children![0]!
     expect(child).toMatchObject({ component: Wrapper, meta: { isLayout: true } })
     expect(child.children![0]!.path).toBe('')
-  })
-
-  it('attaches beforeEnter from the wrapper preload symbol, when present', () => {
-    const PreloadingWrapper = { name: 'PreloadingWrapper', render: () => null, [LAYOUT_PRELOAD]: () => {} }
-    const setupLayouts = createSetupLayouts(PreloadingWrapper as any, { inheritDefaultLayout: true })
-    const [route] = setupLayouts([{ path: '/about', component: Page, meta: { layout: 'admin' } }])
-    expect(route.beforeEnter).toBe((PreloadingWrapper as any)[LAYOUT_PRELOAD])
-  })
-
-  it('does not add a beforeEnter key when the wrapper carries no preload symbol', () => {
-    const setupLayouts = createSetupLayouts(Wrapper, { inheritDefaultLayout: true })
-    const [route] = setupLayouts([{ path: '/about', component: Page, meta: { layout: 'admin' } }])
-    expect('beforeEnter' in route).toBe(false)
   })
 
   it('skips auto-routes group routes whose "" child is already a layout', () => {

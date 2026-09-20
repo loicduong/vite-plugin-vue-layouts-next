@@ -248,6 +248,49 @@ describe('layoutWrapper', () => {
     expect(layoutOf(wrapper)).toBe('default')
     expect(wrapper.find('[data-page="user"]').exists()).toBe(true)
   })
+
+  it('preloads a lazy layout chosen by the page\'s own route-level beforeEnter on the initial navigation', async () => {
+    // Record-level `beforeEnter` guards (parent then child) all run before ANY
+    // component's `beforeRouteEnter`, so the wrapper's own `beforeRouteEnter` already
+    // sees the page's `beforeEnter` mutation by the time it computes what to preload —
+    // no router access (and so no installed app) is needed for this case.
+    const { wrapper } = await createApp({
+      initialPath: '/pe',
+      routes: [
+        ...defaultRoutes(),
+        { path: '/pe', component: page('pe'), beforeEnter: (to) => { to.meta.layout = 'lazy2' } },
+      ],
+    })
+    expect(layoutOf(wrapper)).toBe('lazy2')
+  })
+
+  it('preloads a lazy layout chosen by the page\'s beforeRouteEnter on the initial navigation', async () => {
+    // Component `beforeRouteEnter` guards also run parent-first, so the wrapper's own
+    // guard runs (and fully resolves) *before* the page's own `beforeRouteEnter` sets
+    // `to.meta.layout`. Only the `beforeResolve` guard the wrapper installs (which
+    // requires `inject(routerKey)` to succeed) runs late enough to catch it — which
+    // requires the router to already be installed on an app, so this test installs the
+    // router (`app.use`, via `mount`) before navigating, unlike the shared `createApp`
+    // helper which deliberately navigates first.
+    const PageWithGuard = defineComponent({
+      beforeRouteEnter(to) {
+        to.meta.layout = 'lazy2'
+      },
+      setup: () => () => h('p', { 'data-page': 'pr' }, 'pr'),
+    })
+    const layouts = { default: Default, lazy2: lazyLayout(lazyFactory2) }
+    const Wrapper = createLayoutWrapper(layouts, 'default')
+    const setupLayouts = createSetupLayouts(Wrapper, { inheritDefaultLayout: true })
+    const router = createRouter({
+      history: createMemoryHistory(),
+      routes: setupLayouts([{ path: '/', component: page('home') }, { path: '/pr', component: PageWithGuard }]),
+    })
+    const wrapper = mount(defineComponent({ setup: () => () => h(RouterView) }), {
+      global: { plugins: [router] },
+    })
+    await router.push('/pr')
+    expect(layoutOf(wrapper)).toBe('lazy2')
+  })
 })
 
 describe('nested routes', () => {

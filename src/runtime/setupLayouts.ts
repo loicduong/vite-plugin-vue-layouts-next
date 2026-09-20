@@ -1,6 +1,5 @@
 import type { Component } from 'vue'
 import type { Router, RouteRecordRaw } from 'vue-router'
-import { LAYOUT_PRELOAD } from './wrapper'
 
 export interface SetupLayoutsOptions {
   inheritDefaultLayout: boolean
@@ -39,13 +38,11 @@ function hasChildWithLayout(route: AnyRoute): boolean {
 
 export function createSetupLayouts(wrapper: Component, options: SetupLayoutsOptions) {
   const { inheritDefaultLayout } = options
-  const beforeEnter = (wrapper as any)[LAYOUT_PRELOAD]
 
   function wrap(route: AnyRoute, keepRootPath: boolean): AnyRoute {
     return {
       path: route.path,
       component: wrapper,
-      ...(typeof beforeEnter === 'function' ? { beforeEnter } : {}),
       children: keepRootPath && route.path === '/' ? [route] : [{ ...route, path: '' }],
       meta: { isLayout: true },
     } as AnyRoute

@@ -1,7 +1,7 @@
 export { normalizeLayoutName } from '../layoutName'
 export { createGetRoutes, createSetupLayouts } from './setupLayouts'
 export type { SetupLayoutsOptions } from './setupLayouts'
-export { createLayoutWrapper, LAYOUT_PRELOAD, lazyLayout, setPageLayout, useLayout } from './wrapper'
+export { createLayoutWrapper, lazyLayout, setPageLayout, useLayout } from './wrapper'
 export type { LayoutMap, LayoutName, LazyLayout } from './wrapper'
 
 declare module 'vue-router' {
