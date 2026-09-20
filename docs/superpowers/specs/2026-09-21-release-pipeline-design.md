@@ -113,10 +113,16 @@ from the squash commit `feat: dynamic layouts (setPageLayout, useLayout) and sha
   `environment: Release`, `permissions: { contents: write, id-token: write }`.
   Steps: checkout (`persist-credentials: false`), pnpm, Node 22 with
   `registry-url: https://registry.npmjs.org`, `pnpm install --frozen-lockfile`,
-  `npm i -g npm@latest` (Trusted Publishing needs npm ≥ 11.5),
-  `pnpm build`, `pnpm publish --no-git-checks` (OIDC — no `NODE_AUTH_TOKEN`),
-  then `pnpm exec conventional-changelog -p angular -r 1 > release-notes.md`
-  and `gh release create "$TAG" --title "$TAG" --notes-file release-notes.md`
+  `npm i -g npm@latest` (Trusted Publishing needs npm ≥ 11.5), `pnpm build`,
+  `pnpm pack --out package.tgz` (pnpm resolves `catalog:` specifiers in the
+  packed manifest — the 2.0.0 incident cannot recur) and
+  `npm publish package.tgz --provenance --access public` (npm's documented
+  OIDC Trusted Publishing path; no `NODE_AUTH_TOKEN`). Release notes are the
+  top section of `CHANGELOG.md`, which the release commit already contains
+  (`conventional-changelog -r 1` at a tagged HEAD emits nothing, and the
+  checkout is shallow): `awk 'NR>1 && /^#{1,2} \[/{exit} {print}' CHANGELOG.md > release-notes.md`
+  followed by `test -s release-notes.md`. Then, idempotently,
+  `gh release view "$TAG" || gh release create "$TAG" --verify-tag --title "$TAG" --notes-file release-notes.md`
   (`GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}`).
 - `conventional-github-releaser` and its token are removed.
 
