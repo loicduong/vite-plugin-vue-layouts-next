@@ -1,9 +1,3 @@
-# Changelog
-
-All notable changes to this project are documented in this file. Entries are generated from
-[Conventional Commits](https://www.conventionalcommits.org/) by [conventional-changelog](https://github.com/conventional-changelog/conventional-changelog)
-(angular preset) at release time.
-
 # [3.0.0](https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v2.1.0...v3.0.0) (2026-09-03)
 
 
