@@ -3,12 +3,12 @@ cleanupUnusedCatalogs: true
 
 minimumReleaseAgeExcludePrune: true
 minimumReleaseAgeExclude:
-  - '@vitest/mocker@5.0.0'
-  - '@vitest/spy@5.0.0'
-  - vitest@5.0.0
   - vitepress@2.0.0-alpha.20
 
 trustPolicy: no-downgrade
+trustPolicyExclude:
+  - undici-types@6.21.0
+
 shellEmulator: true
 
 packages:
@@ -34,25 +34,25 @@ onlyBuiltDependencies:
 catalog:
   '@antfu/eslint-config': ^9.5.1
   '@types/debug': ^4.1.13
-  '@types/node': ^26.4.1
-  '@vitejs/plugin-vue': ^6.0.8
-  '@vue/compiler-sfc': ^3.5.42
-  '@vue/server-renderer': ^3.5.42
+  '@types/node': ^22.20.4
+  '@vitejs/plugin-vue': ^6.0.9
+  '@vue/compiler-sfc': ^3.5.43
+  '@vue/server-renderer': ^3.5.43
   '@vueuse/head': ^2.0.0
   cross-env: ^10.1.0
   debug: ^4.4.3
-  eslint: ^10.9.1
+  eslint: ^10.11.0
   fast-glob: ^3.3.3
   nodemon: ^3.1.14
-  tsdown: ^0.22.14
+  tsdown: ^0.23.0
   typescript: ^6.0.3
   unplugin-vue-markdown: ^32.1.1
-  vite: ^8.2.2
+  vite: ^8.3.0
   vite-plugin-inspect: ^12.0.2
   vite-ssg: ^28.3.0
   vitepress: ^2.0.0-alpha.20
   vitepress-plugin-group-icons: ^1.7.6
   vitepress-plugin-llms: ^1.14.0
-  vitest: ^5.0.0
-  vue: ^3.5.42
+  vitest: ^5.0.1
+  vue: ^3.5.43
   vue-router: ^5.3.1
