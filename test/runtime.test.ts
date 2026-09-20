@@ -20,12 +20,14 @@ const Second = layout('second')
 const A = layout('a')
 const B = layout('b')
 const Lazy = layout('lazy')
+const Lazy2 = layout('lazy2')
 // A bare functional layout component: no `props`/`displayName`/`__vccOpts`. Lazy entries
 // are now marked explicitly via `lazyLayout`, so a plain function like this must be
 // treated as a component, not mistaken for a `() => import()` loader.
 const Fn = (_props: unknown, { slots }: { slots: any }) => h('div', { 'data-layout': 'fn' }, slots.default?.())
 // Resolves on a macrotask, like a real chunk: an unresolved async component renders empty until then.
 const lazyFactory = vi.fn(() => new Promise<{ default: Component }>(resolve => setTimeout(resolve, 0, { default: Lazy })))
+const lazyFactory2 = vi.fn(() => new Promise<{ default: Component }>(resolve => setTimeout(resolve, 0, { default: Lazy2 })))
 
 function page(text: string): Component {
   return defineComponent({
@@ -62,6 +64,7 @@ function defaultRoutes(): RouteRecordRaw[] {
     { path: '/raw', component: page('raw'), meta: { layout: false } },
     { path: '/dyn', component: page('dyn') },
     { path: '/fn', component: page('fn'), meta: { layout: 'fn' } },
+    { path: '/user/:id', component: page('user') },
   ]
 }
 
@@ -78,7 +81,7 @@ function nestedRoutes(): RouteRecordRaw[] {
 // Navigates to `initialPath` BEFORE mounting so the router plugin does not
 // perform its own initial navigation to "/" on install.
 async function createApp(opts: AppOptions = {}) {
-  const layouts = { default: Default, admin: Admin, second: Second, a: A, b: B, lazy: lazyLayout(lazyFactory), fn: Fn as Component }
+  const layouts = { default: Default, admin: Admin, second: Second, a: A, b: B, lazy: lazyLayout(lazyFactory), lazy2: lazyLayout(lazyFactory2), broken: lazyLayout(() => Promise.reject(new Error('chunk failed'))), fn: Fn as Component }
   const Wrapper = createLayoutWrapper(layouts, 'default')
   const setupLayouts = createSetupLayouts(Wrapper, { inheritDefaultLayout: opts.inheritDefaultLayout ?? true })
   const router = createRouter({
@@ -208,6 +211,42 @@ describe('layoutWrapper', () => {
     expect(layoutOf(wrapper)).toBe('admin')
     await router.push('/lazy') // override resets on path change; the lazy layout must be ready
     expect(layoutOf(wrapper)).toBe('lazy')
+  })
+
+  it('preloads a lazy layout chosen by a guard on a reused record', async () => {
+    const { router, wrapper } = await createApp({
+      initialPath: '/user/1',
+      beforeEach: (to) => {
+        if (to.path === '/user/2')
+          to.meta.layout = 'lazy2'
+      },
+    })
+    expect(layoutOf(wrapper)).toBe('default')
+
+    // `/user/1` -> `/user/2` reuses the same matched record, so the generated record's
+    // own `beforeEnter` never runs. The wrapper mounted for `/user/1` already installed
+    // the global `beforeResolve` guard, which must preload `lazy2` before this `push`
+    // resolves — no `flushPromises` here.
+    await router.push('/user/2')
+    expect(layoutOf(wrapper)).toBe('lazy2')
+    expect(lazyFactory2).toHaveBeenCalledTimes(1)
+  })
+
+  it('a rejected lazy import aborts the navigation', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => {})
+    const { router, wrapper } = await createApp({
+      initialPath: '/user/1',
+      beforeEach: (to) => {
+        if (to.path === '/user/3')
+          to.meta.layout = 'broken'
+      },
+    })
+
+    await expect(router.push('/user/3')).rejects.toThrow('chunk failed')
+
+    expect(router.currentRoute.value.path).toBe('/user/1')
+    expect(layoutOf(wrapper)).toBe('default')
+    expect(wrapper.find('[data-page="user"]').exists()).toBe(true)
   })
 })
 

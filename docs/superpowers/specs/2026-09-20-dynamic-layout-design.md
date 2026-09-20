@@ -132,7 +132,10 @@ the `component` of every generated parent route.
   In-place `setPageLayout` to a not-yet-loaded lazy layout falls back to
   `defineAsyncComponent`.
 - On `setup`, installs the `afterEach` override-reset guard once per router
-  (module-level `WeakSet<Router>`):
+  (module-level `WeakSet<Router>`), which also registers the same `preload`
+  guard with `router.beforeResolve` so a guard that switches layouts between
+  params of a reused route record (e.g. `/user/1` -> `/user/2`, where
+  `beforeEnter` never fires) is still preloaded before the navigation confirms:
   `router.afterEach((to, from) => { if (from !== START_LOCATION && to.path !== from.path) override.value = null })`
   — the initial navigation is skipped so `setPageLayout` called before the
   router is ready still applies to the first page. `beforeEnter` runs before

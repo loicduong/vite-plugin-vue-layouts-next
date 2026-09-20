@@ -182,6 +182,16 @@ export function createLayoutWrapper(layouts: LayoutMap, defaultLayout: string): 
     if (guardedRouters.has(router))
       return
     guardedRouters.add(router)
+    // `beforeEnter` (attached per-record below) only fires when a record is entered.
+    // A guard that switches `to.meta.layout` between two params of the *same* route
+    // (e.g. `/user/1` -> `/user/2`) reuses the matched record, so `beforeEnter` never
+    // runs, the navigation would confirm before the import starts, and a rejected
+    // import could no longer abort it. That reused record was in `from.matched`, so
+    // its wrapper already mounted and reached this `setup()`, installing this global
+    // `beforeResolve` guard. It shares the `resolved`/`pending` caches with the
+    // `beforeEnter` guard, so a layout is never loaded twice: `beforeEnter` runs
+    // before `beforeResolve`, making the second pass a cache hit for entered records.
+    router.beforeResolve(preload)
     router.afterEach((to, from, failure) => {
       // A failed navigation (e.g. aborted by a guard) never reaches render; redirects
       // are re-issued as a new navigation rather than reported as a failure here.
