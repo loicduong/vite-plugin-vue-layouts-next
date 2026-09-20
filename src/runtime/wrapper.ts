@@ -106,6 +106,9 @@ function unwrapModule(mod: any): Component {
   return mod && typeof mod === 'object' && 'default' in mod ? mod.default : mod
 }
 
+/** Options-API navigation guards that never run on a layout component (see `checkRouteGuards`). */
+const ROUTE_GUARD_NAMES = ['beforeRouteEnter', 'beforeRouteUpdate', 'beforeRouteLeave'] as const
+
 export function createLayoutWrapper(layouts: LayoutMap, defaultLayout: string): Component {
   resolvedDefaultLayout = defaultLayout
   /** Lazy layouts already loaded (by the `beforeResolve` preload or an async render). */
@@ -115,6 +118,30 @@ export function createLayoutWrapper(layouts: LayoutMap, defaultLayout: string): 
   /** `defineAsyncComponent` per name, for renders that happen before the preload. */
   const asyncCache = new Map<string, Component>()
   const warned = new Set<string>()
+  /** Layout names already warned about declaring dead Options-API route guards. */
+  const guardWarned = new Set<string>()
+
+  /**
+   * Warn once per layout name when the resolved component declares an Options-API
+   * `beforeRouteEnter` / `beforeRouteUpdate` / `beforeRouteLeave`. Layouts are rendered
+   * by `LayoutWrapper`, not matched as route components, so Vue Router never calls
+   * these; the Composition-API `onBeforeRouteUpdate`/`onBeforeRouteLeave` still work
+   * since they subscribe directly to the router. Skipped for a `defineAsyncComponent`
+   * wrapper that hasn't resolved yet — the caller passes the real component once loaded.
+   */
+  function checkRouteGuards(name: string, comp: unknown) {
+    if (guardWarned.has(name) || !comp || (typeof comp !== 'object' && typeof comp !== 'function'))
+      return
+    const target = 'default' in (comp as any) ? (comp as any).default : comp
+    if (!target)
+      return
+    const opts = (target as any).__vccOpts ?? target
+    const guards = ROUTE_GUARD_NAMES.filter(g => opts?.[g])
+    if (guards.length > 0) {
+      guardWarned.add(name)
+      console.warn(`${PREFIX} Layout "${name}" declares ${guards.join(', ')}; layouts are no longer route components, so these guards will not run. Use onBeforeRouteUpdate/onBeforeRouteLeave or a router guard instead.`)
+    }
+  }
 
   function load(name: string, loader: () => Promise<any>): Promise<Component> {
     let promise = pending.get(name)
@@ -134,8 +161,10 @@ export function createLayoutWrapper(layouts: LayoutMap, defaultLayout: string): 
 
   function resolveComponent(name: string): Component | undefined {
     const loaded = resolved.get(name)
-    if (loaded)
+    if (loaded) {
+      checkRouteGuards(name, loaded)
       return loaded
+    }
     const entry = layouts[name]
     if (!entry)
       return undefined
@@ -148,6 +177,7 @@ export function createLayoutWrapper(layouts: LayoutMap, defaultLayout: string): 
       }
       return created
     }
+    checkRouteGuards(name, entry)
     return entry
   }
 

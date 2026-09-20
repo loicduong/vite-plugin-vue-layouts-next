@@ -25,6 +25,13 @@ const Lazy2 = layout('lazy2')
 // are now marked explicitly via `lazyLayout`, so a plain function like this must be
 // treated as a component, not mistaken for a `() => import()` loader.
 const Fn = (_props: unknown, { slots }: { slots: any }) => h('div', { 'data-layout': 'fn' }, slots.default?.())
+// An Options-API `beforeRouteLeave` on a layout never runs (layouts aren't route
+// components anymore); resolving this layout should warn about it once.
+const Guarded = defineComponent({
+  name: 'guarded-layout',
+  beforeRouteLeave() {},
+  setup: () => () => h('div', { 'data-layout': 'guarded' }, [h(RouterView)]),
+})
 // Resolves on a macrotask, like a real chunk: an unresolved async component renders empty until then.
 const lazyFactory = vi.fn(() => new Promise<{ default: Component }>(resolve => setTimeout(resolve, 0, { default: Lazy })))
 const lazyFactory2 = vi.fn(() => new Promise<{ default: Component }>(resolve => setTimeout(resolve, 0, { default: Lazy2 })))
@@ -64,6 +71,7 @@ function defaultRoutes(): RouteRecordRaw[] {
     { path: '/raw', component: page('raw'), meta: { layout: false } },
     { path: '/dyn', component: page('dyn') },
     { path: '/fn', component: page('fn'), meta: { layout: 'fn' } },
+    { path: '/guarded', component: page('guarded'), meta: { layout: 'guarded' } },
     { path: '/user/:id', component: page('user') },
   ]
 }
@@ -81,7 +89,7 @@ function nestedRoutes(): RouteRecordRaw[] {
 // Navigates to `initialPath` BEFORE mounting so the router plugin does not
 // perform its own initial navigation to "/" on install.
 async function createApp(opts: AppOptions = {}) {
-  const layouts = { default: Default, admin: Admin, second: Second, a: A, b: B, lazy: lazyLayout(lazyFactory), lazy2: lazyLayout(lazyFactory2), broken: lazyLayout(() => Promise.reject(new Error('chunk failed'))), fn: Fn as Component }
+  const layouts = { default: Default, admin: Admin, second: Second, a: A, b: B, lazy: lazyLayout(lazyFactory), lazy2: lazyLayout(lazyFactory2), broken: lazyLayout(() => Promise.reject(new Error('chunk failed'))), fn: Fn as Component, guarded: Guarded }
   const Wrapper = createLayoutWrapper(layouts, 'default')
   const setupLayouts = createSetupLayouts(Wrapper, { inheritDefaultLayout: opts.inheritDefaultLayout ?? true })
   const router = createRouter({
@@ -173,6 +181,20 @@ describe('layoutWrapper', () => {
     const { wrapper } = await createApp({ initialPath: '/missing' })
     expect(layoutOf(wrapper)).toBe('default')
     expect(warn).toHaveBeenCalledWith('[vite-plugin-vue-layouts-next] Layout "nope" not found, falling back to "default"')
+  })
+
+  it('warns once when a layout declares an Options-API route guard', async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    const { router, wrapper } = await createApp({ initialPath: '/guarded' })
+    expect(layoutOf(wrapper)).toBe('guarded')
+    expect(wrapper.find('[data-page="guarded"]').exists()).toBe(true)
+    expect(warn).toHaveBeenCalledTimes(1)
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining('beforeRouteLeave'))
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining('Layout "guarded"'))
+
+    await router.push('/')
+    await router.push('/guarded')
+    expect(warn).toHaveBeenCalledTimes(1)
   })
 
   it('leaves layout: false routes unwrapped', async () => {
