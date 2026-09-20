@@ -265,4 +265,27 @@ describe('setPageLayout', () => {
     await router.push('/dyn')
     expect(layoutOf(wrapper)).toBe('default')
   })
+
+  it('keeps the override when a navigation is aborted by a guard', async () => {
+    const { router, wrapper } = await createApp({
+      beforeEach: (to) => {
+        if (to.path === '/dyn')
+          return false
+      },
+    })
+
+    setPageLayout('admin')
+    await nextTick()
+    expect(layoutOf(wrapper)).toBe('admin')
+
+    const result = await router.push('/dyn')
+    expect(result).toBeInstanceOf(Error) // aborted navigation, not a throw
+    expect(layoutOf(wrapper)).toBe('admin')
+    expect(useLayoutOf(wrapper)).toBe('admin')
+
+    await router.push('/admin') // succeeds: real path change
+    expect(layoutOf(wrapper)).toBe('admin')
+    await router.push('/') // override must be gone now; '/' has no meta.layout
+    expect(layoutOf(wrapper)).toBe('default')
+  })
 })

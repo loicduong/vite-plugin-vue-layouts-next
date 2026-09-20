@@ -134,7 +134,11 @@ export function createLayoutWrapper(layouts: LayoutMap, defaultLayout: string): 
     if (guardedRouters.has(router))
       return
     guardedRouters.add(router)
-    router.afterEach((to, from) => {
+    router.afterEach((to, from, failure) => {
+      // A failed navigation (e.g. aborted by a guard) never reaches render; redirects
+      // are re-issued as a new navigation rather than reported as a failure here.
+      if (failure)
+        return
       if (from !== START_LOCATION && to.path !== from.path)
         override.value = null
     })
