@@ -55,6 +55,15 @@ const layout = useLayout() // ComputedRef<string | false>
 - In a nested route (a page with children, each level with its own `layout`), guards and `setPageLayout` target the
   *innermost* layout — the one directly around the leaf page. The static layouts of the outer levels are unaffected.
 - An unknown layout name logs a warning and falls back to `defaultLayout`.
+- Layouts are rendered by a shared wrapper component, not matched as route components, so an Options-API
+  `beforeRouteEnter` / `beforeRouteUpdate` / `beforeRouteLeave` declared *inside a layout component* never runs; a
+  warning is logged once per layout name when this is detected. Use `onBeforeRouteUpdate` / `onBeforeRouteLeave`
+  (Composition API) or a router-level guard instead — these still work correctly.
+- **Vue < 3.3:** `app.runWithContext` doesn't exist yet, so the wrapper's `beforeRouteEnter` can't reach the router to
+  preload a lazy layout, and the global `beforeResolve` fallback is only installed once a wrapper's `setup()` has run
+  at least once. In practice this only matters for a lazy layout selected by a *page's own* `beforeRouteEnter` during
+  the *initial* navigation: it renders once its chunk loads instead of being awaited by the navigation. Static `meta.layout`,
+  `<route>` blocks, `beforeEach`, route-level `beforeEnter`, and any navigation after the first are unaffected.
 - `useLayout()` returns the *requested* name — `meta.layout`, or the last value passed to `setPageLayout` — not the
   rendered fallback. So for an unknown name it still reports that name, even though the wrapper renders
   `defaultLayout` (and warns). This matches Nuxt's `useLayout` semantics.
