@@ -111,26 +111,32 @@ the `component` of every generated parent route.
 - `name === false` → `h(RouterView)`.
 - Otherwise `h(resolve(name), null, { default: () => h(RouterView) })`.
 - `resolve(name)`: returns the cached, already-loaded component if the
-  `beforeResolve` preload (below) has resolved it; otherwise, if
+  record's `beforeEnter` preload (below) has resolved it; otherwise, if
   `layouts[name]` is a function, wraps it in `defineAsyncComponent` once
   (cached per name); otherwise returns the component as-is.
 - Unknown name → `console.warn('[vite-plugin-vue-layouts-next] Layout "x" not found, falling back to "default"')`
   once per name, then resolve `defaultLayout`. If `defaultLayout` is also
   missing, render bare `RouterView`.
-- On `setup`, installs the router guards once per router (module-level
-  `WeakSet<Router>`):
-  - `router.afterEach((to, from) => { if (from !== START_LOCATION && to.path !== from.path) override.value = null })`
-    — the initial navigation is skipped so `setPageLayout` called before the
-    router is ready still applies to the first page.
-  - `router.beforeResolve(async (to) => …)` — for every `meta.isLayout`
-    record in `to.matched`, compute the name that wrapper will render
-    (same rule as above, using `override`/guard for the innermost) and, if
-    `layouts[name]` is a function, `await` it and store the resolved
-    component (`mod.default ?? mod`) in the cache. This keeps the original
-    timing: lazy layouts load *before* the navigation is confirmed, the
-    previous page stays visible, and a chunk load error fails the navigation.
-    In-place `setPageLayout` to a not-yet-loaded lazy layout falls back to
-    `defineAsyncComponent`.
+- `createLayoutWrapper` also builds a standalone `NavigationGuard` (`preload`)
+  and returns it attached to the component under `Symbol.for('vite-plugin-vue-layouts-next:preload')`.
+  `createSetupLayouts` reads that symbol once and, when present, sets it as
+  `beforeEnter` on every generated parent route record — so it runs during
+  navigation resolution for *any* matched record, including the initial
+  navigation, before any wrapper has ever mounted. For every `meta.isLayout`
+  record in `to.matched`, it computes the name that wrapper will render
+  (same rule as above, using `override`/guard for the innermost) and, if
+  `layouts[name]` is a function, `await`s it and stores the resolved
+  component (`mod.default ?? mod`) in the cache. This keeps the original
+  timing: lazy layouts load *before* the navigation is confirmed, the
+  previous page stays visible, and a chunk load error fails the navigation.
+  In-place `setPageLayout` to a not-yet-loaded lazy layout falls back to
+  `defineAsyncComponent`.
+- On `setup`, installs the `afterEach` override-reset guard once per router
+  (module-level `WeakSet<Router>`):
+  `router.afterEach((to, from) => { if (from !== START_LOCATION && to.path !== from.path) override.value = null })`
+  — the initial navigation is skipped so `setPageLayout` called before the
+  router is ready still applies to the first page. `beforeEnter` runs before
+  `afterEach`, so this reset logic is unaffected by the move.
 
 ### `setupLayouts`
 

@@ -35,5 +35,7 @@ The parent route created for each page does not point at the layout component di
 resolves the layout and renders it around the page's `<router-view>`. Each wrapper resolves from its *own wrapped
 record*: the `layout` of the page it wraps, falling back to `defaultLayout`, so a nested route with a `layout` at each
 level renders one layout per level, exactly as before. The innermost wrapper additionally honours a `meta.layout`
-assigned in a router guard and an in-place override from `setPageLayout`. The route tree is still static; only the
+assigned in a router guard and an in-place override from `setPageLayout`. The generated parent route also carries a
+`beforeEnter` guard that loads a lazy layout before the navigation is confirmed, including the very first one, so
+there is no unstyled flash while a wrapper mounts for the first time. The route tree is still static; only the
 component rendered inside the wrapper is dynamic. See [Dynamic Layouts](/guide/dynamic-layout).

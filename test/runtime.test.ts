@@ -138,8 +138,8 @@ describe('layoutWrapper', () => {
   })
 
   it('resolves async layouts once per name', async () => {
-    // `/lazy` is pushed before mount, so no preload guard exists yet and the
-    // wrapper falls back to `defineAsyncComponent` (same path as an in-place `setPageLayout`).
+    // The generated record's own `beforeEnter` preloads `/lazy` during the initial
+    // `router.push`, before the wrapper ever mounts.
     const { router, wrapper } = await createApp({ initialPath: '/lazy' })
     await flushTimers()
     expect(layoutOf(wrapper)).toBe('lazy')
@@ -147,6 +147,22 @@ describe('layoutWrapper', () => {
     await router.push('/lazy')
     await flushPromises()
     expect(lazyFactory).toHaveBeenCalledTimes(1)
+  })
+
+  it('preloads a lazy layout on the initial navigation', async () => {
+    // No flushPromises/flushTimers here: the record's own `beforeEnter` must already
+    // have loaded the chunk during the initial `router.push`, before the wrapper mounts.
+    const { wrapper } = await createApp({ initialPath: '/lazy' })
+    expect(layoutOf(wrapper)).toBe('lazy')
+  })
+
+  it('preloads when the first route is unwrapped', async () => {
+    // Starting on an unwrapped route means no wrapper has ever mounted, so the preload
+    // can only come from the target record's own `beforeEnter`, not a wrapper-installed guard.
+    const { router, wrapper } = await createApp({ initialPath: '/raw' })
+    expect(layoutOf(wrapper)).toBeNull()
+    await router.push('/lazy')
+    expect(layoutOf(wrapper)).toBe('lazy')
   })
 
   it('warns and falls back to default for an unknown layout', async () => {

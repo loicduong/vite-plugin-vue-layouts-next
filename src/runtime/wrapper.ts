@@ -1,5 +1,5 @@
 import type { Component, ComputedRef } from 'vue'
-import type { RouteLocationNormalized, Router, RouteRecordNormalized } from 'vue-router'
+import type { NavigationGuard, RouteLocationNormalized, Router, RouteRecordNormalized } from 'vue-router'
 import { computed, defineAsyncComponent, defineComponent, h, inject, shallowRef } from 'vue'
 import { matchedRouteKey, RouterView, START_LOCATION, useRoute, useRouter } from 'vue-router'
 
@@ -26,6 +26,9 @@ export function isLazyLayout(entry: unknown): entry is LazyLayout {
 }
 
 export type LayoutMap = Record<string, Component | LazyLayout>
+
+/** Well-known key the generated wrapper's preload guard is exposed under, so `createSetupLayouts` can attach it as `beforeEnter` without changing the generated route code. */
+export const LAYOUT_PRELOAD = Symbol.for('vite-plugin-vue-layouts-next:preload')
 
 /** The parts of a route location the resolution rule needs (current route or a guard's `to`). */
 type RouteLike = Pick<RouteLocationNormalized, 'matched' | 'meta'>
@@ -155,6 +158,26 @@ export function createLayoutWrapper(layouts: LayoutMap, defaultLayout: string): 
     return resolveComponent(defaultLayout)
   }
 
+  // Load lazy layouts before the navigation is confirmed, like when the
+  // `() => import()` factory was the route component itself. Attached as
+  // `beforeEnter` to every generated layout record by `createSetupLayouts`, so it
+  // also covers the initial navigation, before any wrapper has mounted.
+  const preload: NavigationGuard = async (to, from) => {
+    // The override only survives this navigation if `afterEach` below keeps it.
+    const keepOverride = from === START_LOCATION || to.path === from.path
+    for (const rec of to.matched) {
+      if (!rec.meta.isLayout)
+        continue
+      const name = resolveNameFor(to, rec, keepOverride ? override.value : null)
+      if (name === false)
+        continue
+      const entry = layouts[name] ?? layouts[defaultLayout]
+      const key = layouts[name] ? name : defaultLayout
+      if (isLazyLayout(entry) && !resolved.has(key))
+        await load(key, entry)
+    }
+  }
+
   function installGuards(router: Router) {
     if (guardedRouters.has(router))
       return
@@ -167,26 +190,9 @@ export function createLayoutWrapper(layouts: LayoutMap, defaultLayout: string): 
       if (from !== START_LOCATION && to.path !== from.path)
         override.value = null
     })
-    // Load lazy layouts before the navigation is confirmed, like when the
-    // `() => import()` factory was the route component itself.
-    router.beforeResolve(async (to, from) => {
-      // The override only survives this navigation if `afterEach` above keeps it.
-      const keepOverride = from === START_LOCATION || to.path === from.path
-      for (const rec of to.matched) {
-        if (!rec.meta.isLayout)
-          continue
-        const name = resolveNameFor(to, rec, keepOverride ? override.value : null)
-        if (name === false)
-          continue
-        const entry = layouts[name] ?? layouts[defaultLayout]
-        const key = layouts[name] ? name : defaultLayout
-        if (isLazyLayout(entry) && !resolved.has(key))
-          await load(key, entry)
-      }
-    })
   }
 
-  return defineComponent({
+  const Wrapper = defineComponent({
     name: 'LayoutWrapper',
     setup() {
       const route = useRoute()
@@ -204,4 +210,6 @@ export function createLayoutWrapper(layouts: LayoutMap, defaultLayout: string): 
       }
     },
   })
+
+  return Object.assign(Wrapper, { [LAYOUT_PRELOAD]: preload })
 }
