@@ -59,7 +59,7 @@ export function createSetupLayouts(
 ): (routes: readonly RouteRecordRaw[]) => RouteRecordRaw[]
 export function setPageLayout(name: LayoutName): void
 export function useLayout(): ComputedRef<LayoutName>
-export { normalizeLayoutName } from '../layoutName'
+export { normalizeLayoutName } from '../layoutName'   // layoutName.ts drops its node:path import so it is browser-safe
 ```
 
 `virtual:generated-layouts` re-exports `createGetRoutes`, `setupLayouts`,
@@ -100,8 +100,13 @@ used as the `component` of every generated parent route.
 - Unknown name → `console.warn('[vite-plugin-vue-layouts-next] Layout "x" not found, falling back to "default"')`
   and resolve `defaultLayout`. If `defaultLayout` is also missing, render bare
   `RouterView`.
-- On `setup`, registers `router.afterEach((to, from) => { if (to.path !== from.path) override.value = null })`
-  once per wrapper instance and removes it in `onScopeDispose`.
+- On `setup`, registers the override-reset guard on the router once per router
+  (tracked in a module-level `WeakSet<Router>`), so wrapper remounts do not
+  stack guards and the guard keeps working while an unwrapped
+  (`layout: false`) route is active:
+  `router.afterEach((to, from) => { if (from !== START_LOCATION && to.path !== from.path) override.value = null })`.
+  The initial navigation is skipped so `setPageLayout` called before the
+  router is ready still applies to the first page.
 
 ### `setPageLayout(name)`
 
@@ -133,6 +138,12 @@ export const layouts = { /* mode-specific */ }
 const LayoutWrapper = createLayoutWrapper(layouts, '<defaultLayout>')
 export const setupLayouts = createSetupLayouts(LayoutWrapper, { inheritDefaultLayout: <bool> })
 ```
+
+The plugin's `resolveId` does not special-case the runtime import; Vite resolves
+`vite-plugin-vue-layouts-next/runtime` through the package's own `exports`.
+Both plugin factories add `optimizeDeps.include: ['vite-plugin-vue-layouts-next/runtime']`
+in a `config` hook so dev mode does not trigger a late re-optimization reload.
+Tests that build a fixture app alias the specifier to `src/runtime/index.ts`.
 
 - Plugin mode (`src/RouteLayout.ts` + `src/importCode.ts`): `layouts` built from
   scanned files as today (sync `import` or `() => import()` per `importMode`).
@@ -172,7 +183,10 @@ Cases:
 6. Async layout resolves; `defineAsyncComponent` is created once per name.
 7. Unknown name warns and falls back to default.
 8. Static `layout: false` route is not wrapped (regression).
-9. `afterEach` guard is removed when the wrapper unmounts.
+9. The reset guard is registered once per router even when the wrapper mounts
+   several times (navigating through a `layout: false` route and back).
+10. `setPageLayout('admin')` called before the initial navigation applies to
+    the first rendered page.
 
 `test/load-hook.test.ts` and `test/integration.test.ts` are updated to assert
 the new module shape (imports from `/runtime`; no inline regex) and to import
