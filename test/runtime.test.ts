@@ -221,6 +221,28 @@ describe('nested routes', () => {
   })
 })
 
+describe('useLayout', () => {
+  it('reports false when inheritDefaultLayout leaves the route unwrapped', async () => {
+    const { router, wrapper } = await createApp({
+      inheritDefaultLayout: false,
+      routes: [
+        {
+          path: '/p',
+          component: parentPage('p'),
+          children: [{ path: 'c', component: page('c'), meta: { layout: 'admin' } }],
+        },
+      ],
+      initialPath: '/p',
+    })
+    expect(layoutOf(wrapper)).toBeNull()
+    expect(useLayoutOf(wrapper)).toBe('false')
+
+    await router.push('/p/c')
+    expect(layoutOf(wrapper)).toBe('admin')
+    expect(useLayoutOf(wrapper)).toBe('admin')
+  })
+})
+
 describe('setPageLayout', () => {
   it('switches the layout in place and resets on path change', async () => {
     const { router, wrapper } = await createApp()

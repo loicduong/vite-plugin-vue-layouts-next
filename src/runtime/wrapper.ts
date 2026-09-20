@@ -28,13 +28,17 @@ export function setPageLayout(name: LayoutName): void {
   override.value = name
 }
 
-/** Reactive name of the layout resolved for the current route (`false` when none). */
+/**
+ * Reactive name of the layout resolved for the current route.
+ * `false` when no wrapper is rendered around it (a static `layout: false` route, or
+ * one deliberately left unwrapped because `inheritDefaultLayout` is `false`).
+ */
 export function useLayout(): ComputedRef<LayoutName> {
   const route = useRoute()
   return computed(() => {
     const own = innermostLayoutRecord(route)
     if (!own)
-      return route.meta.layout ?? resolvedDefaultLayout
+      return false
     return resolveNameFor(route, own, override.value)
   })
 }
