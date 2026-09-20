@@ -74,6 +74,12 @@ function resolveNameFor(route: RouteLike, own: RouteRecordNormalized, overrideVa
   return overrideValue ?? guardValue ?? staticName
 }
 
+// Same test Vue Router uses to tell a route component from a lazy loader.
+function isLazyLoader(entry: LayoutMap[string]): entry is () => Promise<unknown> {
+  return typeof entry === 'function'
+    && !('displayName' in entry) && !('props' in entry) && !('__vccOpts' in entry)
+}
+
 function unwrapModule(mod: any): Component {
   return mod && typeof mod === 'object' && 'default' in mod ? mod.default : mod
 }
@@ -111,7 +117,7 @@ export function createLayoutWrapper(layouts: LayoutMap, defaultLayout: string): 
     const entry = layouts[name]
     if (!entry)
       return undefined
-    if (typeof entry === 'function') {
+    if (isLazyLoader(entry)) {
       let created = asyncCache.get(name)
       if (!created) {
         const loader = entry as () => Promise<any>
@@ -159,7 +165,7 @@ export function createLayoutWrapper(layouts: LayoutMap, defaultLayout: string): 
           continue
         const entry = layouts[name] ?? layouts[defaultLayout]
         const key = layouts[name] ? name : defaultLayout
-        if (typeof entry === 'function' && !resolved.has(key))
+        if (isLazyLoader(entry) && !resolved.has(key))
           await load(key, entry as () => Promise<any>)
       }
     })

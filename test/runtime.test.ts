@@ -20,6 +20,12 @@ const Second = layout('second')
 const A = layout('a')
 const B = layout('b')
 const Lazy = layout('lazy')
+// A functional (non-lazy) layout component, marked like Vue Router expects a real
+// component to be marked (e.g. via `defineComponent`/JSX compiler output).
+const Fn = Object.assign(
+  (_props: unknown, { slots }: { slots: any }) => h('div', { 'data-layout': 'fn' }, slots.default?.()),
+  { props: {} },
+)
 // Resolves on a macrotask, like a real chunk: an unresolved async component renders empty until then.
 const lazyFactory = vi.fn(() => new Promise<{ default: Component }>(resolve => setTimeout(resolve, 0, { default: Lazy })))
 
@@ -57,6 +63,7 @@ function defaultRoutes(): RouteRecordRaw[] {
     { path: '/missing', component: page('missing'), meta: { layout: 'nope' } },
     { path: '/raw', component: page('raw'), meta: { layout: false } },
     { path: '/dyn', component: page('dyn') },
+    { path: '/fn', component: page('fn'), meta: { layout: 'fn' } },
   ]
 }
 
@@ -73,7 +80,7 @@ function nestedRoutes(): RouteRecordRaw[] {
 // Navigates to `initialPath` BEFORE mounting so the router plugin does not
 // perform its own initial navigation to "/" on install.
 async function createApp(opts: AppOptions = {}) {
-  const layouts = { default: Default, admin: Admin, second: Second, a: A, b: B, lazy: lazyFactory }
+  const layouts = { default: Default, admin: Admin, second: Second, a: A, b: B, lazy: lazyFactory, fn: Fn as Component }
   const Wrapper = createLayoutWrapper(layouts, 'default')
   const setupLayouts = createSetupLayouts(Wrapper, { inheritDefaultLayout: opts.inheritDefaultLayout ?? true })
   const router = createRouter({
@@ -167,6 +174,17 @@ describe('layoutWrapper', () => {
     await router.push('/lazy')
     expect(layoutOf(wrapper)).toBe('lazy')
     expect(lazyFactory).toHaveBeenCalledTimes(1)
+  })
+
+  it('renders a functional layout component synchronously, not as a lazy loader', async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    const { router, wrapper } = await createApp()
+    await router.push('/fn')
+    // No flushPromises: if it were mistaken for a loader, defineAsyncComponent would
+    // render nothing until the next microtask/macrotask.
+    expect(layoutOf(wrapper)).toBe('fn')
+    expect(wrapper.find('[data-page="fn"]').exists()).toBe(true)
+    expect(warn).not.toHaveBeenCalled()
   })
 
   it('preloads the layout of the target route, not a stale in-place override', async () => {
