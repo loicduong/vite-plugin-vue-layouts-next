@@ -39,6 +39,23 @@ pnpm add -D vite-plugin-vue-layouts-next
 This package targets Vite 6 to 8, Vue 3.2+, and Vue Router 4.0.11 or 5. Page discovery is owned by Vue Router 5's own
 Vite plugin — this plugin only resolves layouts, so no page-routing plugin is needed alongside it.
 
+### Support Policy
+
+Which versions of the peer dependencies a release of this plugin supports follows one rule set, so it does not have to
+be decided again for each release:
+
+- **Vite** — the current major and the two previous majors, mirroring Vite's own
+  [release policy](https://vite.dev/releases). Today: Vite 6, 7 and 8.
+- **Vue Router** — the current major and the previous major; for each, only its latest minor is a support target.
+  Today: Vue Router 5.x and 4.6.x. Older 4.x minors still install (the peer range starts at 4.0.11) but are not
+  tested against.
+- **Vue** — no separate floor. Vue has no LTS or backport policy, so the supported Vue range is whatever the oldest
+  supported Vue Router minor requires (Vue Router 4.6 requires Vue 3.5). The peer range currently still allows
+  Vue 3.2+; features that need a newer Vue degrade gracefully there and say so in their docs
+  (see [Dynamic Layouts](/guide/dynamic-layout)).
+- Narrowing any peer range is a breaking change and only happens in a **major** release, listed under "Removed" in
+  the changelog. The next major is expected to move the floors to Vue Router 4.6 and Vue 3.5.
+
 ## Adding the Plugin
 
 Add it to your `vite.config.ts`, after `VueRouter()`:

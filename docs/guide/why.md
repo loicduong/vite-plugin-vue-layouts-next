@@ -34,6 +34,8 @@ improvements and fixes. The differences that matter when choosing between them:
   of slash-separated paths. See [Layout Names](/config/layout-names).
 - **`inheritDefaultLayout`.** Controls whether a parent route still receives the default layout when a child route
   declares its own, which avoids double-wrapped layouts in nested route trees.
+- **Dynamic layouts.** `setPageLayout` and `useLayout` (modelled on Nuxt) let a page's layout change at runtime — for
+  example per user role from a router guard. See [Dynamic Layouts](/guide/dynamic-layout).
 
 If you are coming from the original plugin or from an older version of this one, see [Migration](/guide/migration).
 

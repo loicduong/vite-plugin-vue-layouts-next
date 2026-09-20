@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `setPageLayout()` to change the current page's layout at runtime and `useLayout()` to read it, exported from `virtual:generated-layouts` ([#4](https://github.com/loicduong/vite-plugin-vue-layouts-next/discussions/4))
+- `route.meta.layout` is now read on every navigation, so router guards can assign layouts per role
+- New `vite-plugin-vue-layouts-next/runtime` entry
+- `RouteMeta` type augmentation for `layout` and `isLayout`, shipped in `vite-plugin-vue-layouts-next/runtime` and re-exported through `client.d.ts` (requires `moduleResolution: "bundler"`, `node16`, or `nodenext` — the Vite default)
+
+### Changed
+
+- Generated layout parent routes use a shared wrapper component that resolves the layout at render time, instead of the layout component itself. `meta.isLayout` is unchanged; code that read `route.matched[n].components.default` of a layout route will now see the wrapper.
+- Lazy layouts (`importMode: 'async'`) are preloaded by the wrapper's own `beforeRouteEnter` guard, which also installs a global `beforeResolve` on first use, so they load before the navigation is confirmed — including the initial navigation and layouts chosen by a page's own guards. On Vue < 3.3, a lazy layout selected by a page's own `beforeRouteEnter` during the *initial* navigation is not awaited, since `app.runWithContext` isn't available yet to reach the router from the wrapper's `beforeRouteEnter`. Because layouts are no longer route components, Options-API `beforeRouteEnter` / `beforeRouteUpdate` / `beforeRouteLeave` declared inside a *layout* component no longer run; a warning is now logged once per layout name when this is detected, and router-level guards or the composition guards (`onBeforeRouteUpdate`, `onBeforeRouteLeave`) should be used instead.
+
 ## [3.0.0] - 2026-09-03
 
 ### Added

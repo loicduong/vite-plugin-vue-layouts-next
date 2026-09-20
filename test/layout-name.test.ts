@@ -50,6 +50,13 @@ describe('layout name normalization', () => {
   ])('normalizes layout path %s to %s', (input, expected) => {
     expect(normalizeLayoutName(input)).toBe(expected)
   })
+
+  it('splits dir/base/ext without node:path', () => {
+    expect(normalizeLayoutName('a/b/c.layout.vue')).toBe('a-b-c-layout')
+    expect(normalizeLayoutName('noext')).toBe('noext')
+    expect(normalizeLayoutName('dir\\Win.vue')).toBe('dir-win')
+    expect(normalizeLayoutName('.hidden.vue')).toBe('hidden')
+  })
 })
 
 describe('layout import code', () => {
@@ -67,9 +74,9 @@ describe('layout import code', () => {
       createOptions(),
     )
 
-    expect(code).toContain('\'desktop-default\': () => import(\'/project/src/layouts/desktop/default.vue\'),')
-    expect(code).toContain('\'desktop-base\': () => import(\'/project/src/layouts/desktop-base/DesktopBase.vue\'),')
-    expect(code).toContain('\'sub-layoutsub\': () => import(\'/project/src/layouts/sub/layoutsub.vue\'),')
+    expect(code).toContain('\'desktop-default\': lazyLayout(() => import(\'/project/src/layouts/desktop/default.vue\')),')
+    expect(code).toContain('\'desktop-base\': lazyLayout(() => import(\'/project/src/layouts/desktop-base/DesktopBase.vue\')),')
+    expect(code).toContain('\'sub-layoutsub\': lazyLayout(() => import(\'/project/src/layouts/sub/layoutsub.vue\')),')
     expect(code).not.toContain('\'desktop/default\'')
     expect(code).not.toContain('\'desktop/DesktopDefault\'')
     expect(code).not.toContain('\'sub/layoutsub\'')

@@ -93,6 +93,22 @@ const router = createRouter({
 }
 ```
 
+### 動的レイアウト
+
+```ts
+import { setPageLayout, useLayout } from 'virtual:generated-layouts'
+
+setPageLayout('admin') // 現在のページのレイアウトをその場で切り替える
+const layout = useLayout() // ComputedRef<string | false>
+
+router.beforeEach((to) => {
+  if (to.path.startsWith('/admin'))
+    to.meta.layout = isAdmin() ? 'admin' : 'default'
+})
+```
+
+詳細は [Dynamic Layouts ガイド](https://loicduong.github.io/vite-plugin-vue-layouts-next/guide/dynamic-layout) を参照してください。
+
 ## マイグレーション
 
 古い設定から移行する場合は、Vue Router 5 のファイルベースルーティングをルートの生成元として使用し、このプラグインはレイアウトのみを扱うようにしてください。

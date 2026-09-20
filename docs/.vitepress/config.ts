@@ -93,6 +93,7 @@ export default defineConfig({
           text: 'Guide',
           items: [
             { text: 'Common Patterns', link: '/guide/patterns' },
+            { text: 'Dynamic Layouts', link: '/guide/dynamic-layout' },
             { text: 'ClientSideLayout', link: '/guide/client-side-layout' },
             { text: 'Migration from v2', link: '/guide/migration' },
             { text: 'Examples', link: '/guide/examples' },

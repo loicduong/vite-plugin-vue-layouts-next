@@ -77,6 +77,22 @@ const router = createRouter({
 
 See [Getting Started][docs-getting-started] for client types and per-page layouts.
 
+### Dynamic layouts
+
+```ts
+import { setPageLayout, useLayout } from 'virtual:generated-layouts'
+
+setPageLayout('admin') // switch the current page's layout in place
+const layout = useLayout() // ComputedRef<string | false>
+
+router.beforeEach((to) => {
+  if (to.path.startsWith('/admin'))
+    to.meta.layout = isAdmin() ? 'admin' : 'default'
+})
+```
+
+See the [Dynamic Layouts guide](https://loicduong.github.io/vite-plugin-vue-layouts-next/guide/dynamic-layout).
+
 ## Documentation
 
 Full documentation lives at **[loicduong.github.io/vite-plugin-vue-layouts-next][docs]**:
@@ -87,6 +103,7 @@ Full documentation lives at **[loicduong.github.io/vite-plugin-vue-layouts-next]
 - [Migration][docs-migration] — upgrading to v3, including layout name normalization
 - [Config][docs-config] — plugin options, layout names and ClientSideLayout options
 - [Common Patterns][docs-patterns] — transitions and passing data between layouts and pages
+- [Dynamic Layouts][docs-dynamic-layout] — `setPageLayout` and `useLayout`
 - [ClientSideLayout][docs-client-side-layout] — the lighter, glob-import based variant
 - [Examples][docs-examples] — runnable SPA, SSG, client-side and nested-routes setups
 
@@ -133,6 +150,7 @@ PRs accepted. [Open an issue][open-an-issue] or submit PRs for any improvements.
 [docs-migration]: https://loicduong.github.io/vite-plugin-vue-layouts-next/guide/migration
 [docs-config]: https://loicduong.github.io/vite-plugin-vue-layouts-next/config/
 [docs-patterns]: https://loicduong.github.io/vite-plugin-vue-layouts-next/guide/patterns
+[docs-dynamic-layout]: https://loicduong.github.io/vite-plugin-vue-layouts-next/guide/dynamic-layout
 [docs-client-side-layout]: https://loicduong.github.io/vite-plugin-vue-layouts-next/guide/client-side-layout
 [docs-examples]: https://loicduong.github.io/vite-plugin-vue-layouts-next/guide/examples
 [docs-llms]: https://loicduong.github.io/vite-plugin-vue-layouts-next/llms.txt

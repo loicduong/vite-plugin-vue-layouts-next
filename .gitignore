@@ -5,3 +5,4 @@ dist
 .idea/
 **/.vitepress/cache
 **/.vitepress/dist
+.claude

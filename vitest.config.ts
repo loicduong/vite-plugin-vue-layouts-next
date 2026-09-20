@@ -9,6 +9,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': resolve(import.meta.dirname, 'src'),
+      'vite-plugin-vue-layouts-next/runtime': resolve(import.meta.dirname, 'src/runtime/index.ts'),
     },
   },
 })

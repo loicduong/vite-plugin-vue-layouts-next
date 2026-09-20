@@ -15,6 +15,11 @@ describe('integration: minimal Vite build with plugin', () => {
       root,
       logLevel: 'warn',
       plugins: [Vue(), ClientSideLayout({ layoutDir: 'src/layouts' })],
+      resolve: {
+        alias: {
+          'vite-plugin-vue-layouts-next/runtime': resolve(fixturesRoot, '..', '..', 'src', 'runtime', 'index.ts'),
+        },
+      },
       build: {
         rollupOptions: {
           input: resolve(root, 'index.html'),
