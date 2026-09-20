@@ -77,49 +77,60 @@ consumers via `client.d.ts`.
 
 ### Layout resolution
 
-Inside the wrapper (and `useLayout`):
+`useRoute().meta` is the *merged* meta of every matched record (leaf wins), so a
+wrapper must not read the layout from it directly: with nested route trees
+(`pages/news.vue` + `pages/news/index.vue`, each with its own `layout`) every
+wrapper would resolve to the leaf's layout. Each wrapper therefore resolves
+from its **own wrapped record**:
 
 ```
-name = override ?? route.meta.layout ?? defaultLayout
+own       = inject(matchedRouteKey).value          // the generated parent record
+idx       = route.matched.indexOf(own)
+page      = route.matched[idx + 1]                 // the record this wrapper wraps
+static    = page.meta.layout || defaultLayout      // own record meta, `||` like the original
+innermost = no record after idx + 1 has meta.isLayout
+guard     = route.meta.layout !== staticMerged ? route.meta.layout : undefined
+            // staticMerged = fold of own `meta.layout` over route.matched
+name      = innermost ? (override ?? guard ?? static) : static
 ```
 
-- `route.meta` is rebuilt by Vue Router on every navigation, so a guard doing
-  `to.meta.layout = 'admin'` is picked up by the computed.
-- `override` is a module-level `shallowRef<LayoutName | null>` set by
-  `setPageLayout`.
-- `undefined`/`null` meta → `defaultLayout`. `false` → no layout.
+- Static layouts reproduce the original algorithm exactly (per-record
+  `meta.layout`, `||` fallback to `defaultLayout`, nested `layout: false`
+  children stay inside the parent's layout).
+- Dynamic inputs (`setPageLayout` override and guard assignments to
+  `to.meta.layout`) apply only to the innermost wrapper — the one directly
+  wrapping the leaf page. A guard assignment is detected as "merged
+  `route.meta.layout` differs from what the records alone would produce".
+- `false` → no layout.
 
 ### Wrapper component
 
-`createLayoutWrapper(layouts, defaultLayout)` returns one component instance
-used as the `component` of every generated parent route.
+`createLayoutWrapper(layouts, defaultLayout)` returns one component used as
+the `component` of every generated parent route.
 
 - `name === false` → `h(RouterView)`.
 - Otherwise `h(resolve(name), null, { default: () => h(RouterView) })`.
-- `resolve(name)`: if `layouts[name]` is a function (async import) wrap it in
-  `defineAsyncComponent` once and cache in a `Map`; otherwise return the
-  component as-is.
+- `resolve(name)`: returns the cached, already-loaded component if the
+  `beforeResolve` preload (below) has resolved it; otherwise, if
+  `layouts[name]` is a function, wraps it in `defineAsyncComponent` once
+  (cached per name); otherwise returns the component as-is.
 - Unknown name → `console.warn('[vite-plugin-vue-layouts-next] Layout "x" not found, falling back to "default"')`
-  and resolve `defaultLayout`. If `defaultLayout` is also missing, render bare
-  `RouterView`.
-- On `setup`, registers the override-reset guard on the router once per router
-  (tracked in a module-level `WeakSet<Router>`), so wrapper remounts do not
-  stack guards and the guard keeps working while an unwrapped
-  (`layout: false`) route is active:
-  `router.afterEach((to, from) => { if (from !== START_LOCATION && to.path !== from.path) override.value = null })`.
-  The initial navigation is skipped so `setPageLayout` called before the
-  router is ready still applies to the first page.
-
-### `setPageLayout(name)`
-
-Sets `override.value = name`. The override lives until the next navigation to a
-different `path` (query/hash changes keep it). Calling it before a router is
-active still sets the ref; the wrapper reads it on mount.
-
-### `useLayout()`
-
-Returns `computed(() => name)` using `useRoute()`; usable in any component
-rendered under the router.
+  once per name, then resolve `defaultLayout`. If `defaultLayout` is also
+  missing, render bare `RouterView`.
+- On `setup`, installs the router guards once per router (module-level
+  `WeakSet<Router>`):
+  - `router.afterEach((to, from) => { if (from !== START_LOCATION && to.path !== from.path) override.value = null })`
+    — the initial navigation is skipped so `setPageLayout` called before the
+    router is ready still applies to the first page.
+  - `router.beforeResolve(async (to) => …)` — for every `meta.isLayout`
+    record in `to.matched`, compute the name that wrapper will render
+    (same rule as above, using `override`/guard for the innermost) and, if
+    `layouts[name]` is a function, `await` it and store the resolved
+    component (`mod.default ?? mod`) in the cache. This keeps the original
+    timing: lazy layouts load *before* the navigation is confirmed, the
+    previous page stays visible, and a chunk load error fails the navigation.
+    In-place `setPageLayout` to a not-yet-loaded lazy layout falls back to
+    `defineAsyncComponent`.
 
 ### `setupLayouts`
 
@@ -189,6 +200,14 @@ Cases:
    several times (navigating through a `layout: false` route and back).
 10. `setPageLayout('admin')` called before the initial navigation applies to
     the first rendered page.
+11. Nested trees render exactly as 3.0.0: parent without layout + child
+    `layout: 'second'` → `default > second > page`; parent `'a'` + child
+    `'b'` → `a > b > page`; parent `'second'` + child `layout: false` →
+    `second > page`. A guard / `setPageLayout` on a nested route changes only
+    the innermost layout.
+12. A lazy layout is loaded before the navigation is confirmed (the
+    `beforeResolve` preload): the DOM shows the new layout on the first
+    render after `router.push` resolves, with no empty intermediate render.
 
 `test/load-hook.test.ts` and `test/integration.test.ts` are updated to assert
 the new module shape (imports from `/runtime`; no inline regex) and to import
