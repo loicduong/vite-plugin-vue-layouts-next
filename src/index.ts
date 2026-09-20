@@ -134,6 +134,9 @@ export function ClientSideLayout(options?: clientSideOptions): Plugin {
   } = options || {}
   return {
     name: 'vite-plugin-vue-layouts-next',
+    config() {
+      return { optimizeDeps: { include: [RUNTIME_ID] } }
+    },
     resolveId(id) {
       if (id === MODULE_ID)
         return `\0${MODULE_ID}`
