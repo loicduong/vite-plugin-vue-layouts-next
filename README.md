@@ -128,6 +128,11 @@ pnpm docs:dev
 
 PRs accepted. [Open an issue][open-an-issue] or submit PRs for any improvements.
 
+- PR titles must follow [Conventional Commits](https://www.conventionalcommits.org/) (`feat: …`, `fix: …`, `docs: …`);
+  they become the squash-merge commit subject and feed the generated changelog.
+- Releases are cut by a maintainer with `pnpm release` (version bump + changelog + `release: vX.Y.Z` commit + tag);
+  GitHub Actions then tests, builds, publishes to npm with provenance and creates the GitHub Release.
+
 ## License
 
 [MIT © loicduong][license]
