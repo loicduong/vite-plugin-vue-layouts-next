@@ -37,8 +37,8 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      # Trusted Publishing needs npm >= 11.5
-      - run: npm i -g npm@latest
+      # Trusted Publishing needs npm >= 11.5 (Node 22 bundles npm 10)
+      - run: npm i -g npm@^11
 
       - run: pnpm build
 

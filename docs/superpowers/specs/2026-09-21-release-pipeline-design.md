@@ -125,7 +125,7 @@ from the squash commit `feat: dynamic layouts (setPageLayout, useLayout) and sha
   OIDC Trusted Publishing path; no `NODE_AUTH_TOKEN`). Release notes are the
   top section of `CHANGELOG.md`, which the release commit already contains
   (`conventional-changelog -r 1` at a tagged HEAD emits nothing, and the
-  checkout is shallow): `awk 'NR>1 && /^#{1,2} \[/{exit} {print}' CHANGELOG.md > release-notes.md`
+  checkout is shallow): `awk 'NR>1 && /^##? \[/{exit} {print}' CHANGELOG.md > release-notes.md`
   followed by `test -s release-notes.md`. Then, idempotently,
   `gh release view "$TAG" || gh release create "$TAG" --verify-tag --title "$TAG" --notes-file release-notes.md`
   (`GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}`).
