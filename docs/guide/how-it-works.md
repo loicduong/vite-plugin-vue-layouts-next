@@ -32,6 +32,8 @@ receives the default layout when a child route declares its own.
 ## Resolving the layout at render time
 
 The parent route created for each page does not point at the layout component directly. It uses a small wrapper that
-reads `route.meta.layout` (or an in-place override from `setPageLayout`) and renders that layout around the page's
-`<router-view>`. The route tree is still static; only the component rendered inside the wrapper is dynamic. See
-[Dynamic Layouts](/guide/dynamic-layout).
+resolves the layout and renders it around the page's `<router-view>`. Each wrapper resolves from its *own wrapped
+record*: the `layout` of the page it wraps, falling back to `defaultLayout`, so a nested route with a `layout` at each
+level renders one layout per level, exactly as before. The innermost wrapper additionally honours a `meta.layout`
+assigned in a router guard and an in-place override from `setPageLayout`. The route tree is still static; only the
+component rendered inside the wrapper is dynamic. See [Dynamic Layouts](/guide/dynamic-layout).

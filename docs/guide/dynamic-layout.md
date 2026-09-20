@@ -26,8 +26,12 @@ import { setPageLayout } from 'virtual:generated-layouts'
 </script>
 
 <template>
-  <button @click="setPageLayout('focus')">Focus mode</button>
-  <button @click="setPageLayout(false)">No layout</button>
+  <button @click="setPageLayout('focus')">
+    Focus mode
+  </button>
+  <button @click="setPageLayout(false)">
+    No layout
+  </button>
 </template>
 ```
 
@@ -48,6 +52,8 @@ const layout = useLayout() // ComputedRef<string | false>
 ## Notes
 
 - Pages with a static `layout: false` are never wrapped, so they cannot be given a layout at runtime.
+- In a nested route (a page with children, each level with its own `layout`), guards and `setPageLayout` target the
+  *innermost* layout — the one directly around the leaf page. The static layouts of the outer levels are unaffected.
 - An unknown layout name logs a warning and falls back to `defaultLayout`.
 - `useLayout()` returns the *requested* name — `meta.layout`, or the last value passed to `setPageLayout` — not the
   rendered fallback. So for an unknown name it still reports that name, even though the wrapper renders
@@ -56,6 +62,11 @@ const layout = useLayout() // ComputedRef<string | false>
   [Common Patterns](/guide/patterns#transitions)), an in-place `setPageLayout` does not change the key, so no transition
   runs.
 - These helpers are also exported from `vite-plugin-vue-layouts-next/runtime` if you need them outside the virtual module.
+- The override is module-level state. During SSG pre-rendering (vite-ssg creates a fresh app per route in one process)
+  do not call `setPageLayout` in a component's setup: the override would leak into the routes pre-rendered after it.
+  Use `meta.layout` or a router guard instead.
+- The override is cleared by a guard that the layout wrapper installs on first mount. If the app's first route has a
+  static `layout: false`, a `setPageLayout` called there is not cleared until a wrapper has mounted once.
 - The `RouteMeta` augmentation (`layout?: string | false`, `isLayout?: boolean`) ships in
   `vite-plugin-vue-layouts-next/runtime` and reaches you through `client.d.ts`, which imports types via the package's
   `exports`. This requires `moduleResolution: "bundler"` (or `node16`/`nodenext`) in `tsconfig.json` — the Vite default.
