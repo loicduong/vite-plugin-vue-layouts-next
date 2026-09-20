@@ -28,3 +28,10 @@ That means you have the full flexibility of the [vue-router API](https://next.ro
 
 For nested routes, [`inheritDefaultLayout`](/config/plugin-options#inheritdefaultlayout) controls whether a parent route still
 receives the default layout when a child route declares its own.
+
+## Resolving the layout at render time
+
+The parent route created for each page does not point at the layout component directly. It uses a small wrapper that
+reads `route.meta.layout` (or an in-place override from `setPageLayout`) and renders that layout around the page's
+`<router-view>`. The route tree is still static; only the component rendered inside the wrapper is dynamic. See
+[Dynamic Layouts](/guide/dynamic-layout).

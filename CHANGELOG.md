@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `setPageLayout()` to change the current page's layout at runtime and `useLayout()` to read it, exported from `virtual:generated-layouts` ([#4](https://github.com/loicduong/vite-plugin-vue-layouts-next/discussions/4))
+- `route.meta.layout` is now read on every navigation, so router guards can assign layouts per role
+- New `vite-plugin-vue-layouts-next/runtime` entry
+- `RouteMeta` type augmentation for `layout` and `isLayout`, shipped in `vite-plugin-vue-layouts-next/runtime` and re-exported through `client.d.ts` (requires `moduleResolution: "bundler"`, `node16`, or `nodenext` — the Vite default)
+
+### Changed
+
+- Generated layout parent routes use a shared wrapper component that resolves the layout at render time, instead of the layout component itself. `meta.isLayout` is unchanged; code that read `route.matched[n].components.default` of a layout route will now see the wrapper.
+
 ## [3.0.0] - 2026-09-03
 
 ### Added

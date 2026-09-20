@@ -68,8 +68,10 @@ export { normalizeLayoutName } from '../layoutName'   // layoutName.ts drops its
 the `/runtime` entry is an implementation detail but is public so it can be
 imported directly if needed.
 
-`client.d.ts` declares the new exports and augments `vue-router`'s `RouteMeta`
-with `layout?: string | false` and `isLayout?: boolean`.
+`client.d.ts` declares the new exports. The `RouteMeta` augmentation
+(`layout?: string | false` and `isLayout?: boolean`) lives in
+`src/runtime/index.ts` (bundled into `dist/runtime.d.mts`) and reaches
+consumers via `client.d.ts`.
 
 ## Runtime Behavior
 

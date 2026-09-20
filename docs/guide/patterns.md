@@ -22,6 +22,9 @@ route. So if you want a transition between pages with the same layout *and* a di
 
 Now Vue will always trigger a transition if you change the route.
 
+Note that `setPageLayout` changes the layout without changing the route, so a key derived from the route will not
+trigger a transition in that case.
+
 ## Data From Layout to Page
 
 To send data *down* from the layout to the page, use props on the `<router-view>`:
