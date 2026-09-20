@@ -116,13 +116,17 @@ from the squash commit `feat: dynamic layouts (setPageLayout, useLayout) and sha
 - job `test`: `uses: ./.github/workflows/ci.yml`.
 - job `publish`: `needs: test`, `if: github.repository == 'loicduong/vite-plugin-vue-layouts-next'`,
   `environment: Release`, `permissions: { contents: write, id-token: write }`.
-  Steps: checkout (`persist-credentials: false`), pnpm, Node 22 with
+  Steps: checkout (`persist-credentials: false`), a guard that fails unless
+  `github.ref_name` equals `v<package.json version>` (a mistyped tag must not
+  publish the wrong version — npm never lets a name/version be reused), pnpm, Node 22 with
   `registry-url: https://registry.npmjs.org`, `pnpm install --frozen-lockfile`,
   `npm i -g npm@latest` (Trusted Publishing needs npm ≥ 11.5), `pnpm build`,
   `pnpm pack --out package.tgz` (pnpm resolves `catalog:` specifiers in the
   packed manifest — the 2.0.0 incident cannot recur) and
   `npm publish package.tgz --provenance --access public` (npm's documented
-  OIDC Trusted Publishing path; no `NODE_AUTH_TOKEN`). Release notes are the
+  OIDC Trusted Publishing path; no `NODE_AUTH_TOKEN`), skipped when
+  `npm view <name>@<version>` already resolves so a rerun after a later-step
+  failure can finish the job. Release notes are the
   top section of `CHANGELOG.md`, which the release commit already contains
   (`conventional-changelog -r 1` at a tagged HEAD emits nothing, and the
   checkout is shallow): `awk 'NR>1 && /^##? \[/{exit} {print}' CHANGELOG.md > release-notes.md`

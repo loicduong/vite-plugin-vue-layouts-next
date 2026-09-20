@@ -27,6 +27,18 @@ jobs:
         with:
           persist-credentials: false
 
+      # A mistyped or hand-pushed tag must not publish package.json's version under
+      # the wrong name: a published name/version can never be reused on npm.
+      - name: Check tag matches package version
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          VERSION="v$(node -p "require('./package.json').version")"
+          if [ "$TAG" != "$VERSION" ]; then
+            echo "Tag $TAG does not match package.json version $VERSION" >&2
+            exit 1
+          fi
+
       - uses: pnpm/action-setup@v6
 
       - uses: actions/setup-node@v7
@@ -54,7 +66,17 @@ jobs:
       # so no NODE_AUTH_TOKEN is involved and provenance is attached.
       - run: pnpm pack --out package.tgz
 
-      - run: npm publish package.tgz --provenance --access public
+      # Skipped when this version is already on npm, so a rerun after a failure in a
+      # later step (e.g. creating the GitHub release) can still complete the job.
+      - name: Publish to npm
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          if npm view "vite-plugin-vue-layouts-next@${TAG#v}" version >/dev/null 2>&1; then
+            echo "vite-plugin-vue-layouts-next@${TAG#v} is already published, skipping"
+          else
+            npm publish package.tgz --provenance --access public
+          fi
 
       - name: Create GitHub release
         env:
