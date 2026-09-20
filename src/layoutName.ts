@@ -1,5 +1,3 @@
-import { parse } from 'node:path'
-
 const REGEX_BACKSLASH = /\\/g
 const REGEX_SEPARATORS = /[-_/.\s]+/g
 const REGEX_NON_ALPHANUMERIC = /[^a-z0-9-]+/gi
@@ -114,9 +112,14 @@ function resolveLayoutNameSegments(fileName: string, prefixParts: string[]): str
 
 export function normalizeLayoutName(file: string): string {
   const normalizedFile = file.replace(REGEX_BACKSLASH, '/')
-  const parsed = parse(normalizedFile)
-  const prefixParts = splitByCase(parsed.dir)
-  const fileName = parsed.dir && parsed.name.toLowerCase() === 'index' ? '' : parsed.name
+  const slashIndex = normalizedFile.lastIndexOf('/')
+  const dir = slashIndex === -1 ? '' : normalizedFile.slice(0, slashIndex)
+  const basename = slashIndex === -1 ? normalizedFile : normalizedFile.slice(slashIndex + 1)
+  const dotIndex = basename.lastIndexOf('.')
+  // Mirror node:path parse(): a leading dot with no other dot is the whole name, not an extension.
+  const name = dotIndex <= 0 ? basename : basename.slice(0, dotIndex)
+  const prefixParts = splitByCase(dir)
+  const fileName = dir && name.toLowerCase() === 'index' ? '' : name
   const segments = resolveLayoutNameSegments(fileName, prefixParts).filter(Boolean)
 
   return kebabCaseSegments(segments)
