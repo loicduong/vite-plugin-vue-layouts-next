@@ -61,6 +61,7 @@ describe('load hook return shape', () => {
       expect(result.code).toContain('normalizeLayoutName(name.replace("/src/layouts/", \'\'))')
       expect(result.code).toContain('const LayoutWrapper = createLayoutWrapper(layouts, \'main\')')
       expect(result.code).toContain('export const setupLayouts = createSetupLayouts(LayoutWrapper, { inheritDefaultLayout: false })')
+      expect(result.code).toContain('lazyLayout')
       expect(result.code).not.toContain('function normalizeLayoutName(file)')
       expect(result.code).not.toContain('function deepSetupLayout')
     })
@@ -71,6 +72,15 @@ describe('load hook return shape', () => {
       const result = await load!(MODULE_ID_NULL) as { code: string }
       expect(result.code).toContain('{ eager: true }')
       expect(result.code).toContain('layouts[key] = module.default')
+    })
+
+    it('uses lazy glob and lazyLayout(module) in async mode', async () => {
+      const plugin = ClientSideLayout({ layoutDir: 'src/layouts' }) as Plugin
+      const load = getLoadFunction(plugin)
+      const result = await load!(MODULE_ID_NULL) as { code: string }
+      expect(result.code).toContain('{ eager: false }')
+      expect(result.code).toContain('layouts[key] = lazyLayout(module)')
+      expect(result.code).toContain('lazyLayout')
     })
   })
 
@@ -114,6 +124,7 @@ describe('load hook return shape', () => {
       expect(result.code).toContain('export { createGetRoutes, setPageLayout, useLayout }')
       expect(result.code).toContain('const LayoutWrapper = createLayoutWrapper(layouts, \'main\')')
       expect(result.code).toContain('export const setupLayouts = createSetupLayouts(LayoutWrapper, { inheritDefaultLayout: false })')
+      expect(result.code).toContain('lazyLayout')
       expect(result.code).not.toContain('function deepSetupLayout')
     })
   })

@@ -67,6 +67,9 @@ const layout = useLayout() // ComputedRef<string | false>
   Use `meta.layout` or a router guard instead.
 - The override is cleared by a guard that the layout wrapper installs on first mount. If the app's first route has a
   static `layout: false`, a `setPageLayout` called there is not cleared until a wrapper has mounted once.
+- Layouts may be any component, including a bare functional component. If you build a `layouts` map by hand for
+  `createLayoutWrapper`, wrap `() => import()` factories with `lazyLayout()` from `vite-plugin-vue-layouts-next/runtime`
+  so they aren't mistaken for a synchronous component.
 - The `RouteMeta` augmentation (`layout?: string | false`, `isLayout?: boolean`) ships in
   `vite-plugin-vue-layouts-next/runtime` and reaches you through `client.d.ts`, which imports types via the package's
   `exports`. This requires `moduleResolution: "bundler"` (or `node16`/`nodenext`) in `tsconfig.json` — the Vite default.

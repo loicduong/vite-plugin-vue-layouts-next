@@ -5,7 +5,7 @@ import { flushPromises, mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { defineComponent, h, nextTick } from 'vue'
 import { createMemoryHistory, createRouter, RouterView } from 'vue-router'
-import { createLayoutWrapper, createSetupLayouts, setPageLayout, useLayout } from '../src/runtime'
+import { createLayoutWrapper, createSetupLayouts, lazyLayout, setPageLayout, useLayout } from '../src/runtime'
 
 function layout(name: string): Component {
   return defineComponent({
@@ -20,12 +20,10 @@ const Second = layout('second')
 const A = layout('a')
 const B = layout('b')
 const Lazy = layout('lazy')
-// A functional (non-lazy) layout component, marked like Vue Router expects a real
-// component to be marked (e.g. via `defineComponent`/JSX compiler output).
-const Fn = Object.assign(
-  (_props: unknown, { slots }: { slots: any }) => h('div', { 'data-layout': 'fn' }, slots.default?.()),
-  { props: {} },
-)
+// A bare functional layout component: no `props`/`displayName`/`__vccOpts`. Lazy entries
+// are now marked explicitly via `lazyLayout`, so a plain function like this must be
+// treated as a component, not mistaken for a `() => import()` loader.
+const Fn = (_props: unknown, { slots }: { slots: any }) => h('div', { 'data-layout': 'fn' }, slots.default?.())
 // Resolves on a macrotask, like a real chunk: an unresolved async component renders empty until then.
 const lazyFactory = vi.fn(() => new Promise<{ default: Component }>(resolve => setTimeout(resolve, 0, { default: Lazy })))
 
@@ -80,7 +78,7 @@ function nestedRoutes(): RouteRecordRaw[] {
 // Navigates to `initialPath` BEFORE mounting so the router plugin does not
 // perform its own initial navigation to "/" on install.
 async function createApp(opts: AppOptions = {}) {
-  const layouts = { default: Default, admin: Admin, second: Second, a: A, b: B, lazy: lazyFactory, fn: Fn as Component }
+  const layouts = { default: Default, admin: Admin, second: Second, a: A, b: B, lazy: lazyLayout(lazyFactory), fn: Fn as Component }
   const Wrapper = createLayoutWrapper(layouts, 'default')
   const setupLayouts = createSetupLayouts(Wrapper, { inheritDefaultLayout: opts.inheritDefaultLayout ?? true })
   const router = createRouter({

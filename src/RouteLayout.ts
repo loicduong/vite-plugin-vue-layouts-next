@@ -6,7 +6,7 @@ function getClientCode(importCode: string, options: ResolvedOptions) {
   const inheritDefaultLayout = options.inheritDefaultLayout ?? true
 
   return `
-import { createGetRoutes, createLayoutWrapper, createSetupLayouts, setPageLayout, useLayout } from '${RUNTIME_ID}'
+import { createGetRoutes, createLayoutWrapper, createSetupLayouts, lazyLayout, setPageLayout, useLayout } from '${RUNTIME_ID}'
 export { createGetRoutes, setPageLayout, useLayout }
 ${importCode}
 const LayoutWrapper = createLayoutWrapper(layouts, '${options.defaultLayout}')

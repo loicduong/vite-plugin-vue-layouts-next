@@ -4,7 +4,28 @@ import { computed, defineAsyncComponent, defineComponent, h, inject, shallowRef 
 import { matchedRouteKey, RouterView, START_LOCATION, useRoute, useRouter } from 'vue-router'
 
 export type LayoutName = string | false
-export type LayoutMap = Record<string, Component | (() => Promise<{ default: Component } | Component>)>
+
+const LAZY = Symbol.for('vite-plugin-vue-layouts-next:lazy')
+
+export type LazyLayout = (() => Promise<{ default: Component } | Component>) & { [LAZY]: true }
+
+/**
+ * Marks a `() => import()` factory as a lazy layout entry.
+ *
+ * Both virtual-module generators wrap their async imports with this, so a lazy entry
+ * is always identified explicitly rather than guessed from its shape — unlike Vue
+ * Router's route components, a bare functional component (e.g. an arrow-function
+ * default export from a `.tsx` layout) is a perfectly valid, non-lazy layout here.
+ */
+export function lazyLayout(loader: () => Promise<{ default: Component } | Component>): LazyLayout {
+  return Object.assign(loader, { [LAZY]: true as const })
+}
+
+export function isLazyLayout(entry: unknown): entry is LazyLayout {
+  return typeof entry === 'function' && (entry as any)[LAZY] === true
+}
+
+export type LayoutMap = Record<string, Component | LazyLayout>
 
 /** The parts of a route location the resolution rule needs (current route or a guard's `to`). */
 type RouteLike = Pick<RouteLocationNormalized, 'matched' | 'meta'>
@@ -74,12 +95,6 @@ function resolveNameFor(route: RouteLike, own: RouteRecordNormalized, overrideVa
   return overrideValue ?? guardValue ?? staticName
 }
 
-// Same test Vue Router uses to tell a route component from a lazy loader.
-function isLazyLoader(entry: LayoutMap[string]): entry is () => Promise<unknown> {
-  return typeof entry === 'function'
-    && !('displayName' in entry) && !('props' in entry) && !('__vccOpts' in entry)
-}
-
 function unwrapModule(mod: any): Component {
   return mod && typeof mod === 'object' && 'default' in mod ? mod.default : mod
 }
@@ -117,10 +132,10 @@ export function createLayoutWrapper(layouts: LayoutMap, defaultLayout: string): 
     const entry = layouts[name]
     if (!entry)
       return undefined
-    if (isLazyLoader(entry)) {
+    if (isLazyLayout(entry)) {
       let created = asyncCache.get(name)
       if (!created) {
-        const loader = entry as () => Promise<any>
+        const loader = entry
         created = defineAsyncComponent(() => load(name, loader))
         asyncCache.set(name, created)
       }
@@ -165,8 +180,8 @@ export function createLayoutWrapper(layouts: LayoutMap, defaultLayout: string): 
           continue
         const entry = layouts[name] ?? layouts[defaultLayout]
         const key = layouts[name] ? name : defaultLayout
-        if (isLazyLoader(entry) && !resolved.has(key))
-          await load(key, entry as () => Promise<any>)
+        if (isLazyLayout(entry) && !resolved.has(key))
+          await load(key, entry)
       }
     })
   }

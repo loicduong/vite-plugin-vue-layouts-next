@@ -17,7 +17,7 @@ export function getImportCode(files: FileContainer[], options: ResolvedOptions) 
         id += 1
       }
       else {
-        imports.push(`'${name}': () => import('${path}'),`)
+        imports.push(`'${name}': lazyLayout(() => import('${path}')),`)
       }
     }
   }

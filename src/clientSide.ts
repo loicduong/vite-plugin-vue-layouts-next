@@ -19,7 +19,7 @@ export async function createVirtualModuleCode(options: VirtualModuleCodeOptions)
   const isSync = importMode === 'sync'
 
   return `
-import { createGetRoutes, createLayoutWrapper, createSetupLayouts, normalizeLayoutName, setPageLayout, useLayout } from '${RUNTIME_ID}'
+import { createGetRoutes, createLayoutWrapper, createSetupLayouts, lazyLayout, normalizeLayoutName, setPageLayout, useLayout } from '${RUNTIME_ID}'
 export { createGetRoutes, setPageLayout, useLayout }
 
 const modules = import.meta.glob("${normalizedTarget}/**/*.vue", { eager: ${isSync} })
@@ -27,7 +27,7 @@ const modules = import.meta.glob("${normalizedTarget}/**/*.vue", { eager: ${isSy
 export const layouts = {}
 Object.entries(modules).forEach(([name, module]) => {
   const key = normalizeLayoutName(name.replace("${normalizedTarget}/", ''))
-  layouts[key] = ${isSync ? 'module.default' : 'module'}
+  layouts[key] = ${isSync ? 'module.default' : 'lazyLayout(module)'}
 })
 
 const LayoutWrapper = createLayoutWrapper(layouts, '${defaultLayout}')
