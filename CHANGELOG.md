@@ -15,8 +15,8 @@
 
 ### BREAKING CHANGES
 
-- nested layout names no longer use slash-separated paths. Use `sub-layoutsub` instead of `sub/layoutsub`
-- remove `vite-plugin-pages` support and the `pagesDirs` option. Use Vue Router 5 file-based routing as the route source ([#30](https://github.com/loicduong/vite-plugin-vue-layouts-next/issues/30))
+* nested layout names no longer use slash-separated paths. Use `sub-layoutsub` instead of `sub/layoutsub`
+* remove `vite-plugin-pages` support and the `pagesDirs` option. Use Vue Router 5 file-based routing as the route source ([#30](https://github.com/loicduong/vite-plugin-vue-layouts-next/issues/30))
 
 # [2.1.0](https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v2.0.1...v2.1.0) (2026-03-18)
 
@@ -30,7 +30,7 @@
 
 ### Bug Fixes
 
-- Use `pnpm publish` so `catalog:` is resolved in the published tarball (fixes install from npm registry)
+* Use `pnpm publish` so `catalog:` is resolved in the published tarball (fixes install from npm registry)
 
 # [2.0.0](https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v1.3.0...v2.0.0) (2026-02-12) [YANKED]
 
@@ -74,7 +74,7 @@
 
 ### Features
 
-- Support Unplugin Vue Router 0.16
+* Support Unplugin Vue Router 0.16
 
 # [1.0.0](https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v0.1.5...v1.0.0) (2025-07-01)
 
@@ -86,14 +86,14 @@
 
 ### Features
 
-- Support Vite 7
+* Support Vite 7
 
 
 ### BREAKING CHANGES
 
-- Remove `cjs` export
-- Remove `layouts-generated` module
-- **Examples:** Remove vitesse
+* Remove `cjs` export
+* Remove `layouts-generated` module
+* **Examples:** Remove vitesse
 
 ## [0.1.5](https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v0.1.4...v0.1.5) (2025-06-09)
 
@@ -102,26 +102,26 @@
 
 * use correct package exports ([#8](https://github.com/loicduong/vite-plugin-vue-layouts-next/issues/8)) ([91e63e1](https://github.com/loicduong/vite-plugin-vue-layouts-next/commit/91e63e1bd49e5a6eb18e2cac930fa14644a140f6))
 
-## [0.1.4](https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v0.1.3...v0.1.4) (2025-06-07)
+## [0.1.4](https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v0.1.3...v0.1.4) (2025-06-07) [YANKED]
 
 
 ### Miscellaneous
 
-- **Deps:** update deps
+* **Deps:** update deps
 
 ## [0.1.3](https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v0.1.2...v0.1.3) (2025-05-30)
 
 
 ### Miscellaneous
 
-- **Deps:** update deps
+* **Deps:** update deps
 
 ## [0.1.2](https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v0.1.1...v0.1.2) (2025-05-19)
 
 
 ### Miscellaneous
 
-- **Deps:** update deps
+* **Deps:** update deps
 
 ## [0.1.1](https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v0.1.0...v0.1.1) (2025-05-05)
 
@@ -133,9 +133,9 @@
 
 ### BREAKING CHANGES
 
-- Revert component wrapping
+* Revert component wrapping
 
-# [0.1.0](https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v0.0.14...v0.1.0) (2025-05-03)
+# [0.1.0](https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v0.0.14...v0.1.0) (2025-05-03) [YANKED]
 
 
 ### Features
@@ -145,108 +145,108 @@
 
 ### Miscellaneous
 
-- **Deps:** update deps
+* **Deps:** update deps
 
 ## [0.0.14](https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v0.0.13...v0.0.14) (2025-04-25)
 
 
 ### Miscellaneous
 
-- **Deps:** update deps
+* **Deps:** update deps
 
 ## [0.0.13](https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v0.0.12...v0.0.13) (2025-04-17)
 
 
 ### Miscellaneous
 
-- **Deps:** update deps
+* **Deps:** update deps
 
 ## [0.0.12](https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v0.0.11...v0.0.12) (2025-04-12)
 
 
 ### Miscellaneous
 
-- **Deps:** update deps
+* **Deps:** update deps
 
 ## [0.0.11](https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v0.0.10...v0.0.11) (2025-04-08)
 
 
 ### Miscellaneous
 
-- **Deps:** update deps
+* **Deps:** update deps
 
 ## [0.0.10](https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v0.0.9...v0.0.10) (2025-04-03)
 
 
 ### Miscellaneous
 
-- **Deps:** update deps
+* **Deps:** update deps
 
 ## [0.0.9](https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v0.0.8...v0.0.9) (2025-03-29)
 
 
 ### Miscellaneous
 
-- **Deps:** update deps
+* **Deps:** update deps
 
 ## [0.0.8](https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v0.0.7...v0.0.8) (2025-03-25)
 
 
 ### Miscellaneous
 
-- **Deps:** update deps
+* **Deps:** update deps
 
 ## [0.0.7](https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v0.0.6...v0.0.7) (2025-03-19)
 
 
 ### Miscellaneous
 
-- **Deps:** update deps
+* **Deps:** update deps
 
 ## [0.0.6](https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v0.0.5...v0.0.6) (2025-03-14)
 
 
 ### Miscellaneous
 
-- **Docs:** update configuration doc
-- **Deps:** update deps
+* **Docs:** update configuration doc
+* **Deps:** update deps
 
 ## [0.0.5](https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v0.0.4...v0.0.5) (2025-03-14)
 
 
 ### Miscellaneous
 
-- No user-facing changes
+* No user-facing changes
 
 ## [0.0.4](https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v0.0.3...v0.0.4) (2025-03-08)
 
 
 ### Miscellaneous
 
-- **Deps:** update deps
+* **Deps:** update deps
 
 ## [0.0.3](https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v0.0.2...v0.0.3) (2025-02-25)
 
 
 ### Miscellaneous
 
-- **Deps:** use `vite` 6.2, `vue` 3.5, `typescript` 5.7, etc.
-- **Docs:** update `unplugin-vue-router` config after version 0.9.0
-- **Examples:** update deps in vitesse
+* **Deps:** use `vite` 6.2, `vue` 3.5, `typescript` 5.7, etc.
+* **Docs:** update `unplugin-vue-router` config after version 0.9.0
+* **Examples:** update deps in vitesse
 
 ## [0.0.2](https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v0.0.1...v0.0.2) (2025-02-25)
 
 
 ### Miscellaneous
 
-- **Docs:** update README
+* **Docs:** update README
 
 ## [0.0.1](https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v0.0.0...v0.0.1) (2025-02-25)
 
 
 ### Features
 
-- Support Vite 6
+* Support Vite 6
 
 # [0.0.0](https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/c570e9327470f3be324318609f911ecb02ab331c...v0.0.0) (2025-02-25)
 

@@ -87,7 +87,7 @@ git history. Because older commits do not follow Conventional Commits, 19 of
    The Keep a Changelog / SemVer preamble, the `[Unreleased]` section and the
    trailing `[x.y.z]: compare` link list are removed (headings carry the
    compare links). A note on how the file is generated lives in `README.md`.
-5. `2.0.0` keeps a `[YANKED]` note in its heading line.
+5. `2.0.0`, `0.1.4` and `0.1.0` keep a `[YANKED]` note in their heading line.
 
 The `[Unreleased]` notes written for 3.1.0 are dropped; 3.1.0 will be generated
 from the squash commit `feat: dynamic layouts (setPageLayout, useLayout) and shared runtime entry (#38)`.
