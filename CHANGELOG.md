@@ -5,16 +5,18 @@
 
 * **examples:** use default SSG formatting ([5bf4b84](https://github.com/loicduong/vite-plugin-vue-layouts-next/commit/5bf4b840689f59b35215e4ef3c2ed78bc9772c2e))
 * use native dirname in Vitest config ([3c2c2f7](https://github.com/loicduong/vite-plugin-vue-layouts-next/commit/3c2c2f79ced4d30016d485371e5390ce1ab9d263))
+* Fix npm `bugs` metadata ([#28](https://github.com/loicduong/vite-plugin-vue-layouts-next/issues/28))
 
 
 ### Features
 
 * **v3:** support nuxt compatible layout name normalization ([#32](https://github.com/loicduong/vite-plugin-vue-layouts-next/issues/32)) ([77f7793](https://github.com/loicduong/vite-plugin-vue-layouts-next/commit/77f77931a08b08f06814f75351d7561ba8329a23))
 
+
 ### BREAKING CHANGES
 
-- remove `vite-plugin-pages` support and the `pagesDirs` option. Use Vue Router 5 file-based routing as the route source ([#30](https://github.com/loicduong/vite-plugin-vue-layouts-next/issues/30))
 - nested layout names no longer use slash-separated paths. Use `sub-layoutsub` instead of `sub/layoutsub`
+- remove `vite-plugin-pages` support and the `pagesDirs` option. Use Vue Router 5 file-based routing as the route source ([#30](https://github.com/loicduong/vite-plugin-vue-layouts-next/issues/30))
 
 # [2.1.0](https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v2.0.1...v2.1.0) (2026-03-18)
 
@@ -24,6 +26,7 @@
 * support vite 8 ([65ccbd0](https://github.com/loicduong/vite-plugin-vue-layouts-next/commit/65ccbd0dd52175ce487f1c6b4d0187cc2ffbc3f0))
 
 ## [2.0.1](https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v2.0.0...v2.0.1) (2026-02-12)
+
 
 ### Bug Fixes
 
@@ -49,6 +52,7 @@
 ### Features
 
 * add inherit default layout option ([6af15a2](https://github.com/loicduong/vite-plugin-vue-layouts-next/commit/6af15a2e3018d327aa21de1a7485664aa6142c76))
+* Add `inheritDefaultLayout` option
 
 # [1.2.0](https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v1.1.1...v1.2.0) (2025-11-03)
 
@@ -63,8 +67,10 @@
 ### Bug Fixes
 
 * wrong setupLayouts type ([e4d93f9](https://github.com/loicduong/vite-plugin-vue-layouts-next/commit/e4d93f980ba2930dc3bcc426f7f07e6128667d41))
+* Fix type definition
 
 # [1.1.0](https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v1.0.0...v1.1.0) (2025-10-23)
+
 
 ### Features
 
@@ -76,6 +82,12 @@
 ### Bug Fixes
 
 * remove deprecated module ([a00fa4a](https://github.com/loicduong/vite-plugin-vue-layouts-next/commit/a00fa4aa75a9d8d8dcaad250703d2291c16b78c0))
+
+
+### Features
+
+- Support Vite 7
+
 
 ### BREAKING CHANGES
 
@@ -92,17 +104,20 @@
 
 ## [0.1.4](https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v0.1.3...v0.1.4) (2025-06-07)
 
+
 ### Miscellaneous
 
 - **Deps:** update deps
 
 ## [0.1.3](https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v0.1.2...v0.1.3) (2025-05-30)
 
+
 ### Miscellaneous
 
 - **Deps:** update deps
 
 ## [0.1.2](https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v0.1.1...v0.1.2) (2025-05-19)
+
 
 ### Miscellaneous
 
@@ -115,6 +130,7 @@
 
 * add component wrapping ([89ad848](https://github.com/loicduong/vite-plugin-vue-layouts-next/commit/89ad848b8f82658085eb883c6fbe7d3dd2ad1cb7))
 
+
 ### BREAKING CHANGES
 
 - Revert component wrapping
@@ -126,7 +142,13 @@
 
 * add component wrapping ([e232630](https://github.com/loicduong/vite-plugin-vue-layouts-next/commit/e2326305984fa4c6094be1c404e59d880aa1cc5b))
 
+
+### Miscellaneous
+
+- **Deps:** update deps
+
 ## [0.0.14](https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v0.0.13...v0.0.14) (2025-04-25)
+
 
 ### Miscellaneous
 
@@ -134,11 +156,13 @@
 
 ## [0.0.13](https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v0.0.12...v0.0.13) (2025-04-17)
 
+
 ### Miscellaneous
 
 - **Deps:** update deps
 
 ## [0.0.12](https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v0.0.11...v0.0.12) (2025-04-12)
+
 
 ### Miscellaneous
 
@@ -146,11 +170,13 @@
 
 ## [0.0.11](https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v0.0.10...v0.0.11) (2025-04-08)
 
+
 ### Miscellaneous
 
 - **Deps:** update deps
 
 ## [0.0.10](https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v0.0.9...v0.0.10) (2025-04-03)
+
 
 ### Miscellaneous
 
@@ -158,11 +184,13 @@
 
 ## [0.0.9](https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v0.0.8...v0.0.9) (2025-03-29)
 
+
 ### Miscellaneous
 
 - **Deps:** update deps
 
 ## [0.0.8](https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v0.0.7...v0.0.8) (2025-03-25)
+
 
 ### Miscellaneous
 
@@ -170,11 +198,13 @@
 
 ## [0.0.7](https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v0.0.6...v0.0.7) (2025-03-19)
 
+
 ### Miscellaneous
 
 - **Deps:** update deps
 
 ## [0.0.6](https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v0.0.5...v0.0.6) (2025-03-14)
+
 
 ### Miscellaneous
 
@@ -183,17 +213,20 @@
 
 ## [0.0.5](https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v0.0.4...v0.0.5) (2025-03-14)
 
+
 ### Miscellaneous
 
 - No user-facing changes
 
 ## [0.0.4](https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v0.0.3...v0.0.4) (2025-03-08)
 
+
 ### Miscellaneous
 
 - **Deps:** update deps
 
 ## [0.0.3](https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v0.0.2...v0.0.3) (2025-02-25)
+
 
 ### Miscellaneous
 
@@ -203,11 +236,13 @@
 
 ## [0.0.2](https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v0.0.1...v0.0.2) (2025-02-25)
 
+
 ### Miscellaneous
 
 - **Docs:** update README
 
 ## [0.0.1](https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v0.0.0...v0.0.1) (2025-02-25)
+
 
 ### Features
 
@@ -243,3 +278,4 @@
 * support vite 3.0 ([4f822fd](https://github.com/loicduong/vite-plugin-vue-layouts-next/commit/4f822fd7386252de62e0066484900863e7017076))
 * support Vite 4.0 ([e9bf0d0](https://github.com/loicduong/vite-plugin-vue-layouts-next/commit/e9bf0d06b37d7c340fe653a6ba3a2e97c60a0191))
 * use fastest plugin available based on options ([8e76bad](https://github.com/loicduong/vite-plugin-vue-layouts-next/commit/8e76bad69ff3cfaa28710ee90cc793681cc4b0d4)), closes [#131](https://github.com/loicduong/vite-plugin-vue-layouts-next/issues/131)
+* Initial releases
