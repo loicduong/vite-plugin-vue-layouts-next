@@ -43,7 +43,8 @@
   "scripts": {
     "dev": "npm run build -- --watch",
     "build": "tsdown",
-    "release": "npx bumpp --commit --tag --push && pnpm publish",
+    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s",
+    "release": "bumpp --all --commit \"release: v%s\" --tag --push --execute \"pnpm changelog\"",
     "spa:dev": "npm -C examples/spa run dev",
     "spa:build": "npm -C examples/spa run build",
     "spa:preview": "npm -C examples/spa run preview",
@@ -79,6 +80,8 @@
     "@types/node": "catalog:",
     "@vitejs/plugin-vue": "catalog:",
     "@vue/test-utils": "catalog:",
+    "bumpp": "catalog:",
+    "conventional-changelog-cli": "catalog:",
     "cross-env": "catalog:",
     "eslint": "catalog:",
     "happy-dom": "catalog:",
