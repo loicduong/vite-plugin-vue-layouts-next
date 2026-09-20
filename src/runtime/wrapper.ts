@@ -213,7 +213,9 @@ export function createLayoutWrapper(layouts: LayoutMap, defaultLayout: string): 
       // `app.use(router)` (so `app.runWithContext` never ran): there is then no router
       // to install onto anyway, and `setup()` below will install it once a wrapper
       // instance is actually created.
-      if (hasInjectionContext()) {
+      // `hasInjectionContext` itself only exists since Vue 3.3; on older Vue the named
+      // import is `undefined`, so fall through to the `setup()` fallback there.
+      if (typeof hasInjectionContext === 'function' && hasInjectionContext()) {
         const router = inject(routerKey, null)
         if (router)
           installGuards(router)
