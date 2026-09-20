@@ -42,19 +42,19 @@ jobs:
 
       - run: pnpm build
 
+      # The release commit already holds this version's changelog entry at the top of
+      # CHANGELOG.md; take everything up to the next version heading.
+      - name: Release notes for this version
+        run: |
+          awk 'NR>1 && /^##? \[/{exit} {print}' CHANGELOG.md > release-notes.md
+          test -s release-notes.md
+
       # `pnpm pack` writes the manifest with `catalog:` specifiers resolved;
       # `npm publish` on the tarball uses npm's OIDC Trusted Publishing (npm >= 11.5),
       # so no NODE_AUTH_TOKEN is involved and provenance is attached.
       - run: pnpm pack --out package.tgz
 
       - run: npm publish package.tgz --provenance --access public
-
-      # The release commit already holds this version's changelog entry at the top of
-      # CHANGELOG.md; take everything up to the next version heading.
-      - name: Release notes for this version
-        run: |
-          awk 'NR>1 && /^#{1,2} \[/{exit} {print}' CHANGELOG.md > release-notes.md
-          test -s release-notes.md
 
       - name: Create GitHub release
         env:
