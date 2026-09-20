@@ -42,13 +42,24 @@ jobs:
 
       - run: pnpm build
 
-      - run: pnpm publish --no-git-checks
+      # `pnpm pack` writes the manifest with `catalog:` specifiers resolved;
+      # `npm publish` on the tarball uses npm's OIDC Trusted Publishing (npm >= 11.5),
+      # so no NODE_AUTH_TOKEN is involved and provenance is attached.
+      - run: pnpm pack --out package.tgz
 
+      - run: npm publish package.tgz --provenance --access public
+
+      # The release commit already holds this version's changelog entry at the top of
+      # CHANGELOG.md; take everything up to the next version heading.
       - name: Release notes for this version
-        run: pnpm exec conventional-changelog -p angular -r 1 > release-notes.md
+        run: |
+          awk 'NR>1 && /^#{1,2} \[/{exit} {print}' CHANGELOG.md > release-notes.md
+          test -s release-notes.md
 
       - name: Create GitHub release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG: ${{ github.ref_name }}
-        run: gh release create "$TAG" --title "$TAG" --notes-file release-notes.md
+        run: |
+          gh release view "$TAG" >/dev/null 2>&1 \
+            || gh release create "$TAG" --verify-tag --title "$TAG" --notes-file release-notes.md
