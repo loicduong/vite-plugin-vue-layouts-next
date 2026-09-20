@@ -39,11 +39,11 @@ function hasChildWithLayout(route: AnyRoute): boolean {
 export function createSetupLayouts(wrapper: Component, options: SetupLayoutsOptions) {
   const { inheritDefaultLayout } = options
 
-  function wrap(route: AnyRoute): AnyRoute {
+  function wrap(route: AnyRoute, keepRootPath: boolean): AnyRoute {
     return {
       path: route.path,
       component: wrapper,
-      children: route.path === '/' ? [route] : [{ ...route, path: '' }],
+      children: keepRootPath && route.path === '/' ? [route] : [{ ...route, path: '' }],
       meta: { isLayout: true },
     } as AnyRoute
   }
@@ -71,12 +71,12 @@ export function createSetupLayouts(wrapper: Component, options: SetupLayoutsOpti
           // If inheritDefaultLayout is false, only apply if child doesn't have its own layout
           const shouldApplyDefaultLayout = inheritDefaultLayout || !childHasLayout
           if (shouldApplyDefaultLayout)
-            return wrap(route)
+            return wrap(route, true)
         }
       }
 
       if (route.meta?.layout)
-        return wrap(route)
+        return wrap(route, false)
 
       return route
     })

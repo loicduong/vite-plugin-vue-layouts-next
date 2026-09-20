@@ -52,6 +52,18 @@ describe('createSetupLayouts', () => {
     expect(parent.meta?.isLayout).toBeUndefined()
   })
 
+  it('uses an empty path (not "/") for a nested own-layout child at the root path', () => {
+    const setupLayouts = createSetupLayouts(Wrapper, { inheritDefaultLayout: true })
+    const [parent] = setupLayouts([{
+      path: '/p',
+      component: Page,
+      children: [{ path: '/', component: Page, meta: { layout: 'admin' } }],
+    }])
+    const child = parent.children![0]!.children![0]!
+    expect(child).toMatchObject({ component: Wrapper, meta: { isLayout: true } })
+    expect(child.children![0]!.path).toBe('')
+  })
+
   it('skips auto-routes group routes whose "" child is already a layout', () => {
     const setupLayouts = createSetupLayouts(Wrapper, { inheritDefaultLayout: true })
     const group: RouteRecordRaw = {
