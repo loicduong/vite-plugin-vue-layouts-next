@@ -7,5 +7,7 @@ export default antfu({
     'docs/.vitepress/dist',
     // Internal plans and specs, not user-facing docs.
     'docs/superpowers',
+    // Git-ignored scratch workspace for plan execution.
+    '.superpowers',
   ],
 })
