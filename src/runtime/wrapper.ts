@@ -1,6 +1,7 @@
 import type { Component, ComputedRef } from 'vue'
 import type { NavigationGuard, RouteLocationNormalized, Router, RouteRecordNormalized } from 'vue-router'
-import { computed, defineAsyncComponent, defineComponent, h, hasInjectionContext, inject, shallowRef } from 'vue'
+import * as Vue from 'vue'
+import { computed, defineAsyncComponent, defineComponent, h, inject, shallowRef } from 'vue'
 import { matchedRouteKey, routerKey, RouterView, START_LOCATION, useRoute, useRouter } from 'vue-router'
 
 export type LayoutName = string | false
@@ -31,6 +32,12 @@ export type LayoutMap = Record<string, Component | LazyLayout>
 type RouteLike = Pick<RouteLocationNormalized, 'matched' | 'meta'>
 
 const PREFIX = '[vite-plugin-vue-layouts-next]'
+
+// `hasInjectionContext` only exists since Vue 3.3, and a static named import of a
+// missing export fails at module link time on Vue 3.2. Read it off the namespace
+// instead, so older Vue just reports "no context" and falls back to `setup()`.
+const hasInjectionContext: () => boolean
+  = (Vue as { hasInjectionContext?: () => boolean }).hasInjectionContext ?? (() => false)
 
 /** In-place override set by `setPageLayout`; cleared on navigation to another path. */
 const override = shallowRef<LayoutName | null>(null)
@@ -213,9 +220,7 @@ export function createLayoutWrapper(layouts: LayoutMap, defaultLayout: string): 
       // `app.use(router)` (so `app.runWithContext` never ran): there is then no router
       // to install onto anyway, and `setup()` below will install it once a wrapper
       // instance is actually created.
-      // `hasInjectionContext` itself only exists since Vue 3.3; on older Vue the named
-      // import is `undefined`, so fall through to the `setup()` fallback there.
-      if (typeof hasInjectionContext === 'function' && hasInjectionContext()) {
+      if (hasInjectionContext()) {
         const router = inject(routerKey, null)
         if (router)
           installGuards(router)
