@@ -66,6 +66,20 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
+    '/nested': RouteRecordInfo<
+      '/nested',
+      '/nested',
+      Record<never, never>,
+      Record<never, never>,
+      | '/nested/'
+    >,
+    '/nested/': RouteRecordInfo<
+      '/nested/',
+      '/nested',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
     '/news': RouteRecordInfo<
       '/news',
       '/news',
@@ -150,6 +164,23 @@ declare module 'vue-router/auto-routes' {
     'src/pages/api-client-layout.vue': {
       routes:
         | '/api-client-layout'
+      views:
+        | never
+      pathParamNames:
+        | never
+    }
+    'src/pages/nested.vue': {
+      routes:
+        | '/nested'
+        | '/nested/'
+      views:
+        | 'default'
+      pathParamNames:
+        | never
+    }
+    'src/pages/nested/index.vue': {
+      routes:
+        | '/nested/'
       views:
         | never
       pathParamNames:

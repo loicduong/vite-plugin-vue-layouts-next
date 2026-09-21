@@ -27,6 +27,11 @@
         API client layout
       </router-link>
     </p>
+    <p>
+      <router-link to="/nested">
+        nested, inheritDefaultLayout: false
+      </router-link>
+    </p>
   </div>
 </template>
 

@@ -17,6 +17,16 @@
         sub layout
       </router-link>
     </p>
+    <p>
+      <router-link to="/nolayout">
+        no layout
+      </router-link>
+    </p>
+    <p>
+      <router-link to="/guarded">
+        layout from a router guard
+      </router-link>
+    </p>
   </div>
 </template>
 

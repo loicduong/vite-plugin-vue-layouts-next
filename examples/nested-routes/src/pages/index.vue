@@ -47,6 +47,11 @@
         no inherit default layout
       </router-link>
     </p>
+    <p>
+      <router-link to="/outer">
+        nested layouts + setPageLayout on the inner one
+      </router-link>
+    </p>
   </div>
 </template>
 

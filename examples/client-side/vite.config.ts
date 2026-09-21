@@ -1,5 +1,4 @@
 import Vue from '@vitejs/plugin-vue'
-import Markdown from 'unplugin-vue-markdown/vite'
 import { defineConfig } from 'vite'
 import { ClientSideLayout } from 'vite-plugin-vue-layouts-next'
 import VueRouter from 'vue-router/vite'
@@ -9,11 +8,16 @@ const config = defineConfig({
     VueRouter({
       /* options */
     }),
-    Vue({
-      include: [/\.vue$/, /\.md$/],
+    Vue(),
+    ClientSideLayout({
+      layoutDir: 'src/layouts',
+      // `main.vue` is the fallback instead of `default.vue`.
+      defaultLayout: 'main',
+      // One mode for every layout; `sync` inlines them all in the main chunk.
+      importMode: 'sync',
+      // /nested has no layout of its own; its child sets one, so the parent is not wrapped in `main`.
+      inheritDefaultLayout: false,
     }),
-    ClientSideLayout(),
-    Markdown({}),
   ],
 })
 
