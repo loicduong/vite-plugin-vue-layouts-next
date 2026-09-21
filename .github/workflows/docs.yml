@@ -6,8 +6,7 @@ on:
     tags:
       - '*'
   # Build (but never deploy) on PRs that touch the site or its dependencies,
-  # so dead links and broken builds are caught before merge. `docs/superpowers`
-  # is excluded from the site (`srcExclude`), so it is not a trigger.
+  # so dead links and broken builds are caught before merge.
   pull_request:
     paths:
       - docs/**
