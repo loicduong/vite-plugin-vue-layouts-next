@@ -8,5 +8,7 @@ export default defineConfig({
   format: 'esm',
   dts: true,
   clean: true,
-  external: ['vue', 'vue-router'],
+  deps: {
+    neverBundle: ['vue', 'vue-router'],
+  },
 })
