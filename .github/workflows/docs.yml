@@ -5,10 +5,12 @@ on:
   push:
     tags:
       - '*'
-  # Build (but never deploy) on PRs, so dead links are caught before merge.
+  # Build (but never deploy) on PRs that touch the site or its dependencies,
+  # so dead links and broken builds are caught before merge.
   pull_request:
     paths:
       - docs/**
+      - '!docs/superpowers/**'
       - pnpm-workspace.yaml
       - pnpm-lock.yaml
       - .github/workflows/docs.yml
