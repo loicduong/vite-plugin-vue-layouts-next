@@ -20,8 +20,9 @@ import type {
 
 declare module 'vue-router' {
   interface TypesConfig {
-    ParamParsers:
-      | never
+    _ParamParsers: {}
+    RouteNamedMap: import('vue-router/auto-routes').RouteNamedMap
+    _RouteFileInfoMap: import('vue-router/auto-routes')._RouteFileInfoMap
   }
 }
 
@@ -136,6 +137,20 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
+    '/outer': RouteRecordInfo<
+      '/outer',
+      '/outer',
+      Record<never, never>,
+      Record<never, never>,
+      | '/outer/'
+    >,
+    '/outer/': RouteRecordInfo<
+      '/outer/',
+      '/outer',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
     '/second/': RouteRecordInfo<
       '/second/',
       '/second',
@@ -168,17 +183,23 @@ declare module 'vue-router/auto-routes' {
         | 'name-override'
       views:
         | never
+      pathParamNames:
+        | never
     }
     'src/pages/[...all].vue': {
       routes:
         | '/[...all]'
       views:
         | never
+      pathParamNames:
+        | 'all'
     }
     'src/pages/about/index.vue': {
       routes:
         | '/about/'
       views:
+        | never
+      pathParamNames:
         | never
     }
     'src/pages/about/who/me.vue': {
@@ -186,11 +207,15 @@ declare module 'vue-router/auto-routes' {
         | 'who-me-override'
       views:
         | never
+      pathParamNames:
+        | never
     }
     'src/pages/deep/index.vue': {
       routes:
         | '/deep/'
       views:
+        | never
+      pathParamNames:
         | never
     }
     'src/pages/deep/deeper/index.vue': {
@@ -198,11 +223,15 @@ declare module 'vue-router/auto-routes' {
         | '/deep/deeper/'
       views:
         | never
+      pathParamNames:
+        | never
     }
     'src/pages/deep/deeper/deepest/index.vue': {
       routes:
         | '/deep/deeper/deepest/'
       views:
+        | never
+      pathParamNames:
         | never
     }
     'src/pages/inherit/[id].vue': {
@@ -210,23 +239,31 @@ declare module 'vue-router/auto-routes' {
         | '/inherit/[id]'
       views:
         | never
+      pathParamNames:
+        | 'id'
     }
     'src/pages/inherit/deep/[id].vue': {
       routes:
         | '/inherit/deep/[id]'
       views:
         | never
+      pathParamNames:
+        | 'id'
     }
     'src/pages/module1.vue': {
       routes:
         | '/module1'
       views:
         | never
+      pathParamNames:
+        | never
     }
     'src/pages/module2.vue': {
       routes:
         | '/module2'
       views:
+        | never
+      pathParamNames:
         | never
     }
     'src/pages/news.vue': {
@@ -236,11 +273,15 @@ declare module 'vue-router/auto-routes' {
         | 'named-news-page'
       views:
         | 'default'
+      pathParamNames:
+        | never
     }
     'src/pages/news/index.vue': {
       routes:
         | '/news/'
       views:
+        | never
+      pathParamNames:
         | never
     }
     'src/pages/news/Today.vue': {
@@ -248,11 +289,32 @@ declare module 'vue-router/auto-routes' {
         | 'named-news-page'
       views:
         | never
+      pathParamNames:
+        | never
     }
     'src/pages/nolayout.vue': {
       routes:
         | '/nolayout'
       views:
+        | never
+      pathParamNames:
+        | never
+    }
+    'src/pages/outer.vue': {
+      routes:
+        | '/outer'
+        | '/outer/'
+      views:
+        | 'default'
+      pathParamNames:
+        | never
+    }
+    'src/pages/outer/index.vue': {
+      routes:
+        | '/outer/'
+      views:
+        | never
+      pathParamNames:
         | never
     }
     'src/pages/second/index.vue': {
@@ -260,11 +322,15 @@ declare module 'vue-router/auto-routes' {
         | '/second/'
       views:
         | never
+      pathParamNames:
+        | never
     }
     'src/pages/sublayout.vue': {
       routes:
         | '/sublayout'
       views:
+        | never
+      pathParamNames:
         | never
     }
   }

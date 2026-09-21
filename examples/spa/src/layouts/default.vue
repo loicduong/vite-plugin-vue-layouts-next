@@ -22,8 +22,14 @@ function toggleRole() {
       <router-link to="/admin">
         Go to admin
       </router-link>
+    </p>
+    <p>
+      In place:
       <button @click="setPageLayout('admin')">
         Preview admin layout here
+      </button>
+      <button @click="setPageLayout(false)">
+        Drop the layout
       </button>
     </p>
     <router-view />

@@ -20,8 +20,9 @@ import type {
 
 declare module 'vue-router' {
   interface TypesConfig {
-    ParamParsers:
-      | never
+    _ParamParsers: {}
+    RouteNamedMap: import('vue-router/auto-routes').RouteNamedMap
+    _RouteFileInfoMap: import('vue-router/auto-routes')._RouteFileInfoMap
   }
 }
 
@@ -58,6 +59,13 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
+    '/guarded': RouteRecordInfo<
+      '/guarded',
+      '/guarded',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
     '/news': RouteRecordInfo<
       '/news',
       '/news',
@@ -76,6 +84,13 @@ declare module 'vue-router/auto-routes' {
     'named-news-page': RouteRecordInfo<
       'named-news-page',
       '/news/Today',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/nolayout': RouteRecordInfo<
+      '/nolayout',
+      '/nolayout',
       Record<never, never>,
       Record<never, never>,
       | never
@@ -105,23 +120,39 @@ declare module 'vue-router/auto-routes' {
         | 'name-override'
       views:
         | never
+      pathParamNames:
+        | never
     }
     'src/pages/[...all].vue': {
       routes:
         | '/[...all]'
       views:
         | never
+      pathParamNames:
+        | 'all'
     }
     'src/pages/about/index.vue': {
       routes:
         | '/about/'
       views:
         | never
+      pathParamNames:
+        | never
     }
     'src/pages/about/who/me.vue': {
       routes:
         | 'who-me-override'
       views:
+        | never
+      pathParamNames:
+        | never
+    }
+    'src/pages/guarded.vue': {
+      routes:
+        | '/guarded'
+      views:
+        | never
+      pathParamNames:
         | never
     }
     'src/pages/news.vue': {
@@ -131,11 +162,15 @@ declare module 'vue-router/auto-routes' {
         | 'named-news-page'
       views:
         | 'default'
+      pathParamNames:
+        | never
     }
     'src/pages/news/index.vue': {
       routes:
         | '/news/'
       views:
+        | never
+      pathParamNames:
         | never
     }
     'src/pages/news/Today.vue': {
@@ -143,11 +178,23 @@ declare module 'vue-router/auto-routes' {
         | 'named-news-page'
       views:
         | never
+      pathParamNames:
+        | never
+    }
+    'src/pages/nolayout.vue': {
+      routes:
+        | '/nolayout'
+      views:
+        | never
+      pathParamNames:
+        | never
     }
     'src/pages/sublayout.vue': {
       routes:
         | '/sublayout'
       views:
+        | never
+      pathParamNames:
         | never
     }
   }

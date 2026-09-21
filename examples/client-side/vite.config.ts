@@ -15,7 +15,8 @@ const config = defineConfig({
       defaultLayout: 'main',
       // One mode for every layout; `sync` inlines them all in the main chunk.
       importMode: 'sync',
-      inheritDefaultLayout: true,
+      // /nested has no layout of its own; its child sets one, so the parent is not wrapped in `main`.
+      inheritDefaultLayout: false,
     }),
   ],
 })

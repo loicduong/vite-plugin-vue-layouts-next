@@ -1,6 +1,15 @@
 <template>
   <div>
     <p>index.vue</p>
+    <p>
+      After an in-place layout change (buttons in the default layout):
+      <router-link :to="{ query: { t: Date.now() } }">
+        change query (override kept)
+      </router-link> |
+      <router-link to="/about">
+        go to /about (override cleared)
+      </router-link>
+    </p>
     <router-link to="/about">
       about
     </router-link>
