@@ -5,12 +5,15 @@ on:
   push:
     tags:
       - '*'
-  # Build (but never deploy) on PRs, so dead links are caught before merge.
+  # Build (but never deploy) on PRs that touch the site, so dead links are
+  # caught before merge. `docs/superpowers` is excluded from the site
+  # (`srcExclude`), and the lockfile/workspace change on nearly every PR, so
+  # neither is a trigger: a dependency bump that breaks the build surfaces on
+  # the next tag or a manual dispatch.
   pull_request:
     paths:
       - docs/**
-      - pnpm-workspace.yaml
-      - pnpm-lock.yaml
+      - '!docs/superpowers/**'
       - .github/workflows/docs.yml
   workflow_dispatch:
 
