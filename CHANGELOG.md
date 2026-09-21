@@ -1,3 +1,10 @@
+# [3.1.0](https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v3.0.0...v3.1.0) (2026-09-21)
+
+
+### Features
+
+* **client-side:** accept layoutsDirs, deprecate layoutDir ([#42](https://github.com/loicduong/vite-plugin-vue-layouts-next/issues/42)) ([a7f8945](https://github.com/loicduong/vite-plugin-vue-layouts-next/commit/a7f89450aa8fba9bc47b44cfaa73e511ea923706))
+* dynamic layouts (setPageLayout, useLayout) and shared runtime entry ([#38](https://github.com/loicduong/vite-plugin-vue-layouts-next/issues/38)) ([50d2147](https://github.com/loicduong/vite-plugin-vue-layouts-next/commit/50d21473373846f7354820981e518ccb7c80734b))
 # [3.0.0](https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v2.1.0...v3.0.0) (2026-09-03)
 
 
