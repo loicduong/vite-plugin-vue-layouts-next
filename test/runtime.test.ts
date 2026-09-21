@@ -248,7 +248,7 @@ describe('layoutWrapper', () => {
     // `/user/1` -> `/user/2` reuses the same matched record, so the generated record's
     // own `beforeEnter` never runs. The wrapper mounted for `/user/1` already installed
     // the global `beforeResolve` guard, which must preload `lazy2` before this `push`
-    // resolves — no `flushPromises` here.
+    // resolves - no `flushPromises` here.
     await router.push('/user/2')
     expect(layoutOf(wrapper)).toBe('lazy2')
     expect(lazyFactory2).toHaveBeenCalledTimes(1)
@@ -274,7 +274,7 @@ describe('layoutWrapper', () => {
   it('preloads a lazy layout chosen by the page\'s own route-level beforeEnter on the initial navigation', async () => {
     // Record-level `beforeEnter` guards (parent then child) all run before ANY
     // component's `beforeRouteEnter`, so the wrapper's own `beforeRouteEnter` already
-    // sees the page's `beforeEnter` mutation by the time it computes what to preload —
+    // sees the page's `beforeEnter` mutation by the time it computes what to preload -
     // no router access (and so no installed app) is needed for this case.
     const { wrapper } = await createApp({
       initialPath: '/pe',
@@ -287,13 +287,10 @@ describe('layoutWrapper', () => {
   })
 
   it('preloads a lazy layout chosen by the page\'s beforeRouteEnter on the initial navigation', async () => {
-    // Component `beforeRouteEnter` guards also run parent-first, so the wrapper's own
-    // guard runs (and fully resolves) *before* the page's own `beforeRouteEnter` sets
-    // `to.meta.layout`. Only the `beforeResolve` guard the wrapper installs (which
-    // requires `inject(routerKey)` to succeed) runs late enough to catch it — which
-    // requires the router to already be installed on an app, so this test installs the
-    // router (`app.use`, via `mount`) before navigating, unlike the shared `createApp`
-    // helper which deliberately navigates first.
+    // Component `beforeRouteEnter` guards run parent-first, so the wrapper's guard fully
+    // resolves before the page's guard sets `to.meta.layout`. Only the wrapper's
+    // `beforeResolve` guard catches it, and that needs `inject(routerKey)`, so this test
+    // installs the router via `mount` before navigating.
     const PageWithGuard = defineComponent({
       beforeRouteEnter(to) {
         to.meta.layout = 'lazy2'

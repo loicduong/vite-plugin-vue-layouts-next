@@ -13,22 +13,22 @@ and the generated `layouts` map all use these normalized names, never raw file p
 
 ## Examples
 
-| File | Layout name |
-| --- | --- |
-| `src/layouts/default.vue` | `default` |
-| `src/layouts/someLayout.vue` | `some-layout` |
-| `src/layouts/desktop/default.vue` | `desktop-default` |
-| `src/layouts/desktop/index.vue` | `desktop` |
-| `src/layouts/desktop/Desktop.vue` | `desktop` |
-| `src/layouts/desktop/DesktopDefault.vue` | `desktop-default` |
-| `src/layouts/desktop-base/DesktopBase.vue` | `desktop-base` |
+| File                                       | Layout name       |
+| ------------------------------------------ | ----------------- |
+| `src/layouts/default.vue`                  | `default`         |
+| `src/layouts/someLayout.vue`               | `some-layout`     |
+| `src/layouts/desktop/default.vue`          | `desktop-default` |
+| `src/layouts/desktop/index.vue`            | `desktop`         |
+| `src/layouts/desktop/Desktop.vue`          | `desktop`         |
+| `src/layouts/desktop/DesktopDefault.vue`   | `desktop-default` |
+| `src/layouts/desktop-base/DesktopBase.vue` | `desktop-base`    |
 
 For clarity, prefer filenames that match the final layout name, such as `DesktopDefault.vue`, `DesktopBase.vue`, and
 `Desktop.vue`.
 
 ## Using a Layout Name
 
-```html [src/pages/users.vue]
+```vue [src/pages/users.vue]
 <route lang="yaml">
 meta:
   layout: desktop-default

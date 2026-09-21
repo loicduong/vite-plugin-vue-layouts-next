@@ -58,6 +58,6 @@ import { setupLayouts } from 'virtual:generated-layouts'
 
 ## Options Reference
 
-- [Plugin Options](/config/plugin-options) — every option accepted by `Layouts()`
-- [Layout Names](/config/layout-names) — how filenames become layout names
-- [ClientSideLayout Options](/config/client-side-options) — options for the lighter `ClientSideLayout` variant
+- [Plugin Options](/config/plugin-options) - every option accepted by `Layouts()`
+- [Layout Names](/config/layout-names) - how filenames become layout names
+- [ClientSideLayout Options](/config/client-side-options) - options for the lighter `ClientSideLayout` variant

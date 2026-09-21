@@ -14,7 +14,7 @@ export type LazyLayout = (() => Promise<{ default: Component } | Component>) & {
  * Marks a `() => import()` factory as a lazy layout entry.
  *
  * Both virtual-module generators wrap their async imports with this, so a lazy entry
- * is always identified explicitly rather than guessed from its shape — unlike Vue
+ * is always identified explicitly rather than guessed from its shape - unlike Vue
  * Router's route components, a bare functional component (e.g. an arrow-function
  * default export from a `.tsx` layout) is a perfectly valid, non-lazy layout here.
  */
@@ -86,8 +86,8 @@ function innermostLayoutRecord(route: RouteLike): RouteRecordNormalized | undefi
  *
  * The static name comes from the wrapped record's own meta (`||` fallback to the
  * default, like the original algorithm), so nested trees keep one layout per level.
- * Dynamic inputs — the `setPageLayout` override and a guard assignment to the merged
- * `route.meta.layout` — apply only to the innermost wrapper.
+ * Dynamic inputs - the `setPageLayout` override and a guard assignment to the merged
+ * `route.meta.layout` - apply only to the innermost wrapper.
  */
 function resolveNameFor(route: RouteLike, own: RouteRecordNormalized, overrideValue: LayoutName | null): LayoutName {
   const { matched } = route
@@ -127,7 +127,7 @@ export function createLayoutWrapper(layouts: LayoutMap, defaultLayout: string): 
    * by `LayoutWrapper`, not matched as route components, so Vue Router never calls
    * these; the Composition-API `onBeforeRouteUpdate`/`onBeforeRouteLeave` still work
    * since they subscribe directly to the router. Skipped for a `defineAsyncComponent`
-   * wrapper that hasn't resolved yet — the caller passes the real component once loaded.
+   * wrapper that hasn't resolved yet - the caller passes the real component once loaded.
    */
   function checkRouteGuards(name: string, comp: unknown) {
     if (guardWarned.has(name) || !comp || (typeof comp !== 'object' && typeof comp !== 'function'))
@@ -216,15 +216,10 @@ export function createLayoutWrapper(layouts: LayoutMap, defaultLayout: string): 
     if (guardedRouters.has(router))
       return
     guardedRouters.add(router)
-    // A guard (route-level `beforeEnter`, `beforeRouteEnter`, or `beforeEach`) can set
-    // `to.meta.layout` to a lazy layout after this wrapper's own `beforeRouteEnter` below
-    // already ran — e.g. a page's own `beforeRouteEnter`, which Vue Router calls after the
-    // parent wrapper's, or a guard that only changes params on an already-matched record
-    // (e.g. `/user/1` -> `/user/2`, which never re-enters the wrapper). `beforeResolve`
-    // guards are read once that phase starts, so registering it here still lets it run,
-    // and still await, within the *current* navigation. It shares the `resolved`/`pending`
-    // caches with the `beforeRouteEnter` preload, so a layout already awaited there is a
-    // cache hit here.
+    // Guards that run after this wrapper's own `beforeRouteEnter` (a page's guard, or one
+    // that only changes params on an already-matched record) can still set `to.meta.layout`
+    // to a lazy layout. `beforeResolve` runs late enough to await it within the current
+    // navigation, and shares the `resolved`/`pending` caches with the preload.
     router.beforeResolve(preload)
     router.afterEach((to, from, failure) => {
       // A failed navigation (e.g. aborted by a guard) never reaches render; redirects
@@ -238,12 +233,10 @@ export function createLayoutWrapper(layouts: LayoutMap, defaultLayout: string): 
 
   const Wrapper = defineComponent({
     name: 'LayoutWrapper',
-    // Runs for the wrapper's own generated route on every entering navigation,
-    // including the initial one, before any wrapper has ever mounted — unlike
-    // `setup()`, which only runs once a wrapper instance is actually created. Vue
-    // Router invokes in-component guards inside `app.runWithContext` (Vue >= 3.3), so
-    // `inject` works here; `setup()` below remains the fallback for older Vue, and the
-    // guard registration is idempotent either way.
+    // Runs for the wrapper's generated route on every entering navigation, including
+    // the initial one before any wrapper mounts, unlike `setup()`. Vue Router calls
+    // in-component guards inside `app.runWithContext` (Vue >= 3.3), so `inject` works
+    // here; `setup()` below stays as the fallback for older Vue.
     beforeRouteEnter(to, from) {
       // `hasInjectionContext` avoids Vue's "inject() can only be used inside setup()"
       // warning for a navigation that resolves before any app has ever called

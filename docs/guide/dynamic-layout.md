@@ -53,18 +53,18 @@ const layout = useLayout() // ComputedRef<string | false>
 
 - Pages with a static `layout: false` are never wrapped, so they cannot be given a layout at runtime.
 - In a nested route (a page with children, each level with its own `layout`), guards and `setPageLayout` target the
-  *innermost* layout — the one directly around the leaf page. The static layouts of the outer levels are unaffected.
+  _innermost_ layout - the one directly around the leaf page. The static layouts of the outer levels are unaffected.
 - An unknown layout name logs a warning and falls back to `defaultLayout`.
 - Layouts are rendered by a shared wrapper component, not matched as route components, so an Options-API
-  `beforeRouteEnter` / `beforeRouteUpdate` / `beforeRouteLeave` declared *inside a layout component* never runs; a
+  `beforeRouteEnter` / `beforeRouteUpdate` / `beforeRouteLeave` declared _inside a layout component_ never runs; a
   warning is logged once per layout name when this is detected. Use `onBeforeRouteUpdate` / `onBeforeRouteLeave`
-  (Composition API) or a router-level guard instead — these still work correctly.
+  (Composition API) or a router-level guard instead - these still work correctly.
 - **Vue < 3.3:** `app.runWithContext` doesn't exist yet, so the wrapper's `beforeRouteEnter` can't reach the router to
   preload a lazy layout, and the global `beforeResolve` fallback is only installed once a wrapper's `setup()` has run
-  at least once. In practice this only matters for a lazy layout selected by a *page's own* `beforeRouteEnter` during
-  the *initial* navigation: it renders once its chunk loads instead of being awaited by the navigation. Static `meta.layout`,
+  at least once. In practice this only matters for a lazy layout selected by a _page's own_ `beforeRouteEnter` during
+  the _initial_ navigation: it renders once its chunk loads instead of being awaited by the navigation. Static `meta.layout`,
   `<route>` blocks, `beforeEach`, route-level `beforeEnter`, and any navigation after the first are unaffected.
-- `useLayout()` returns the *requested* name — `meta.layout`, or the last value passed to `setPageLayout` — not the
+- `useLayout()` returns the _requested_ name - `meta.layout`, or the last value passed to `setPageLayout` - not the
   rendered fallback. So for an unknown name it still reports that name, even though the wrapper renders
   `defaultLayout` (and warns). This matches Nuxt's `useLayout` semantics.
 - Switching layouts remounts the layout subtree. If you use a `<transition>` keyed on the route (see
@@ -81,4 +81,4 @@ const layout = useLayout() // ComputedRef<string | false>
   so they aren't mistaken for a synchronous component.
 - The `RouteMeta` augmentation (`layout?: string | false`, `isLayout?: boolean`) ships in
   `vite-plugin-vue-layouts-next/runtime` and reaches you through `client.d.ts`, which imports types via the package's
-  `exports`. This requires `moduleResolution: "bundler"` (or `node16`/`nodenext`) in `tsconfig.json` — the Vite default.
+  `exports`. This requires `moduleResolution: "bundler"` (or `node16`/`nodenext`) in `tsconfig.json` - the Vite default.

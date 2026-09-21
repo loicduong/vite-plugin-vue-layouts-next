@@ -6,7 +6,7 @@ Because layouts compile down to ordinary nested routes, these are all plain Vue 
 
 Layouts and transitions work as explained in the
 [vue-router docs](https://router.vuejs.org/guide/advanced/transitions.html) only as long as `Component` changes on each
-route. So if you want a transition between pages with the same layout *and* a different layout, you have to mutate
+route. So if you want a transition between pages with the same layout _and_ a different layout, you have to mutate
 `:key` on `<component>` (for a detailed example, see the Vue docs about
 [transitions between elements](https://vuejs.org/guide/built-ins/transition.html#transition-between-elements)).
 
@@ -27,7 +27,7 @@ trigger a transition in that case.
 
 ## Data From Layout to Page
 
-To send data *down* from the layout to the page, use props on the `<router-view>`:
+To send data _down_ from the layout to the page, use props on the `<router-view>`:
 
 ```vue [src/layouts/default.vue]
 <template>
@@ -42,8 +42,11 @@ the state at build time.
 
 With Vue Router 5 file-based routing, use the `<route>` block:
 
-```html [src/pages/index.vue]
-<template><div>Content</div></template>
+```vue [src/pages/index.vue]
+<template>
+  <div>Content</div>
+</template>
+
 <route lang="yaml">
 meta:
   layout: default
