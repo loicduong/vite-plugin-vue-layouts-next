@@ -52,6 +52,11 @@
         deduped layout
       </router-link>
     </p>
+    <p>
+      <router-link to="/excluded">
+        excluded layout (falls back to default)
+      </router-link>
+    </p>
   </div>
 </template>
 

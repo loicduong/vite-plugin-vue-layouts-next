@@ -73,6 +73,13 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
+    '/excluded': RouteRecordInfo<
+      '/excluded',
+      '/excluded',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
     '/module1': RouteRecordInfo<
       '/module1',
       '/module1',
@@ -200,6 +207,14 @@ declare module 'vue-router/auto-routes' {
     'src/pages/api-client-layout.vue': {
       routes:
         | '/api-client-layout'
+      views:
+        | never
+      pathParamNames:
+        | never
+    }
+    'src/pages/excluded.vue': {
+      routes:
+        | '/excluded'
       views:
         | never
       pathParamNames:

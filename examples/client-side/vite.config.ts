@@ -9,7 +9,14 @@ const config = defineConfig({
       /* options */
     }),
     Vue(),
-    ClientSideLayout(),
+    ClientSideLayout({
+      layoutDir: 'src/layouts',
+      // `main.vue` is the fallback instead of `default.vue`.
+      defaultLayout: 'main',
+      // One mode for every layout; `sync` inlines them all in the main chunk.
+      importMode: 'sync',
+      inheritDefaultLayout: true,
+    }),
   ],
 })
 

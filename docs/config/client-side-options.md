@@ -10,7 +10,7 @@ import { ClientSideLayout } from 'vite-plugin-vue-layouts-next'
 export default defineConfig({
   plugins: [
     ClientSideLayout({
-      layoutsDir: 'src/mylayouts',
+      layoutDir: 'src/mylayouts',
       defaultLayout: 'my-default',
       importMode: 'sync',
     }),
@@ -18,7 +18,7 @@ export default defineConfig({
 })
 ```
 
-## layoutsDir
+## layoutDir
 
 - **Type:** `string`
 - **Default:** `'src/layouts'`
@@ -44,3 +44,12 @@ than a filename, so `myDefault.vue` is `my-default`.
 
 How layout components are imported. Unlike the default plugin, this takes a plain string rather than a function, since
 the glob import applies one mode to every layout.
+
+## inheritDefaultLayout
+
+- **Type:** `boolean`
+- **Default:** `true`
+- **Related:** [`inheritDefaultLayout`](/config/plugin-options#inheritdefaultlayout)
+
+Whether nested routes should inherit the default layout from parent routes. Behaves exactly like the default plugin's
+option.
