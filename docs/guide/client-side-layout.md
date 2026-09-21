@@ -27,7 +27,7 @@ import { ClientSideLayout } from 'vite-plugin-vue-layouts-next'
 export default defineConfig({
   plugins: [
     ClientSideLayout({
-      layoutDir: 'src/mylayouts', // default to 'src/layouts'
+      layoutsDirs: 'src/mylayouts', // default to 'src/layouts'
       defaultLayout: 'my-default', // default to 'default', matches myDefault.vue
       importMode: 'sync' // The default will automatically detect -> ssg is sync, other is async
     }),
