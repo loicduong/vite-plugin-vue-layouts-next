@@ -77,7 +77,7 @@ Files named `__*__.vue` are always excluded, regardless of this option.
 
 Normalized layout name to use when a route does not specify `meta.layout`.
 
-The value is a *layout name*, not a filename. For example `myDefault.vue` is named `my-default`:
+The value is a _layout name_, not a filename. For example `myDefault.vue` is named `my-default`:
 
 ```js [vite.config.js]
 Layouts({

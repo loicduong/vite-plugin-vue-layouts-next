@@ -12,19 +12,37 @@ function isUppercase(char = ''): boolean | undefined {
   return char !== char.toLowerCase()
 }
 
+type CaseBoundary = 'before' | 'after' | undefined
+
+/**
+ * Where a word boundary falls when `char` follows `buffer` with no separator:
+ * `before` for `aB`, `after` for `ABc` (the last upper starts the next word).
+ */
+function caseBoundary(previousUpper: boolean | undefined, isUpper: boolean | undefined, buffer: string): CaseBoundary {
+  if (previousUpper === false && isUpper === true)
+    return 'before'
+  if (previousUpper === true && isUpper === false && buffer.length > 1)
+    return 'after'
+  return undefined
+}
+
 function splitByCase(value: string): string[] {
   const parts: string[] = []
   let buffer = ''
   let previousUpper: boolean | undefined
   let previousSplitter: boolean | undefined
 
+  const flush = () => {
+    if (buffer)
+      parts.push(buffer)
+  }
+
   for (const char of value) {
     const isSplitter = REGEX_SEPARATORS.test(char)
     REGEX_SEPARATORS.lastIndex = 0
 
     if (isSplitter) {
-      if (buffer)
-        parts.push(buffer)
+      flush()
       buffer = ''
       previousUpper = undefined
       previousSplitter = true
@@ -32,32 +50,24 @@ function splitByCase(value: string): string[] {
     }
 
     const isUpper = isUppercase(char)
+    const boundary = previousSplitter === false ? caseBoundary(previousUpper, isUpper, buffer) : undefined
 
-    if (previousSplitter === false) {
-      if (previousUpper === false && isUpper === true) {
-        if (buffer)
-          parts.push(buffer)
-        buffer = char
-        previousUpper = isUpper
-        continue
-      }
-
-      if (previousUpper === true && isUpper === false && buffer.length > 1) {
-        const lastChar = buffer.at(-1)!
-        parts.push(buffer.slice(0, -1))
-        buffer = lastChar + char
-        previousUpper = isUpper
-        continue
-      }
+    if (boundary === 'before') {
+      flush()
+      buffer = char
     }
-
-    buffer += char
+    else if (boundary === 'after') {
+      parts.push(buffer.slice(0, -1))
+      buffer = buffer.at(-1)! + char
+    }
+    else {
+      buffer += char
+    }
     previousUpper = isUpper
     previousSplitter = false
   }
 
-  if (buffer)
-    parts.push(buffer)
+  flush()
 
   return parts
 }

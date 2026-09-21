@@ -14,7 +14,7 @@ Pages without a layout specified use `default.vue` for their layout.
 
 You can use route blocks to allow each page to determine its layout. The block below in a page will look for `/src/layouts/users.vue` for its layout.
 
-```html
+```vue
 <route lang="yaml">
 meta:
   layout: users
@@ -96,15 +96,15 @@ See the [Dynamic Layouts guide](https://loicduong.github.io/vite-plugin-vue-layo
 
 Full documentation lives at **[loicduong.github.io/vite-plugin-vue-layouts-next][docs]**:
 
-- [Getting Started][docs-getting-started] — install, usage and client types
-- [Why][docs-why] — the rationale, and how this fork differs
-- [How it works][docs-how-it-works] — what `setupLayouts` does to your routes
-- [Migration][docs-migration] — upgrading to v3, including layout name normalization
-- [Config][docs-config] — plugin options, layout names and ClientSideLayout options
-- [Common Patterns][docs-patterns] — transitions and passing data between layouts and pages
-- [Dynamic Layouts][docs-dynamic-layout] — `setPageLayout` and `useLayout`
-- [ClientSideLayout][docs-client-side-layout] — the lighter, glob-import based variant
-- [Examples][docs-examples] — runnable SPA, SSG, client-side and nested-routes setups
+- [Getting Started][docs-getting-started] - install, usage and client types
+- [Why][docs-why] - the rationale, and how this fork differs
+- [How it works][docs-how-it-works] - what `setupLayouts` does to your routes
+- [Migration][docs-migration] - upgrading to v3, including layout name normalization
+- [Config][docs-config] - plugin options, layout names and ClientSideLayout options
+- [Common Patterns][docs-patterns] - transitions and passing data between layouts and pages
+- [Dynamic Layouts][docs-dynamic-layout] - `setPageLayout` and `useLayout`
+- [ClientSideLayout][docs-client-side-layout] - the lighter, glob-import based variant
+- [Examples][docs-examples] - runnable SPA, SSG, client-side and nested-routes setups
 
 The site also publishes [`llms.txt`][docs-llms] and `llms-full.txt` for LLM consumption.
 

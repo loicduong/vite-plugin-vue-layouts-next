@@ -37,19 +37,19 @@ pnpm add -D vite-plugin-vue-layouts-next
 ### Compatibility Note
 
 This package targets Vite 6 to 8, Vue 3.2+, and Vue Router 4.0.11 or 5. Page discovery is owned by Vue Router 5's own
-Vite plugin — this plugin only resolves layouts, so no page-routing plugin is needed alongside it.
+Vite plugin - this plugin only resolves layouts, so no page-routing plugin is needed alongside it.
 
 ### Support Policy
 
 Which versions of the peer dependencies a release of this plugin supports follows one rule set, so it does not have to
 be decided again for each release:
 
-- **Vite** — the current major and the two previous majors, mirroring Vite's own
+- **Vite** - the current major and the two previous majors, mirroring Vite's own
   [release policy](https://vite.dev/releases). Today: Vite 6, 7 and 8.
-- **Vue Router** — the current major and the previous major; for each, only its latest minor is a support target.
+- **Vue Router** - the current major and the previous major; for each, only its latest minor is a support target.
   Today: Vue Router 5.x and 4.6.x. Older 4.x minors still install (the peer range starts at 4.0.11) but are not
   tested against.
-- **Vue** — no separate floor. Vue has no LTS or backport policy, so the supported Vue range is whatever the oldest
+- **Vue** - no separate floor. Vue has no LTS or backport policy, so the supported Vue range is whatever the oldest
   supported Vue Router minor requires (Vue Router 4.6 requires Vue 3.5). The peer range currently still allows
   Vue 3.2+; features that need a newer Vue degrade gracefully there and say so in their docs
   (see [Dynamic Layouts](/guide/dynamic-layout)).
@@ -105,7 +105,7 @@ Every page without an explicit layout renders inside this one.
 
 A page selects its layout through `meta.layout`, either in a `<route>` block:
 
-```html [src/pages/users.vue]
+```vue [src/pages/users.vue]
 <route lang="yaml">
 meta:
   layout: users
@@ -124,7 +124,7 @@ definePage({
 </script>
 ```
 
-Both look for `src/layouts/users.vue`. Note that the value is a *layout name*, not a path — see
+Both look for `src/layouts/users.vue`. Note that the value is a _layout name_, not a path - see
 [Layout Names](/config/layout-names).
 
 ## Client Types

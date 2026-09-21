@@ -7,13 +7,13 @@ accurate, but also more limited.
 
 ## When to Use It
 
-| | `Layouts()` | `ClientSideLayout()` |
-| --- | --- | --- |
-| Layout resolution | Build time, explicit generated imports | Run time, `import.meta.glob` |
-| HMR | Regenerates the virtual module | Faster and more accurate |
-| `layoutsDirs` | One or many directories, globs supported | A single directory |
-| `importMode` | Per-layout function | One mode for all layouts |
-| `exclude` / `extensions` | Supported | Not supported |
+|                          | `Layouts()`                              | `ClientSideLayout()`         |
+| ------------------------ | ---------------------------------------- | ---------------------------- |
+| Layout resolution        | Build time, explicit generated imports   | Run time, `import.meta.glob` |
+| HMR                      | Regenerates the virtual module           | Faster and more accurate     |
+| `layoutsDirs`            | One or many directories, globs supported | A single directory           |
+| `importMode`             | Per-layout function                      | One mode for all layouts     |
+| `exclude` / `extensions` | Supported                                | Not supported                |
 
 Reach for `ClientSideLayout` when you have a single flat layouts directory and want the tightest dev feedback loop.
 Stay on `Layouts()` when you need multiple layout directories, glob paths, or per-layout import modes.

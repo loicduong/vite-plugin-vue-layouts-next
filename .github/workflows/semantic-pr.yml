@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # Squash-merged PR titles become commit subjects, which conventional-changelog
-      # turns into changelog entries — so titles must be Conventional Commits.
+      # turns into changelog entries - so titles must be Conventional Commits.
       - uses: amannn/action-semantic-pull-request@v6
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -38,7 +38,7 @@ Layouts are stored in the `/src/layouts` folder by default and are standard Vue 
 You can use route blocks to allow each page to determine its layout. The block below in a page will look for
 `/src/layouts/users.vue` for its layout.
 
-```html
+```vue
 <route lang="yaml">
 meta:
   layout: users

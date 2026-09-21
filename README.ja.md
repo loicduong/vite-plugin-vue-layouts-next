@@ -15,7 +15,7 @@ Vite 8、Vue 3 および Vue Router 5 用のルーターベースのレイアウ
 
 ルートブロックを使用することで、各ページがレイアウトを決定できます。以下のブロックをページに追加すると、レイアウトとして `/src/layouts/users.vue` を探します。
 
-```html
+```vue
 <route lang="yaml">
 meta:
   layout: users
@@ -255,7 +255,7 @@ router: [
 
 `App.vue`
 
-```html
+```vue
 <template>
   <router-view v-slot="{ Component, route }">
     <transition name="slide">
@@ -271,7 +271,7 @@ router: [
 
 レイアウトからページにデータを*下に*送信したい場合は、props を使用します。
 
-```html
+```vue
 <router-view foo="bar" />
 ```
 
@@ -283,8 +283,11 @@ Vue Router 5 のファイルベースルーティングでは、`<route>` ブロ
 
 `page.vue` で：
 
-```html
-<template><div>Content</div></template>
+```vue
+<template>
+  <div>Content</div>
+</template>
+
 <route lang="yaml">
 meta:
   layout: default
@@ -294,10 +297,11 @@ meta:
 
 これで、`layout.vue` で `bgColor` を読み取ることができます：
 
-```html
+```vue
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
 </script>
+
 <template>
   <div :style="`background: ${useRouter().currentRoute.value.meta.bgColor};`">
     <router-view />
@@ -311,9 +315,10 @@ import { useRouter } from 'vue-router'
 
 `page.vue` でイベントを発行：
 
-```html
+```vue
 <script setup lang="ts">
 import { defineEmit } from 'vue'
+
 const emit = defineEmit(['setColor'])
 
 if (2 + 2 === 4)
@@ -325,12 +330,12 @@ else
 
 `layout.vue` で `setColor` カスタムイベントをリッスン：
 
-```html
+```vue
 <script setup lang="ts">
 import { ref } from 'vue'
 
 const bgColor = ref('yellow')
-const setBg = (color) => {
+function setBg(color) {
   bgColor.value = color
 }
 </script>

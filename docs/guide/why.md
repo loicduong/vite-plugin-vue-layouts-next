@@ -5,7 +5,7 @@
 Vue Router has no concept of a layout. What it has is [nested routes](https://router.vuejs.org/guide/essentials/nested-routes.html):
 a parent route component renders a `<router-view>`, and child routes render inside it.
 
-That is enough to build layouts by hand, but with file-based routing it means writing route records manually — exactly
+That is enough to build layouts by hand, but with file-based routing it means writing route records manually - exactly
 the work file-based routing exists to avoid. Every new page has to be nested under the right parent by hand, and moving
 a page between layouts means editing route definitions rather than the page itself.
 
@@ -19,7 +19,7 @@ The output is plain Vue Router route records. Nothing about the router is wrappe
 scroll behavior and the rest of the [vue-router API](https://router.vuejs.org/api/) keep working exactly as documented.
 See [How it works](/guide/how-it-works) for the transformation itself.
 
-Layout choice stays with the page — a `meta.layout` value in a `<route>` block or `definePage` — so the page remains the
+Layout choice stays with the page - a `meta.layout` value in a `<route>` block or `definePage` - so the page remains the
 single file you edit.
 
 ## Relation to vite-plugin-vue-layouts
@@ -34,7 +34,7 @@ improvements and fixes. The differences that matter when choosing between them:
   of slash-separated paths. See [Layout Names](/config/layout-names).
 - **`inheritDefaultLayout`.** Controls whether a parent route still receives the default layout when a child route
   declares its own, which avoids double-wrapped layouts in nested route trees.
-- **Dynamic layouts.** `setPageLayout` and `useLayout` (modelled on Nuxt) let a page's layout change at runtime — for
+- **Dynamic layouts.** `setPageLayout` and `useLayout` (modelled on Nuxt) let a page's layout change at runtime - for
   example per user role from a router guard. See [Dynamic Layouts](/guide/dynamic-layout).
 
 If you are coming from the original plugin or from an older version of this one, see [Migration](/guide/migration).
@@ -43,6 +43,6 @@ If you are coming from the original plugin or from an older version of this one,
 
 There are two exports, and they solve the same problem with different trade-offs:
 
-- `Layouts()` — the default. Resolves layouts at build time and generates explicit imports.
-- [`ClientSideLayout()`](/guide/client-side-layout) — a lighter variant built on `import.meta.glob`. HMR is faster and
+- `Layouts()` - the default. Resolves layouts at build time and generates explicit imports.
+- [`ClientSideLayout()`](/guide/client-side-layout) - a lighter variant built on `import.meta.glob`. HMR is faster and
   more accurate, but it is more limited.

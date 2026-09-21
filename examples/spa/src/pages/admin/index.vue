@@ -6,7 +6,7 @@ const layout = useLayout()
 
 <template>
   <div>
-    <p>Admin page — current layout: {{ layout }}</p>
+    <p>Admin page - current layout: {{ layout }}</p>
     <p>Switch the role on the home page to see this page rendered in the default layout instead.</p>
   </div>
 </template>
