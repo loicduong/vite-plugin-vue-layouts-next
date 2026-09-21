@@ -14,7 +14,7 @@ describe('integration: minimal Vite build with plugin', () => {
     const result = await build({
       root,
       logLevel: 'warn',
-      plugins: [Vue(), ClientSideLayout({ layoutDir: 'src/layouts' })],
+      plugins: [Vue(), ClientSideLayout({ layoutsDirs: 'src/layouts' })],
       resolve: {
         alias: {
           'vite-plugin-vue-layouts-next/runtime': resolve(fixturesRoot, '..', '..', 'src', 'runtime', 'index.ts'),
@@ -28,7 +28,7 @@ describe('integration: minimal Vite build with plugin', () => {
     })
     expect(result).toBeDefined()
 
-    const plugin = ClientSideLayout({ layoutDir: 'src/layouts' }) as Plugin
+    const plugin = ClientSideLayout({ layoutsDirs: 'src/layouts' }) as Plugin
     const load = plugin.load
     expect(typeof load === 'function' || typeof (load as any)?.handler === 'function').toBe(true)
 

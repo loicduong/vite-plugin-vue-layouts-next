@@ -36,7 +36,7 @@ function assertLoadReturnShape(result: unknown) {
 describe('load hook return shape', () => {
   describe('clientSideLayout', () => {
     it('returns object with code (string) and moduleType === "js" only', async () => {
-      const plugin = ClientSideLayout({ layoutDir: 'src/layouts' }) as Plugin
+      const plugin = ClientSideLayout({ layoutsDirs: 'src/layouts' }) as Plugin
       const load = getLoadFunction(plugin)
       expect(load).toBeTypeOf('function')
       const result = await load!(MODULE_ID_NULL)
@@ -51,7 +51,7 @@ describe('load hook return shape', () => {
     })
 
     it('builds the layouts map with normalizeLayoutName from the runtime', async () => {
-      const plugin = ClientSideLayout({ layoutDir: 'src/layouts', defaultLayout: 'main', inheritDefaultLayout: false }) as Plugin
+      const plugin = ClientSideLayout({ layoutsDirs: 'src/layouts', defaultLayout: 'main', inheritDefaultLayout: false }) as Plugin
       const load = getLoadFunction(plugin)
       const result = await load!(MODULE_ID_NULL) as { code: string }
 
@@ -66,8 +66,30 @@ describe('load hook return shape', () => {
       expect(result.code).not.toContain('function deepSetupLayout')
     })
 
+    it('reads the directory from layoutsDirs', async () => {
+      const plugin = ClientSideLayout({ layoutsDirs: 'src/mylayouts' }) as Plugin
+      const load = getLoadFunction(plugin)
+      const result = await load!(MODULE_ID_NULL) as { code: string }
+      expect(result.code).toContain('import.meta.glob("/src/mylayouts/**/*.vue"')
+    })
+
+    it('still accepts the deprecated layoutDir alias', async () => {
+      const plugin = ClientSideLayout({ layoutDir: 'src/legacy' }) as Plugin
+      const load = getLoadFunction(plugin)
+      const result = await load!(MODULE_ID_NULL) as { code: string }
+      expect(result.code).toContain('import.meta.glob("/src/legacy/**/*.vue"')
+    })
+
+    it('prefers layoutsDirs over layoutDir when both are given', async () => {
+      const plugin = ClientSideLayout({ layoutsDirs: 'src/new', layoutDir: 'src/old' }) as Plugin
+      const load = getLoadFunction(plugin)
+      const result = await load!(MODULE_ID_NULL) as { code: string }
+      expect(result.code).toContain('import.meta.glob("/src/new/**/*.vue"')
+      expect(result.code).not.toContain('src/old')
+    })
+
     it('uses eager glob and module.default in sync mode', async () => {
-      const plugin = ClientSideLayout({ layoutDir: 'src/layouts', importMode: 'sync' }) as Plugin
+      const plugin = ClientSideLayout({ layoutsDirs: 'src/layouts', importMode: 'sync' }) as Plugin
       const load = getLoadFunction(plugin)
       const result = await load!(MODULE_ID_NULL) as { code: string }
       expect(result.code).toContain('{ eager: true }')
@@ -75,7 +97,7 @@ describe('load hook return shape', () => {
     })
 
     it('uses lazy glob and lazyLayout(module) in async mode', async () => {
-      const plugin = ClientSideLayout({ layoutDir: 'src/layouts' }) as Plugin
+      const plugin = ClientSideLayout({ layoutsDirs: 'src/layouts' }) as Plugin
       const load = getLoadFunction(plugin)
       const result = await load!(MODULE_ID_NULL) as { code: string }
       expect(result.code).toContain('{ eager: false }')

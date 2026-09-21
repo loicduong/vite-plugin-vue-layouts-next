@@ -10,7 +10,7 @@ import { ClientSideLayout } from 'vite-plugin-vue-layouts-next'
 export default defineConfig({
   plugins: [
     ClientSideLayout({
-      layoutDir: 'src/mylayouts',
+      layoutsDirs: 'src/mylayouts',
       defaultLayout: 'my-default',
       importMode: 'sync',
     }),
@@ -18,14 +18,19 @@ export default defineConfig({
 })
 ```
 
-## layoutDir
+## layoutsDirs
 
 - **Type:** `string`
 - **Default:** `'src/layouts'`
 - **Related:** [`layoutsDirs`](/config/plugin-options#layoutsdirs)
 
-Directory to scan for layout components. Unlike the default plugin's `layoutsDirs`, this is a single directory and does
-not accept an array.
+Directory to scan for layout components. Same name as the default plugin's option so configs can move between the two
+exports, but here it is a single directory: no array, no glob.
+
+::: details Deprecated alias: `layoutDir`
+Earlier versions called this option `layoutDir`. It still works, but is ignored when `layoutsDirs` is also set, and will
+be removed in the next major.
+:::
 
 ## defaultLayout
 

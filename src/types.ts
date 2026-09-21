@@ -44,8 +44,13 @@ export interface ResolvedOptions extends Options {}
 
 export interface clientSideOptions {
   /**
-   * layouts dir
+   * Relative path to the directory to search for layout components.
+   * Same name as the default plugin's option, but a single directory: no array, no glob.
    * @default "src/layouts"
+   */
+  layoutsDirs?: string
+  /**
+   * @deprecated Use `layoutsDirs` instead. Ignored when `layoutsDirs` is set.
    */
   layoutDir?: string
   /**

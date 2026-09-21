@@ -36,7 +36,7 @@ export default function Layout(userOptions: UserOptions = {}): Plugin {
   if (canEnableClientLayout(userOptions)) {
     return ClientSideLayout({
       defaultLayout: userOptions.defaultLayout,
-      layoutDir: userOptions.layoutsDirs as string,
+      layoutsDirs: userOptions.layoutsDirs as string,
       inheritDefaultLayout: userOptions.inheritDefaultLayout,
     })
   }
@@ -127,11 +127,13 @@ export default function Layout(userOptions: UserOptions = {}): Plugin {
 
 export function ClientSideLayout(options?: clientSideOptions): Plugin {
   const {
-    layoutDir = 'src/layouts',
+    layoutsDirs,
+    layoutDir: legacyLayoutDir,
     defaultLayout = 'default',
     importMode = process.env.VITE_SSG ? 'sync' : 'async',
     inheritDefaultLayout = true,
   } = options || {}
+  const layoutDir = layoutsDirs ?? legacyLayoutDir ?? 'src/layouts'
   return {
     name: 'vite-plugin-vue-layouts-next',
     config() {
