@@ -57,9 +57,11 @@ See [Layout names](/config/layout-names) for the full normalization table.
 
 ## Redirects and other route options
 
-`vite-plugin-pages` let a `<route>` block set any route record field. With Vue Router 5 file-based routing, put those
-fields in `definePage()` instead - the same way Nuxt's `definePageMeta()` works. `setupLayouts` keeps them on the route
-record, so they work with layouts too.
+`vite-plugin-pages` let a `<route>` block set any route record field. With Vue Router 5 file-based routing, use
+`definePage()` instead - the same way Nuxt's `definePageMeta()` works. It accepts the route record fields a page can
+own, such as `name`, `path`, `alias`, `meta`, `props`, `redirect` and `beforeEnter`; `component` and `children` come from
+the file tree and cannot be overridden. `setupLayouts` keeps these fields on the route record, so they work with layouts
+too.
 
 For example, a page at `src/pages/settings/legacy.vue` that forwards to the new settings page:
 
