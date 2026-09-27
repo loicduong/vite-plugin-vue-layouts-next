@@ -129,8 +129,7 @@ Both look for `src/layouts/users.vue`. Note that the value is a _layout name_, n
 
 ## Passing Props to a Layout
 
-Like Nuxt's `definePageMeta`, `meta.layout` also accepts an object with the layout `name` and the `props` to pass to
-the layout component:
+`meta.layout` also accepts an object with the layout `name` and the `props` to pass to the layout component:
 
 ```vue [src/pages/dashboard.vue]
 <script setup lang="ts">
