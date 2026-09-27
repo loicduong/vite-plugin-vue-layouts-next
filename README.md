@@ -76,22 +76,6 @@ const router = createRouter({
 
 See [Getting Started][docs-getting-started] for client types and per-page layouts.
 
-### Dynamic layouts
-
-```ts
-import { setPageLayout, useLayout } from 'virtual:generated-layouts'
-
-setPageLayout('admin') // switch the current page's layout in place
-const layout = useLayout() // ComputedRef<string | false>
-
-router.beforeEach((to) => {
-  if (to.path.startsWith('/admin'))
-    to.meta.layout = isAdmin() ? 'admin' : 'default'
-})
-```
-
-See the [Dynamic Layouts guide](https://loicduong.github.io/vite-plugin-vue-layouts-next/guide/dynamic-layout).
-
 ## Documentation
 
 Full documentation lives at **[loicduong.github.io/vite-plugin-vue-layouts-next][docs]**:
