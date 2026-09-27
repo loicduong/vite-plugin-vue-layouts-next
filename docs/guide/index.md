@@ -127,6 +127,54 @@ definePage({
 Both look for `src/layouts/users.vue`. Note that the value is a _layout name_, not a path - see
 [Layout Names](/config/layout-names).
 
+## Passing Props to a Layout
+
+Like Nuxt's `definePageMeta`, `meta.layout` also accepts an object with the layout `name` and the `props` to pass to
+the layout component:
+
+```vue [src/pages/dashboard.vue]
+<script setup lang="ts">
+definePage({
+  meta: {
+    layout: {
+      name: 'panel',
+      props: {
+        sidebar: true,
+        title: 'Dashboard',
+      },
+    },
+  },
+})
+</script>
+```
+
+The layout receives them through `defineProps`:
+
+```vue [src/layouts/panel.vue]
+<script setup lang="ts">
+defineProps<{
+  sidebar?: boolean
+  title?: string
+}>()
+</script>
+
+<template>
+  <div class="panel">
+    <h1>{{ title }}</h1>
+    <aside v-if="sidebar">
+      ...
+    </aside>
+    <router-view />
+  </div>
+</template>
+```
+
+- Omit `name` to pass props to `defaultLayout`; `name: false` renders the page without a layout, like `layout: false`.
+- Props a layout does not declare fall through as attributes on its root element.
+- A flat `meta.layoutProps` next to a string `layout` works too (`layout.props` wins when both are set).
+- `definePage` and `<route>` blocks are extracted statically, so props must be plain serializable values. To compute
+  them at runtime, use a router guard or `setPageLayout` - see [Dynamic Layouts](/guide/dynamic-layout#layout-props).
+
 ## Client Types
 
 To get type definitions for `virtual:generated-layouts`, add the client types to your `tsconfig`:

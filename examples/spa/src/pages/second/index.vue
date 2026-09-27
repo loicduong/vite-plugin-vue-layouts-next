@@ -15,7 +15,7 @@ const emit = defineEmits<{ setColor: [color: string] }>()
         Tell the layout to go green
       </button>
       <button @click="emit('setColor', 'lightyellow')">
-        Back to the meta color
+        Back to the layout prop color
       </button>
     </p>
     <router-view />
@@ -25,8 +25,10 @@ const emit = defineEmits<{ setColor: [color: string] }>()
 <route>
 {
   meta: {
-    layout: "second",
-    bgColor: "lightyellow"
+    layout: {
+      name: "second",
+      props: { bgColor: "lightyellow" }
+    }
   }
 }
 </route>
