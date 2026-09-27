@@ -1,5 +1,6 @@
 import type { Component } from 'vue'
 import type { Router, RouteRecordRaw } from 'vue-router'
+import { declaresLayout, readLayoutMeta } from './layoutMeta'
 
 export interface SetupLayoutsOptions {
   inheritDefaultLayout: boolean
@@ -27,7 +28,7 @@ function hasChildWithLayout(route: AnyRoute): boolean {
 
   return route.children.some((child) => {
     // Check if child has layout in meta (before transformation)
-    if (child.meta?.layout)
+    if (declaresLayout(child.meta))
       return true
     // Also check if child is already a layout route (after transformation)
     if (child.meta?.isLayout)
@@ -66,7 +67,7 @@ export function createSetupLayouts(wrapper: Component, options: SetupLayoutsOpti
         if (skipLayout)
           return route
 
-        if (route.meta?.layout !== false) {
+        if (readLayoutMeta(route.meta).name !== false) {
           // If inheritDefaultLayout is true, always apply default layout (original behavior)
           // If inheritDefaultLayout is false, only apply if child doesn't have its own layout
           const shouldApplyDefaultLayout = inheritDefaultLayout || !childHasLayout
@@ -75,7 +76,7 @@ export function createSetupLayouts(wrapper: Component, options: SetupLayoutsOpti
         }
       }
 
-      if (route.meta?.layout)
+      if (declaresLayout(route.meta))
         return wrap(route, false)
 
       return route

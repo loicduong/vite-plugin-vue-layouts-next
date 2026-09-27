@@ -20,6 +20,12 @@ const Second = layout('second')
 const A = layout('a')
 const B = layout('b')
 const Lazy = layout('lazy')
+// Declares its props, so page-provided values arrive as props rather than fallthrough attrs.
+const Panel = defineComponent({
+  name: 'panel-layout',
+  props: { title: String, sidebar: Boolean },
+  setup: props => () => h('div', { 'data-layout': 'panel', 'data-title': props.title, 'data-sidebar': String(props.sidebar) }, [h(RouterView)]),
+})
 const Lazy2 = layout('lazy2')
 // A bare functional layout component: no `props`/`displayName`/`__vccOpts`. Lazy entries
 // are now marked explicitly via `lazyLayout`, so a plain function like this must be
@@ -89,7 +95,7 @@ function nestedRoutes(): RouteRecordRaw[] {
 // Navigates to `initialPath` BEFORE mounting so the router plugin does not
 // perform its own initial navigation to "/" on install.
 async function createApp(opts: AppOptions = {}) {
-  const layouts = { default: Default, admin: Admin, second: Second, a: A, b: B, lazy: lazyLayout(lazyFactory), lazy2: lazyLayout(lazyFactory2), broken: lazyLayout(() => Promise.reject(new Error('chunk failed'))), fn: Fn as Component, guarded: Guarded }
+  const layouts = { default: Default, admin: Admin, second: Second, a: A, b: B, lazy: lazyLayout(lazyFactory), lazy2: lazyLayout(lazyFactory2), broken: lazyLayout(() => Promise.reject(new Error('chunk failed'))), fn: Fn as Component, guarded: Guarded, panel: Panel }
   const Wrapper = createLayoutWrapper(layouts, 'default')
   const setupLayouts = createSetupLayouts(Wrapper, { inheritDefaultLayout: opts.inheritDefaultLayout ?? true })
   const router = createRouter({
@@ -442,5 +448,131 @@ describe('setPageLayout', () => {
     expect(layoutOf(wrapper)).toBe('admin')
     await router.push('/') // override must be gone now; '/' has no meta.layout
     expect(layoutOf(wrapper)).toBe('default')
+  })
+})
+
+describe('layout props', () => {
+  function propsRoutes(): RouteRecordRaw[] {
+    return [
+      { path: '/', component: page('home') },
+      { path: '/obj', component: page('obj'), meta: { layout: { name: 'panel', props: { title: 'Dashboard', sidebar: true } } } },
+      { path: '/obj-default', component: page('obj-default'), meta: { layout: { props: { title: 'Fallthrough' } } } },
+      { path: '/obj-false', component: page('obj-false'), meta: { layout: { name: false } } },
+      { path: '/flat', component: page('flat'), meta: { layout: 'panel', layoutProps: { title: 'Flat' } } },
+      { path: '/plain', component: page('plain'), meta: { layout: 'panel' } },
+      { path: '/nested', component: parentPage('outer'), meta: { layout: { name: 'panel', props: { title: 'Outer' } } }, children: [
+        { path: 'inner', component: page('inner'), meta: { layout: { name: 'panel', props: { title: 'Inner' } } } },
+      ] },
+    ]
+  }
+  const panelTitles = (wrapper: ReturnType<typeof mount>) => wrapper.findAll('[data-layout="panel"]').map(el => el.attributes('data-title'))
+
+  it('renders the named layout with props from the object syntax', async () => {
+    const { wrapper } = await createApp({ routes: propsRoutes(), initialPath: '/obj' })
+    const el = wrapper.find('[data-layout="panel"]')
+    expect(el.attributes('data-title')).toBe('Dashboard')
+    expect(el.attributes('data-sidebar')).toBe('true')
+    expect(useLayoutOf(wrapper)).toBe('panel')
+  })
+
+  it('uses the default layout when the object syntax omits name', async () => {
+    const { wrapper } = await createApp({ routes: propsRoutes(), initialPath: '/obj-default' })
+    expect(layoutOf(wrapper)).toBe('default')
+    // `default` declares no props, so they fall through as attributes on its root.
+    expect(wrapper.find('[data-layout="default"]').attributes('title')).toBe('Fallthrough')
+    expect(useLayoutOf(wrapper)).toBe('default')
+  })
+
+  it('leaves { name: false } routes unwrapped', async () => {
+    const { router, wrapper } = await createApp({ routes: propsRoutes(), initialPath: '/obj-false' })
+    expect(layoutOf(wrapper)).toBeNull()
+    expect(router.getRoutes().find(r => r.path === '/obj-false')!.meta.isLayout).toBeUndefined()
+  })
+
+  it('accepts flat meta.layoutProps next to a string layout', async () => {
+    const { wrapper } = await createApp({ routes: propsRoutes(), initialPath: '/flat' })
+    expect(panelTitles(wrapper)).toEqual(['Flat'])
+  })
+
+  it('renders without props when none are given', async () => {
+    const { wrapper } = await createApp({ routes: propsRoutes(), initialPath: '/plain' })
+    expect(wrapper.find('[data-layout="panel"]').attributes('data-title')).toBeUndefined()
+  })
+
+  it('gives each nested level the props of its own page', async () => {
+    const { wrapper } = await createApp({ routes: propsRoutes(), initialPath: '/nested/inner' })
+    expect(panelTitles(wrapper)).toEqual(['Outer', 'Inner'])
+  })
+
+  it('setPageLayout passes props and resets them on path change', async () => {
+    const { router, wrapper } = await createApp({ routes: propsRoutes(), initialPath: '/' })
+    setPageLayout('panel', { title: 'Override' })
+    await nextTick()
+    expect(panelTitles(wrapper)).toEqual(['Override'])
+
+    await router.push('/?tab=2')
+    expect(panelTitles(wrapper)).toEqual(['Override'])
+
+    await router.push('/obj')
+    expect(panelTitles(wrapper)).toEqual(['Dashboard'])
+  })
+
+  it('setPageLayout without props drops the static props of the page', async () => {
+    const { wrapper } = await createApp({ routes: propsRoutes(), initialPath: '/obj' })
+    setPageLayout('panel')
+    await nextTick()
+    expect(panelTitles(wrapper)).toEqual([undefined])
+  })
+
+  it('setPageLayout changes only the innermost level props', async () => {
+    const { wrapper } = await createApp({ routes: propsRoutes(), initialPath: '/nested/inner' })
+    setPageLayout('panel', { title: 'Changed' })
+    await nextTick()
+    expect(panelTitles(wrapper)).toEqual(['Outer', 'Changed'])
+  })
+
+  it('picks up an object layout assigned in a guard', async () => {
+    const { wrapper } = await createApp({
+      routes: propsRoutes(),
+      initialPath: '/',
+      beforeEach: (to) => {
+        to.meta.layout = { name: 'panel', props: { title: 'From guard' } }
+      },
+    })
+    expect(panelTitles(wrapper)).toEqual(['From guard'])
+  })
+
+  it('picks up layoutProps assigned in a guard without changing the layout', async () => {
+    const { wrapper } = await createApp({
+      routes: propsRoutes(),
+      initialPath: '/obj',
+      beforeEach: (to) => {
+        to.meta.layoutProps = { title: 'Guard props' }
+      },
+    })
+    expect(panelTitles(wrapper)).toEqual(['Guard props'])
+  })
+})
+
+describe('nullish layout input', () => {
+  it('setPageLayout(undefined) is ignored like null', async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    const { wrapper } = await createApp({ initialPath: '/admin' })
+    setPageLayout(undefined as any)
+    await nextTick()
+    expect(layoutOf(wrapper)).toBe('admin')
+    expect(useLayoutOf(wrapper)).toBe('admin')
+    expect(warn).not.toHaveBeenCalled()
+  })
+
+  it('a guard assigning null keeps the static layout', async () => {
+    const { wrapper } = await createApp({
+      initialPath: '/admin',
+      beforeEach: (to) => {
+        to.meta.layout = null as any
+      },
+    })
+    expect(layoutOf(wrapper)).toBe('admin')
+    expect(useLayoutOf(wrapper)).toBe('admin')
   })
 })

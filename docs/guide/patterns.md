@@ -37,10 +37,8 @@ To send data _down_ from the layout to the page, use props on the `<router-view>
 
 ## Static Data From Page to Layout
 
-To set state in your page and read it in your layout, add properties to a route's `meta`. This only works if you know
-the state at build time.
-
-With Vue Router 5 file-based routing, use the `<route>` block:
+To send state known at build time from your page to its layout, pass it as layout props with the object form of
+`meta.layout`. With Vue Router 5 file-based routing, use the `<route>` block:
 
 ```vue [src/pages/index.vue]
 <template>
@@ -49,24 +47,30 @@ With Vue Router 5 file-based routing, use the `<route>` block:
 
 <route lang="yaml">
 meta:
-  layout: default
-  bgColor: yellow
+  layout:
+    name: default
+    props:
+      bgColor: yellow
 </route>
 ```
 
-Now read `bgColor` in the layout:
+Now declare `bgColor` as a prop of the layout:
 
 ```vue [src/layouts/default.vue]
 <script setup lang="ts">
-import { useRouter } from 'vue-router'
+defineProps<{ bgColor?: string }>()
 </script>
 
 <template>
-  <div :style="`background: ${useRouter().currentRoute.value.meta.bgColor};`">
+  <div :style="{ background: bgColor }">
     <router-view />
   </div>
 </template>
 ```
+
+Any other `meta` property also works - read it with `useRoute().meta` in the layout - but layout props are typed by
+the layout's `defineProps` and follow `setPageLayout` and router guards. See
+[Passing Props to a Layout](/guide/#passing-props-to-a-layout).
 
 ## Dynamic Data From Page to Layout
 

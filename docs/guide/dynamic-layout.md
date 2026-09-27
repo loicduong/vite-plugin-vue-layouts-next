@@ -35,9 +35,32 @@ import { setPageLayout } from 'virtual:generated-layouts'
 </template>
 ```
 
-- Takes a layout name or `false` (render the page without a layout).
+- Takes a layout name or `false` (render the page without a layout), and optionally the
+  [props](#layout-props) for that layout.
 - The override lasts until the router navigates to a different `path`. Query or hash changes keep it.
 - It can be called before the router is ready; the first page then renders with that layout.
+
+## Layout props
+
+Both ways of changing the layout at runtime can also pass props to it (see
+[Passing Props to a Layout](/guide/#passing-props-to-a-layout) for the static form):
+
+```ts
+// In place
+setPageLayout('panel', { title: 'Settings', sidebar: false })
+
+// Per navigation: assign the object form, or only `layoutProps` to keep the layout
+router.beforeEach((to) => {
+  to.meta.layout = { name: 'panel', props: { title: String(to.name) } }
+  // or: to.meta.layoutProps = { title: String(to.name) }
+})
+```
+
+- A layout set at runtime brings its own props: `setPageLayout('panel')` without props renders `panel` without the
+  props the page declared statically.
+- Like the layout name, runtime props only apply to the innermost layout; each outer level keeps the props of its own
+  page. Props of different levels are never merged.
+- `useLayout()` still returns only the layout name.
 
 ## Reading it: `useLayout`
 
@@ -79,6 +102,6 @@ const layout = useLayout() // ComputedRef<string | false>
 - Layouts may be any component, including a bare functional component. If you build a `layouts` map by hand for
   `createLayoutWrapper`, wrap `() => import()` factories with `lazyLayout()` from `vite-plugin-vue-layouts-next/runtime`
   so they aren't mistaken for a synchronous component.
-- The `RouteMeta` augmentation (`layout?: string | false`, `isLayout?: boolean`) ships in
+- The `RouteMeta` augmentation (`layout?: string | false | { name?, props? }`, `layoutProps?`, `isLayout?`) ships in
   `vite-plugin-vue-layouts-next/runtime` and reaches you through `client.d.ts`, which imports types via the package's
   `exports`. This requires `moduleResolution: "bundler"` (or `node16`/`nodenext`) in `tsconfig.json` - the Vite default.

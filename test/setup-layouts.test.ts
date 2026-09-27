@@ -30,6 +30,39 @@ describe('createSetupLayouts', () => {
     expect(route.meta).toEqual({ layout: false })
   })
 
+  it('does not wrap { name: false } routes', () => {
+    const setupLayouts = createSetupLayouts(Wrapper, { inheritDefaultLayout: true })
+    const [route] = setupLayouts([{ path: '/raw', component: Page, meta: { layout: { name: false } } }])
+    expect(route.component).toBe(Page)
+  })
+
+  it('wraps nested children that declare an object layout', () => {
+    const setupLayouts = createSetupLayouts(Wrapper, { inheritDefaultLayout: true })
+    const [parent] = setupLayouts([{
+      path: '/p',
+      component: Page,
+      children: [
+        { path: 'c', component: Page, meta: { layout: { name: 'admin', props: { a: 1 } } } },
+        { path: 'd', component: Page, meta: { layout: { props: { a: 1 } } } },
+        { path: 'e', component: Page, meta: { layout: { name: false } } },
+      ],
+    }])
+    const [c, d, e] = parent.children![0]!.children!
+    expect(c).toMatchObject({ component: Wrapper, meta: { isLayout: true } })
+    expect(d).toMatchObject({ component: Wrapper, meta: { isLayout: true } })
+    expect(e!.component).toBe(Page)
+  })
+
+  it('does not count a { name: false } child as having its own layout', () => {
+    const setupLayouts = createSetupLayouts(Wrapper, { inheritDefaultLayout: false })
+    const [parent] = setupLayouts([{
+      path: '/p',
+      component: Page,
+      children: [{ path: 'c', component: Page, meta: { layout: { name: false } } }],
+    }])
+    expect(parent.meta?.isLayout).toBe(true)
+  })
+
   it('wraps nested children that declare a layout', () => {
     const setupLayouts = createSetupLayouts(Wrapper, { inheritDefaultLayout: true })
     const [parent] = setupLayouts([{

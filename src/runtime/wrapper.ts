@@ -1,10 +1,10 @@
 import type { Component, ComputedRef } from 'vue'
 import type { NavigationGuard, RouteLocationNormalized, Router, RouteRecordNormalized } from 'vue-router'
+import type { LayoutName, LayoutProps } from './layoutMeta'
 import * as Vue from 'vue'
 import { computed, defineAsyncComponent, defineComponent, h, inject, shallowRef } from 'vue'
 import { matchedRouteKey, routerKey, RouterView, START_LOCATION, useRoute, useRouter } from 'vue-router'
-
-export type LayoutName = string | false
+import { readLayoutMeta } from './layoutMeta'
 
 const LAZY = Symbol.for('vite-plugin-vue-layouts-next:lazy')
 
@@ -39,8 +39,14 @@ const PREFIX = '[vite-plugin-vue-layouts-next]'
 const hasInjectionContext: () => boolean
   = (Vue as { hasInjectionContext?: () => boolean }).hasInjectionContext ?? (() => false)
 
+/** A layout the wrapper renders: its name (or `false`) and the props passed to it. */
+interface ResolvedLayout {
+  name: LayoutName
+  props: LayoutProps | undefined
+}
+
 /** In-place override set by `setPageLayout`; cleared on navigation to another path. */
-const override = shallowRef<LayoutName | null>(null)
+const override = shallowRef<ResolvedLayout | null>(null)
 
 /** Routers that already have the guards installed. */
 const guardedRouters = new WeakSet<Router>()
@@ -49,11 +55,12 @@ const guardedRouters = new WeakSet<Router>()
 let resolvedDefaultLayout = 'default'
 
 /**
- * Change the layout of the current page without navigating.
- * The override lasts until the router navigates to a different `path`.
+ * Change the layout of the current page without navigating, optionally passing props
+ * to the layout component. The override lasts until the router navigates to a different `path`.
  */
-export function setPageLayout(name: LayoutName): void {
-  override.value = name
+export function setPageLayout(name: LayoutName, props?: LayoutProps): void {
+  // `null`/`undefined` clear the override, as they did before it carried props.
+  override.value = name == null ? null : { name, props }
 }
 
 /**
@@ -67,7 +74,7 @@ export function useLayout(): ComputedRef<LayoutName> {
     const own = innermostLayoutRecord(route)
     if (!own)
       return false
-    return resolveNameFor(route, own, override.value)
+    return resolveLayoutFor(route, own, override.value).name
   })
 }
 
@@ -82,24 +89,33 @@ function innermostLayoutRecord(route: RouteLike): RouteRecordNormalized | undefi
 }
 
 /**
- * Layout name the wrapper whose generated record is `own` renders for `route`.
+ * Layout (name and props) the wrapper whose generated record is `own` renders for `route`.
  *
- * The static name comes from the wrapped record's own meta (`||` fallback to the
+ * The static layout comes from the wrapped record's own meta (`||` fallback to the
  * default, like the original algorithm), so nested trees keep one layout per level.
  * Dynamic inputs - the `setPageLayout` override and a guard assignment to the merged
- * `route.meta.layout` - apply only to the innermost wrapper.
+ * `route.meta.layout` / `route.meta.layoutProps` - apply only to the innermost wrapper.
+ * A dynamic layout brings its own props and never inherits the page's static ones.
  */
-function resolveNameFor(route: RouteLike, own: RouteRecordNormalized, overrideValue: LayoutName | null): LayoutName {
+function resolveLayoutFor(route: RouteLike, own: RouteRecordNormalized, overrideValue: ResolvedLayout | null): ResolvedLayout {
   const { matched } = route
   const idx = matched.indexOf(own)
-  const page = matched[idx + 1]
-  const staticName: LayoutName = page?.meta.layout || resolvedDefaultLayout
+  const page = readLayoutMeta(matched[idx + 1]?.meta)
+  const staticLayout: ResolvedLayout = { name: page.name || resolvedDefaultLayout, props: page.props }
   const innermost = !matched.slice(idx + 2).some(r => r.meta.isLayout)
   if (!innermost)
-    return staticName
-  const staticMerged = matched.reduce<LayoutName | undefined>((m, r) => r.meta.layout ?? m, undefined)
-  const guardValue = route.meta.layout !== staticMerged ? route.meta.layout : undefined
-  return overrideValue ?? guardValue ?? staticName
+    return staticLayout
+  if (overrideValue)
+    return overrideValue
+  // A guard assigns to the merged `route.meta`; anything not taken from a record is dynamic.
+  const staticMerged = matched.reduce<typeof route.meta.layout>((m, r) => r.meta.layout ?? m, undefined)
+  const staticMergedProps = matched.reduce<LayoutProps | undefined>((m, r) => r.meta.layoutProps ?? m, undefined)
+  const guardProps = route.meta.layoutProps !== staticMergedProps ? route.meta.layoutProps : undefined
+  if (route.meta.layout != null && route.meta.layout !== staticMerged) {
+    const guard = readLayoutMeta({ layout: route.meta.layout, layoutProps: guardProps })
+    return { name: guard.name ?? resolvedDefaultLayout, props: guard.props }
+  }
+  return { name: staticLayout.name, props: guardProps ?? staticLayout.props }
 }
 
 function unwrapModule(mod: any): Component {
@@ -202,7 +218,7 @@ export function createLayoutWrapper(layouts: LayoutMap, defaultLayout: string): 
     for (const rec of to.matched) {
       if (!rec.meta.isLayout)
         continue
-      const name = resolveNameFor(to, rec, keepOverride ? override.value : null)
+      const { name } = resolveLayoutFor(to, rec, keepOverride ? override.value : null)
       if (name === false)
         continue
       const entry = layouts[name] ?? layouts[defaultLayout]
@@ -256,14 +272,16 @@ export function createLayoutWrapper(layouts: LayoutMap, defaultLayout: string): 
       const route = useRoute()
       const own = inject(matchedRouteKey)!
       installGuards(useRouter())
-      const name = computed(() => resolveNameFor(route, own.value!, override.value))
+      const layout = computed(() => resolveLayoutFor(route, own.value!, override.value))
 
       return () => {
-        if (name.value === false)
+        const { name, props } = layout.value
+        if (name === false)
           return h(RouterView)
-        const LayoutComponent = resolveLayout(name.value)
+        const LayoutComponent = resolveLayout(name)
+        // Copied: Vue normalizes `class`/`style` on the props object in place.
         return LayoutComponent
-          ? h(LayoutComponent, null, { default: () => h(RouterView) })
+          ? h(LayoutComponent, props ? { ...props } : null, { default: () => h(RouterView) })
           : h(RouterView)
       }
     },
