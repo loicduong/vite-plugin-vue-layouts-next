@@ -553,3 +553,26 @@ describe('layout props', () => {
     expect(panelTitles(wrapper)).toEqual(['Guard props'])
   })
 })
+
+describe('nullish layout input', () => {
+  it('setPageLayout(undefined) is ignored like null', async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    const { wrapper } = await createApp({ initialPath: '/admin' })
+    setPageLayout(undefined as any)
+    await nextTick()
+    expect(layoutOf(wrapper)).toBe('admin')
+    expect(useLayoutOf(wrapper)).toBe('admin')
+    expect(warn).not.toHaveBeenCalled()
+  })
+
+  it('a guard assigning null keeps the static layout', async () => {
+    const { wrapper } = await createApp({
+      initialPath: '/admin',
+      beforeEach: (to) => {
+        to.meta.layout = null as any
+      },
+    })
+    expect(layoutOf(wrapper)).toBe('admin')
+    expect(useLayoutOf(wrapper)).toBe('admin')
+  })
+})

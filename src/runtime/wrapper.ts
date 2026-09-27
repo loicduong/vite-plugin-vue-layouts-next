@@ -59,7 +59,8 @@ let resolvedDefaultLayout = 'default'
  * to the layout component. The override lasts until the router navigates to a different `path`.
  */
 export function setPageLayout(name: LayoutName, props?: LayoutProps): void {
-  override.value = name === null ? null : { name, props }
+  // `null`/`undefined` clear the override, as they did before it carried props.
+  override.value = name == null ? null : { name, props }
 }
 
 /**
@@ -110,7 +111,7 @@ function resolveLayoutFor(route: RouteLike, own: RouteRecordNormalized, override
   const staticMerged = matched.reduce<typeof route.meta.layout>((m, r) => r.meta.layout ?? m, undefined)
   const staticMergedProps = matched.reduce<LayoutProps | undefined>((m, r) => r.meta.layoutProps ?? m, undefined)
   const guardProps = route.meta.layoutProps !== staticMergedProps ? route.meta.layoutProps : undefined
-  if (route.meta.layout !== undefined && route.meta.layout !== staticMerged) {
+  if (route.meta.layout != null && route.meta.layout !== staticMerged) {
     const guard = readLayoutMeta({ layout: route.meta.layout, layoutProps: guardProps })
     return { name: guard.name ?? resolvedDefaultLayout, props: guard.props }
   }
