@@ -101,7 +101,7 @@ pnpm docs:dev
 
 ## Maintainer
 
-[Loic Duong](https://github.com/loicduong)
+[Loic Duong](https://loicduong.dev/)
 
 ## Thanks
 
