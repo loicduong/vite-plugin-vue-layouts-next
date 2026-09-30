@@ -78,7 +78,7 @@ See [Getting Started][docs-getting-started] for client types and per-page layout
 
 ## Documentation
 
-Full documentation lives at **[loicduong.github.io/vite-plugin-vue-layouts-next][docs]**:
+Full documentation lives at **[vuelayouts.loicduong.dev][docs]**:
 
 - [Getting Started][docs-getting-started] - install, usage and client types
 - [Why][docs-why] - the rationale, and how this fork differs
@@ -130,14 +130,14 @@ PRs accepted. [Open an issue][open-an-issue] or submit PRs for any improvements.
 [license]: ./LICENSE
 [open-an-issue]: https://github.com/loicduong/vite-plugin-vue-layouts-next/issues/new
 [vite-plugin-vue-layouts]: https://github.com/JohnCampionJr/vite-plugin-vue-layouts
-[docs]: https://loicduong.github.io/vite-plugin-vue-layouts-next/
-[docs-getting-started]: https://loicduong.github.io/vite-plugin-vue-layouts-next/guide/
-[docs-why]: https://loicduong.github.io/vite-plugin-vue-layouts-next/guide/why
-[docs-how-it-works]: https://loicduong.github.io/vite-plugin-vue-layouts-next/guide/how-it-works
-[docs-migration]: https://loicduong.github.io/vite-plugin-vue-layouts-next/guide/migration
-[docs-config]: https://loicduong.github.io/vite-plugin-vue-layouts-next/config/
-[docs-patterns]: https://loicduong.github.io/vite-plugin-vue-layouts-next/guide/patterns
-[docs-dynamic-layout]: https://loicduong.github.io/vite-plugin-vue-layouts-next/guide/dynamic-layout
-[docs-client-side-layout]: https://loicduong.github.io/vite-plugin-vue-layouts-next/guide/client-side-layout
-[docs-examples]: https://loicduong.github.io/vite-plugin-vue-layouts-next/guide/examples
-[docs-llms]: https://loicduong.github.io/vite-plugin-vue-layouts-next/llms.txt
+[docs]: https://vuelayouts.loicduong.dev/
+[docs-getting-started]: https://vuelayouts.loicduong.dev/guide/
+[docs-why]: https://vuelayouts.loicduong.dev/guide/why
+[docs-how-it-works]: https://vuelayouts.loicduong.dev/guide/how-it-works
+[docs-migration]: https://vuelayouts.loicduong.dev/guide/migration
+[docs-config]: https://vuelayouts.loicduong.dev/config/
+[docs-patterns]: https://vuelayouts.loicduong.dev/guide/patterns
+[docs-dynamic-layout]: https://vuelayouts.loicduong.dev/guide/dynamic-layout
+[docs-client-side-layout]: https://vuelayouts.loicduong.dev/guide/client-side-layout
+[docs-examples]: https://vuelayouts.loicduong.dev/guide/examples
+[docs-llms]: https://vuelayouts.loicduong.dev/llms.txt
