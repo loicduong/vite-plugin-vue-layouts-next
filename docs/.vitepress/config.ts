@@ -15,7 +15,7 @@ const pkgVersion = packageJson.version
 
 const ogTitle = 'vite-plugin-vue-layouts-next'
 const ogDescription = 'Router based layout plugin for Vite 8, Vue 3 and Vue Router 5.'
-const ogUrl = 'https://loicduong.github.io/vite-plugin-vue-layouts-next'
+const ogUrl = 'https://vuelayouts.loicduong.dev'
 
 const repo = 'https://github.com/loicduong/vite-plugin-vue-layouts-next'
 
@@ -23,7 +23,7 @@ export default defineConfig({
   title: ogTitle,
   titleTemplate: ':title | vite-plugin-vue-layouts-next',
   description: ogDescription,
-  base: '/vite-plugin-vue-layouts-next/',
+  base: '/',
   cleanUrls: true,
   lastUpdated: true,
 
