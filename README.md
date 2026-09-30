@@ -78,7 +78,7 @@ See [Getting Started][docs-getting-started] for client types and per-page layout
 
 ## Documentation
 
-Full documentation lives at **[vuelayouts.loicduong.dev][docs]**:
+Full documentation lives at **[vue-layouts.loicduong.dev][docs]**:
 
 - [Getting Started][docs-getting-started] - install, usage and client types
 - [Why][docs-why] - the rationale, and how this fork differs
@@ -130,14 +130,14 @@ PRs accepted. [Open an issue][open-an-issue] or submit PRs for any improvements.
 [license]: ./LICENSE
 [open-an-issue]: https://github.com/loicduong/vite-plugin-vue-layouts-next/issues/new
 [vite-plugin-vue-layouts]: https://github.com/JohnCampionJr/vite-plugin-vue-layouts
-[docs]: https://vuelayouts.loicduong.dev/
-[docs-getting-started]: https://vuelayouts.loicduong.dev/guide/
-[docs-why]: https://vuelayouts.loicduong.dev/guide/why
-[docs-how-it-works]: https://vuelayouts.loicduong.dev/guide/how-it-works
-[docs-migration]: https://vuelayouts.loicduong.dev/guide/migration
-[docs-config]: https://vuelayouts.loicduong.dev/config/
-[docs-patterns]: https://vuelayouts.loicduong.dev/guide/patterns
-[docs-dynamic-layout]: https://vuelayouts.loicduong.dev/guide/dynamic-layout
-[docs-client-side-layout]: https://vuelayouts.loicduong.dev/guide/client-side-layout
-[docs-examples]: https://vuelayouts.loicduong.dev/guide/examples
-[docs-llms]: https://vuelayouts.loicduong.dev/llms.txt
+[docs]: https://vue-layouts.loicduong.dev/
+[docs-getting-started]: https://vue-layouts.loicduong.dev/guide/
+[docs-why]: https://vue-layouts.loicduong.dev/guide/why
+[docs-how-it-works]: https://vue-layouts.loicduong.dev/guide/how-it-works
+[docs-migration]: https://vue-layouts.loicduong.dev/guide/migration
+[docs-config]: https://vue-layouts.loicduong.dev/config/
+[docs-patterns]: https://vue-layouts.loicduong.dev/guide/patterns
+[docs-dynamic-layout]: https://vue-layouts.loicduong.dev/guide/dynamic-layout
+[docs-client-side-layout]: https://vue-layouts.loicduong.dev/guide/client-side-layout
+[docs-examples]: https://vue-layouts.loicduong.dev/guide/examples
+[docs-llms]: https://vue-layouts.loicduong.dev/llms.txt
