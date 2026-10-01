@@ -27,10 +27,8 @@ function hasChildWithLayout(route: AnyRoute): boolean {
     return false
 
   return route.children.some((child) => {
-    // Check if child has layout in meta (before transformation)
     if (declaresLayout(child.meta))
       return true
-    // Also check if child is already a layout route (after transformation)
     if (child.meta?.isLayout)
       return true
     return hasChildWithLayout(child)
@@ -51,7 +49,6 @@ export function createSetupLayouts(wrapper: Component, options: SetupLayoutsOpti
 
   function deepSetupLayout(routes: readonly AnyRoute[], top = true): AnyRoute[] {
     return routes.map((route) => {
-      // Check if child has layout before transforming children (only when inheritDefaultLayout is false)
       const childHasLayout = top && !inheritDefaultLayout && (route.children?.length ?? 0) > 0
         ? hasChildWithLayout(route)
         : false
@@ -68,8 +65,6 @@ export function createSetupLayouts(wrapper: Component, options: SetupLayoutsOpti
           return route
 
         if (readLayoutMeta(route.meta).name !== false) {
-          // If inheritDefaultLayout is true, always apply default layout (original behavior)
-          // If inheritDefaultLayout is false, only apply if child doesn't have its own layout
           const shouldApplyDefaultLayout = inheritDefaultLayout || !childHasLayout
           if (shouldApplyDefaultLayout)
             return wrap(route, true)

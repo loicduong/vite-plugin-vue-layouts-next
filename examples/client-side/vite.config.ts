@@ -5,9 +5,7 @@ import VueRouter from 'vue-router/vite'
 
 const config = defineConfig({
   plugins: [
-    VueRouter({
-      /* options */
-    }),
+    VueRouter(),
     Vue(),
     ClientSideLayout({
       layoutsDirs: 'src/layouts',
