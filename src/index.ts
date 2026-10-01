@@ -36,6 +36,7 @@ export default function Layout(userOptions: UserOptions = {}): Plugin {
   if (canEnableClientLayout(userOptions)) {
     return ClientSideLayout({
       defaultLayout: userOptions.defaultLayout,
+      fallbackLayout: userOptions.fallbackLayout,
       layoutsDirs: userOptions.layoutsDirs as string,
       inheritDefaultLayout: userOptions.inheritDefaultLayout,
     })
@@ -130,6 +131,7 @@ export function ClientSideLayout(options?: clientSideOptions): Plugin {
     layoutsDirs,
     layoutDir: legacyLayoutDir,
     defaultLayout = 'default',
+    fallbackLayout,
     importMode = process.env.VITE_SSG ? 'sync' : 'async',
     inheritDefaultLayout = true,
   } = options || {}
@@ -149,6 +151,7 @@ export function ClientSideLayout(options?: clientSideOptions): Plugin {
           layoutDir,
           importMode,
           defaultLayout,
+          fallbackLayout,
           inheritDefaultLayout,
         })
         return { code, moduleType: 'js' as const }
@@ -161,7 +164,7 @@ function canEnableClientLayout(options: UserOptions) {
   const keys = Object.keys(options)
 
   // Non isomorphic options
-  if (keys.length > 3 || keys.some(key => !['layoutsDirs', 'defaultLayout', 'inheritDefaultLayout'].includes(key)))
+  if (keys.length > 4 || keys.some(key => !['layoutsDirs', 'defaultLayout', 'fallbackLayout', 'inheritDefaultLayout'].includes(key)))
     return false
 
   //  arrays and glob cannot be isomorphic either

@@ -125,7 +125,8 @@ function unwrapModule(mod: any): Component {
 /** Options-API navigation guards that never run on a layout component (see `checkRouteGuards`). */
 const ROUTE_GUARD_NAMES = ['beforeRouteEnter', 'beforeRouteUpdate', 'beforeRouteLeave'] as const
 
-export function createLayoutWrapper(layouts: LayoutMap, defaultLayout: string): Component {
+/** `fallbackLayout` is rendered when the requested layout is not in `layouts`; it defaults to `defaultLayout`. */
+export function createLayoutWrapper(layouts: LayoutMap, defaultLayout: string, fallbackLayout: string = defaultLayout): Component {
   resolvedDefaultLayout = defaultLayout
   /** Lazy layouts already loaded (by the `beforeResolve` preload or an async render). */
   const resolved = new Map<string, Component>()
@@ -134,6 +135,7 @@ export function createLayoutWrapper(layouts: LayoutMap, defaultLayout: string): 
   /** `defineAsyncComponent` per name, for renders that happen before the preload. */
   const asyncCache = new Map<string, Component>()
   const warned = new Set<string>()
+  let fallbackWarned = false
   /** Layout names already warned about declaring dead Options-API route guards. */
   const guardWarned = new Set<string>()
 
@@ -203,9 +205,14 @@ export function createLayoutWrapper(layouts: LayoutMap, defaultLayout: string): 
       return found
     if (!warned.has(name)) {
       warned.add(name)
-      console.warn(`${PREFIX} Layout "${name}" not found, falling back to "${defaultLayout}"`)
+      console.warn(`${PREFIX} Layout "${name}" not found, falling back to "${fallbackLayout}"`)
     }
-    return resolveComponent(defaultLayout)
+    const fallback = resolveComponent(fallbackLayout)
+    if (!fallback && !fallbackWarned) {
+      fallbackWarned = true
+      console.warn(`${PREFIX} Fallback layout "${fallbackLayout}" not found, rendering without a layout`)
+    }
+    return fallback
   }
 
   // Load lazy layouts before the navigation is confirmed, like when the
@@ -221,8 +228,8 @@ export function createLayoutWrapper(layouts: LayoutMap, defaultLayout: string): 
       const { name } = resolveLayoutFor(to, rec, keepOverride ? override.value : null)
       if (name === false)
         continue
-      const entry = layouts[name] ?? layouts[defaultLayout]
-      const key = layouts[name] ? name : defaultLayout
+      const entry = layouts[name] ?? layouts[fallbackLayout]
+      const key = layouts[name] ? name : fallbackLayout
       if (isLazyLayout(entry) && !resolved.has(key))
         await load(key, entry)
     }

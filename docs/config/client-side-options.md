@@ -41,6 +41,15 @@ be removed in the next major.
 Normalized layout name used when a route has no `meta.layout`. As with the default plugin, this is a layout name rather
 than a filename, so `myDefault.vue` is `my-default`.
 
+## fallbackLayout
+
+- **Type:** `string`
+- **Default:** the value of `defaultLayout`
+- **Related:** [`fallbackLayout`](/config/plugin-options#fallbacklayout)
+
+Normalized layout name rendered when a page asks for a layout that does not exist. Behaves exactly like the default
+plugin's option.
+
 ## importMode
 
 - **Type:** `'sync' | 'async'`

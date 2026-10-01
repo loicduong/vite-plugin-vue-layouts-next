@@ -85,6 +85,23 @@ Layouts({
 })
 ```
 
+## fallbackLayout
+
+- **Type:** `string`
+- **Default:** the value of `defaultLayout`
+- **Related:** [Layout Names](/config/layout-names)
+
+Normalized layout name to render when a page asks for a layout that does not exist, for example a typo in
+`meta.layout` or in `setPageLayout`. A warning naming the missing layout is logged once per name.
+
+```js [vite.config.js]
+Layouts({
+  fallbackLayout: 'blank',
+})
+```
+
+If the fallback layout does not exist either, the page renders without a layout and a second warning is logged once.
+
 ## importMode
 
 - **Type:** `(name: string) => 'sync' | 'async'`
