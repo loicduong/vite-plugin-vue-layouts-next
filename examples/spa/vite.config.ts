@@ -13,7 +13,6 @@ const config = defineConfig({
       layoutsDirs: ['src/layouts', 'src/module1/layouts', 'src/module2/layouts'],
       // `src/layouts/drafts/*` is scanned but dropped, so pages asking for it fall back to `default`.
       exclude: ['**/drafts/**'],
-      // Keep the default layout in the main chunk, lazy-load everything else.
       importMode: name => (name === 'default' ? 'sync' : 'async'),
     }),
   ],

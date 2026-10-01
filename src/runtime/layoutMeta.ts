@@ -4,7 +4,7 @@ export type LayoutName = string | false
 
 export type LayoutProps = Record<string, unknown>
 
-/** Object form of `meta.layout`: a layout name plus props for that layout component. */
+/** Object form of `meta.layout`. */
 export interface LayoutOptions {
   /** Layout name, `false` for no layout, or omitted for the default layout. */
   name?: LayoutName

@@ -134,11 +134,11 @@ export function createLayoutWrapper(layouts: LayoutMap, defaultLayout: string, f
   const guardWarned = new Set<string>()
 
   /**
-   * Layouts are rendered
-   * by `LayoutWrapper`, not matched as route components, so Vue Router never calls
-   * these; the Composition-API `onBeforeRouteUpdate`/`onBeforeRouteLeave` still work
-   * since they subscribe directly to the router. Skipped for a `defineAsyncComponent`
-   * wrapper that hasn't resolved yet - the caller passes the real component once loaded.
+   * Layouts are rendered by `LayoutWrapper`, not matched as route components, so Vue
+   * Router never calls their Options-API route guards; the Composition-API
+   * `onBeforeRouteUpdate`/`onBeforeRouteLeave` still work since they subscribe directly
+   * to the router. Skipped for a `defineAsyncComponent` wrapper that hasn't resolved
+   * yet - the caller passes the real component once loaded.
    */
   function checkRouteGuards(name: string, comp: unknown) {
     if (guardWarned.has(name) || !comp || (typeof comp !== 'object' && typeof comp !== 'function'))
