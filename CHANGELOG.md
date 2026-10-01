@@ -1,3 +1,10 @@
+# [3.2.0](https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v3.1.0...v3.2.0) (2026-10-01)
+
+
+### Features
+
+* add `fallbackLayout` option for unknown layout names ([#50](https://github.com/loicduong/vite-plugin-vue-layouts-next/issues/50)) ([3709c19](https://github.com/loicduong/vite-plugin-vue-layouts-next/commit/3709c197bc4d3905f3186c4144b40f9ed628930e))
+* **runtime:** pass props to layouts via `layout: { name, props }` ([#46](https://github.com/loicduong/vite-plugin-vue-layouts-next/issues/46)) ([3a563d0](https://github.com/loicduong/vite-plugin-vue-layouts-next/commit/3a563d087feeae816d56f53fdd4439fab4b1a90b))
 # [3.1.0](https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v3.0.0...v3.1.0) (2026-09-21)
 
 
