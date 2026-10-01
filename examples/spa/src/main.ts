@@ -10,7 +10,6 @@ const router = createRouter({
   routes: setupLayouts(routes),
 })
 
-// Role-based layout: admin pages use the admin layout only for admins.
 router.beforeEach((to) => {
   if (to.path.startsWith('/admin'))
     to.meta.layout = role.value === 'admin' ? 'admin' : 'default'

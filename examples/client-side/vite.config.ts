@@ -9,7 +9,7 @@ const config = defineConfig({
     Vue(),
     ClientSideLayout({
       layoutsDirs: 'src/layouts',
-      // `main.vue` is the fallback instead of `default.vue`.
+      // Pages without `meta.layout` use `main.vue` instead of `default.vue`.
       defaultLayout: 'main',
       // One mode for every layout; `sync` inlines them all in the main chunk.
       importMode: 'sync',

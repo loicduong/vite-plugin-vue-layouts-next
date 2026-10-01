@@ -8,10 +8,7 @@ export interface SetupLayoutsOptions {
 
 type AnyRoute = RouteRecordRaw & { children?: AnyRoute[] }
 
-/**
- * Same signature as before: without `withLayout` it returns a getter that hides
- * generated layout routes; with `withLayout` it returns the raw array.
- */
+/** Without `withLayout`, the returned getter hides the generated layout routes. */
 export function createGetRoutes(router: Router, withLayout: true): RouteRecordRaw[]
 export function createGetRoutes(router: Router, withLayout?: false): () => RouteRecordRaw[]
 export function createGetRoutes(router: Router, withLayout = false): RouteRecordRaw[] | (() => RouteRecordRaw[]) {

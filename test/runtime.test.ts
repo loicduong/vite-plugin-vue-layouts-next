@@ -28,7 +28,7 @@ const Panel = defineComponent({
 })
 const Lazy2 = layout('lazy2')
 // A bare functional layout component: no `props`/`displayName`/`__vccOpts`. Lazy entries
-// are now marked explicitly via `lazyLayout`, so a plain function like this must be
+// are marked explicitly via `lazyLayout`, so a plain function like this must be
 // treated as a component, not mistaken for a `() => import()` loader.
 const Fn = (_props: unknown, { slots }: { slots: any }) => h('div', { 'data-layout': 'fn' }, slots.default?.())
 // An Options-API `beforeRouteLeave` on a layout never runs (layouts aren't route
@@ -51,7 +51,6 @@ function page(text: string): Component {
   })
 }
 
-/** A page that has children of its own and renders them through its own `RouterView`. */
 function parentPage(text: string): Component {
   return defineComponent({
     setup() {
