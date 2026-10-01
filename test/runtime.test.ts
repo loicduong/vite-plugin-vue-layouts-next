@@ -63,6 +63,7 @@ function parentPage(text: string): Component {
 
 interface AppOptions {
   inheritDefaultLayout?: boolean
+  fallbackLayout?: string
   initialPath?: string
   beforeEach?: Parameters<ReturnType<typeof createRouter>['beforeEach']>[0]
   routes?: RouteRecordRaw[]
@@ -96,7 +97,7 @@ function nestedRoutes(): RouteRecordRaw[] {
 // perform its own initial navigation to "/" on install.
 async function createApp(opts: AppOptions = {}) {
   const layouts = { default: Default, admin: Admin, second: Second, a: A, b: B, lazy: lazyLayout(lazyFactory), lazy2: lazyLayout(lazyFactory2), broken: lazyLayout(() => Promise.reject(new Error('chunk failed'))), fn: Fn as Component, guarded: Guarded, panel: Panel }
-  const Wrapper = createLayoutWrapper(layouts, 'default')
+  const Wrapper = createLayoutWrapper(layouts, 'default', opts.fallbackLayout)
   const setupLayouts = createSetupLayouts(Wrapper, { inheritDefaultLayout: opts.inheritDefaultLayout ?? true })
   const router = createRouter({
     history: createMemoryHistory(),
@@ -187,6 +188,31 @@ describe('layoutWrapper', () => {
     const { wrapper } = await createApp({ initialPath: '/missing' })
     expect(layoutOf(wrapper)).toBe('default')
     expect(warn).toHaveBeenCalledWith('[vite-plugin-vue-layouts-next] Layout "nope" not found, falling back to "default"')
+  })
+
+  it('falls back to fallbackLayout for an unknown layout', async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    const { wrapper } = await createApp({ initialPath: '/missing', fallbackLayout: 'admin' })
+    expect(layoutOf(wrapper)).toBe('admin')
+    expect(warn).toHaveBeenCalledWith('[vite-plugin-vue-layouts-next] Layout "nope" not found, falling back to "admin"')
+  })
+
+  it('warns once and renders without a layout when fallbackLayout does not exist', async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    const { router, wrapper } = await createApp({ initialPath: '/missing', fallbackLayout: 'ghost' })
+    expect(layoutOf(wrapper)).toBeNull()
+    expect(wrapper.find('[data-page="missing"]').exists()).toBe(true)
+    expect(warn).toHaveBeenCalledWith('[vite-plugin-vue-layouts-next] Fallback layout "ghost" not found, rendering without a layout')
+
+    await router.push('/')
+    await router.push('/missing')
+    expect(warn).toHaveBeenCalledTimes(2)
+  })
+
+  it('preloads a lazy fallbackLayout before the navigation is confirmed', async () => {
+    vi.spyOn(console, 'warn').mockImplementation(() => {})
+    const { wrapper } = await createApp({ initialPath: '/missing', fallbackLayout: 'lazy' })
+    expect(layoutOf(wrapper)).toBe('lazy')
   })
 
   it('warns once when a layout declares an Options-API route guard', async () => {

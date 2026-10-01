@@ -4,12 +4,13 @@ export const RUNTIME_ID = 'vite-plugin-vue-layouts-next/runtime'
 
 function getClientCode(importCode: string, options: ResolvedOptions) {
   const inheritDefaultLayout = options.inheritDefaultLayout ?? true
+  const fallbackArg = options.fallbackLayout ? `, '${options.fallbackLayout}'` : ''
 
   return `
 import { createGetRoutes, createLayoutWrapper, createSetupLayouts, lazyLayout, setPageLayout, useLayout } from '${RUNTIME_ID}'
 export { createGetRoutes, setPageLayout, useLayout }
 ${importCode}
-const LayoutWrapper = createLayoutWrapper(layouts, '${options.defaultLayout}')
+const LayoutWrapper = createLayoutWrapper(layouts, '${options.defaultLayout}'${fallbackArg})
 export const setupLayouts = createSetupLayouts(LayoutWrapper, { inheritDefaultLayout: ${inheritDefaultLayout} })
 `
 }

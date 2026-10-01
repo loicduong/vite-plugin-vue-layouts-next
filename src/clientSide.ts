@@ -9,14 +9,16 @@ function normalizePath(path: string) {
 interface VirtualModuleCodeOptions {
   layoutDir: string
   defaultLayout: string
+  fallbackLayout?: string
   importMode: 'sync' | 'async'
   inheritDefaultLayout?: boolean
 }
 
 export async function createVirtualModuleCode(options: VirtualModuleCodeOptions) {
-  const { layoutDir, defaultLayout, importMode, inheritDefaultLayout = true } = options
+  const { layoutDir, defaultLayout, fallbackLayout, importMode, inheritDefaultLayout = true } = options
   const normalizedTarget = normalizePath(layoutDir)
   const isSync = importMode === 'sync'
+  const fallbackArg = fallbackLayout ? `, '${fallbackLayout}'` : ''
 
   return `
 import { createGetRoutes, createLayoutWrapper, createSetupLayouts, lazyLayout, normalizeLayoutName, setPageLayout, useLayout } from '${RUNTIME_ID}'
@@ -30,7 +32,7 @@ Object.entries(modules).forEach(([name, module]) => {
   layouts[key] = ${isSync ? 'module.default' : 'lazyLayout(module)'}
 })
 
-const LayoutWrapper = createLayoutWrapper(layouts, '${defaultLayout}')
+const LayoutWrapper = createLayoutWrapper(layouts, '${defaultLayout}'${fallbackArg})
 export const setupLayouts = createSetupLayouts(LayoutWrapper, { inheritDefaultLayout: ${inheritDefaultLayout} })
 `
 }

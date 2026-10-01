@@ -77,7 +77,8 @@ const layout = useLayout() // ComputedRef<string | false>
 - Pages with a static `layout: false` are never wrapped, so they cannot be given a layout at runtime.
 - In a nested route (a page with children, each level with its own `layout`), guards and `setPageLayout` target the
   _innermost_ layout - the one directly around the leaf page. The static layouts of the outer levels are unaffected.
-- An unknown layout name logs a warning and falls back to `defaultLayout`.
+- An unknown layout name logs a warning and falls back to [`fallbackLayout`](/config/plugin-options#fallbacklayout)
+  (`defaultLayout` unless set).
 - Layouts are rendered by a shared wrapper component, not matched as route components, so an Options-API
   `beforeRouteEnter` / `beforeRouteUpdate` / `beforeRouteLeave` declared _inside a layout component_ never runs; a
   warning is logged once per layout name when this is detected. Use `onBeforeRouteUpdate` / `onBeforeRouteLeave`
@@ -89,7 +90,7 @@ const layout = useLayout() // ComputedRef<string | false>
   `<route>` blocks, `beforeEach`, route-level `beforeEnter`, and any navigation after the first are unaffected.
 - `useLayout()` returns the _requested_ name - `meta.layout`, or the last value passed to `setPageLayout` - not the
   rendered fallback. So for an unknown name it still reports that name, even though the wrapper renders
-  `defaultLayout` (and warns). This matches Nuxt's `useLayout` semantics.
+  `fallbackLayout` (and warns). This matches Nuxt's `useLayout` semantics.
 - Switching layouts remounts the layout subtree. If you use a `<transition>` keyed on the route (see
   [Common Patterns](/guide/patterns#transitions)), an in-place `setPageLayout` does not change the key, so no transition
   runs.

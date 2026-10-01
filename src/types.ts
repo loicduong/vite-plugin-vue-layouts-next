@@ -23,6 +23,11 @@ interface Options {
    */
   defaultLayout: string
   /**
+   * Layout name/key to render when a page asks for a layout that does not exist.
+   * Defaults to `defaultLayout`.
+   */
+  fallbackLayout?: string
+  /**
    * Mode for importing layouts
    */
   importMode: (name: string) => 'sync' | 'async'
@@ -59,6 +64,11 @@ export interface clientSideOptions {
    * @default "default"
    */
   defaultLayout?: string
+  /**
+   * Layout name/key to render when a page asks for a layout that does not exist.
+   * Defaults to `defaultLayout`.
+   */
+  fallbackLayout?: string
   /**
    * default auto resolve
    */

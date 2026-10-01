@@ -106,6 +106,13 @@ describe('load hook return shape', () => {
     })
   })
 
+  it('passes fallbackLayout to the wrapper', async () => {
+    const plugin = ClientSideLayout({ layoutsDirs: 'src/layouts', fallbackLayout: 'blank' }) as Plugin
+    const load = getLoadFunction(plugin)
+    const result = await load!(MODULE_ID_NULL) as { code: string }
+    expect(result.code).toContain('const LayoutWrapper = createLayoutWrapper(layouts, \'default\', \'blank\')')
+  })
+
   describe('layout (server/resolved)', () => {
     it('returns object with code (string) and moduleType === "js" only', async () => {
       const plugin = Layout({
@@ -149,6 +156,27 @@ describe('load hook return shape', () => {
       expect(result.code).toContain('lazyLayout')
       expect(result.code).not.toContain('function deepSetupLayout')
     })
+  })
+})
+
+describe('fallbackLayout option', () => {
+  it('keeps the client-side implementation and passes the option on', async () => {
+    const plugin = Layout({ layoutsDirs: 'src/layouts', fallbackLayout: 'blank' }) as Plugin
+    const load = getLoadFunction(plugin)
+    const result = await load!(MODULE_ID_NULL) as { code: string }
+    expect(result.code).toContain('const LayoutWrapper = createLayoutWrapper(layouts, \'default\', \'blank\')')
+  })
+
+  it('passes fallbackLayout to the wrapper in the resolved implementation', async () => {
+    const plugin = Layout({
+      layoutsDirs: resolve(fixturesRoot, 'layouts'),
+      extensions: ['vue'],
+      fallbackLayout: 'blank',
+    }) as Plugin & { configResolved: (config: { root: string }) => void }
+    plugin.configResolved!({ root: fixturesRoot })
+    const load = getLoadFunction(plugin)
+    const result = await load!(MODULE_ID_VIRTUAL) as { code: string }
+    expect(result.code).toContain('const LayoutWrapper = createLayoutWrapper(layouts, \'default\', \'blank\')')
   })
 })
 
