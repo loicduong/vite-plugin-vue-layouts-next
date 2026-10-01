@@ -11,8 +11,6 @@ const LAZY = Symbol.for('vite-plugin-vue-layouts-next:lazy')
 export type LazyLayout = (() => Promise<{ default: Component } | Component>) & { [LAZY]: true }
 
 /**
- * Marks a `() => import()` factory as a lazy layout entry.
- *
  * Both virtual-module generators wrap their async imports with this, so a lazy entry
  * is always identified explicitly rather than guessed from its shape - unlike Vue
  * Router's route components, a bare functional component (e.g. an arrow-function
@@ -39,7 +37,6 @@ const PREFIX = '[vite-plugin-vue-layouts-next]'
 const hasInjectionContext: () => boolean
   = (Vue as { hasInjectionContext?: () => boolean }).hasInjectionContext ?? (() => false)
 
-/** A layout the wrapper renders: its name (or `false`) and the props passed to it. */
 interface ResolvedLayout {
   name: LayoutName
   props: LayoutProps | undefined
@@ -48,7 +45,6 @@ interface ResolvedLayout {
 /** In-place override set by `setPageLayout`; cleared on navigation to another path. */
 const override = shallowRef<ResolvedLayout | null>(null)
 
-/** Routers that already have the guards installed. */
 const guardedRouters = new WeakSet<Router>()
 
 /** `defaultLayout` of the last created wrapper; shared with `useLayout()`. */
@@ -78,7 +74,6 @@ export function useLayout(): ComputedRef<LayoutName> {
   })
 }
 
-/** The generated parent record of the innermost wrapper of `route`, if any. */
 function innermostLayoutRecord(route: RouteLike): RouteRecordNormalized | undefined {
   const { matched } = route
   for (let i = matched.length - 1; i >= 0; i--) {
@@ -125,7 +120,7 @@ function unwrapModule(mod: any): Component {
 /** Options-API navigation guards that never run on a layout component (see `checkRouteGuards`). */
 const ROUTE_GUARD_NAMES = ['beforeRouteEnter', 'beforeRouteUpdate', 'beforeRouteLeave'] as const
 
-/** `fallbackLayout` is rendered when the requested layout is not in `layouts`; it defaults to `defaultLayout`. */
+/** `fallbackLayout` is rendered when the requested layout is not in `layouts`; if it is missing too, the page renders without a layout. */
 export function createLayoutWrapper(layouts: LayoutMap, defaultLayout: string, fallbackLayout: string = defaultLayout): Component {
   resolvedDefaultLayout = defaultLayout
   /** Lazy layouts already loaded (by the `beforeResolve` preload or an async render). */
@@ -136,16 +131,14 @@ export function createLayoutWrapper(layouts: LayoutMap, defaultLayout: string, f
   const asyncCache = new Map<string, Component>()
   const warned = new Set<string>()
   let fallbackWarned = false
-  /** Layout names already warned about declaring dead Options-API route guards. */
   const guardWarned = new Set<string>()
 
   /**
-   * Warn once per layout name when the resolved component declares an Options-API
-   * `beforeRouteEnter` / `beforeRouteUpdate` / `beforeRouteLeave`. Layouts are rendered
-   * by `LayoutWrapper`, not matched as route components, so Vue Router never calls
-   * these; the Composition-API `onBeforeRouteUpdate`/`onBeforeRouteLeave` still work
-   * since they subscribe directly to the router. Skipped for a `defineAsyncComponent`
-   * wrapper that hasn't resolved yet - the caller passes the real component once loaded.
+   * Layouts are rendered by `LayoutWrapper`, not matched as route components, so Vue
+   * Router never calls their Options-API route guards; the Composition-API
+   * `onBeforeRouteUpdate`/`onBeforeRouteLeave` still work since they subscribe directly
+   * to the router. Skipped for a `defineAsyncComponent` wrapper that hasn't resolved
+   * yet - the caller passes the real component once loaded.
    */
   function checkRouteGuards(name: string, comp: unknown) {
     if (guardWarned.has(name) || !comp || (typeof comp !== 'object' && typeof comp !== 'function'))

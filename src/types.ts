@@ -1,6 +1,3 @@
-/**
- * Plugin options.
- */
 interface Options {
   /**
    * Relative path to the directory to search for layout components.
@@ -28,7 +25,8 @@ interface Options {
    */
   fallbackLayout?: string
   /**
-   * Mode for importing layouts
+   * `sync` bundles a layout into the main chunk, `async` lazy-loads it.
+   * Defaults to `sync` for `default` (and for every layout under `VITE_SSG`), `async` otherwise.
    */
   importMode: (name: string) => 'sync' | 'async'
   /**
@@ -70,7 +68,8 @@ export interface clientSideOptions {
    */
   fallbackLayout?: string
   /**
-   * default auto resolve
+   * `sync` bundles every layout into the main chunk, `async` lazy-loads them.
+   * Defaults to `sync` under `VITE_SSG`, `async` otherwise.
    */
   importMode?: 'sync' | 'async'
   /**

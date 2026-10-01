@@ -32,7 +32,7 @@ function resolveOptions(userOptions: UserOptions): ResolvedOptions {
 }
 
 export default function Layout(userOptions: UserOptions = {}): Plugin {
-  // If the customization level is not high, enable clientLayout to support better performance
+  // The client-side variant performs better, so it is used whenever the options allow it.
   if (canEnableClientLayout(userOptions)) {
     return ClientSideLayout({
       defaultLayout: userOptions.defaultLayout,
@@ -167,7 +167,7 @@ function canEnableClientLayout(options: UserOptions) {
   if (keys.length > 4 || keys.some(key => !['layoutsDirs', 'defaultLayout', 'fallbackLayout', 'inheritDefaultLayout'].includes(key)))
     return false
 
-  //  arrays and glob cannot be isomorphic either
+  // arrays and glob cannot be isomorphic either
   if (options.layoutsDirs && (Array.isArray(options.layoutsDirs) || options.layoutsDirs.includes('*')))
     return false
 

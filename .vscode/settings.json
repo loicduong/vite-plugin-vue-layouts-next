@@ -3,7 +3,6 @@
   "prettier.enable": false,
   "editor.formatOnSave": false,
 
-  // Auto fix
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit",
     "source.organizeImports": "never"
@@ -23,7 +22,6 @@
     { "rule": "*semi", "severity": "off", "fixable": true }
   ],
 
-  // Enable eslint for all supported languages
   "eslint.validate": [
     "javascript",
     "javascriptreact",
@@ -48,7 +46,6 @@
     "postcss"
   ],
 
-  // Ignore spell check
   "cSpell.words": [
     "bumpp",
     "demi",

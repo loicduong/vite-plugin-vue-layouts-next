@@ -120,7 +120,6 @@ describe('createGetRoutes', () => {
   })
 
   it('returns all routes when withLayout is true', () => {
-    // existing behavior: returns the array itself, not a getter
     expect(createGetRoutes(router, true)).toBe(routes)
   })
 })
