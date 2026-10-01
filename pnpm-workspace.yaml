@@ -3,7 +3,6 @@ cleanupUnusedCatalogs: true
 
 minimumReleaseAgeExcludePrune: true
 minimumReleaseAgeExclude:
-  - vitepress@2.0.0-alpha.20
   - vite@8.3.2
 
 trustPolicy: no-downgrade
