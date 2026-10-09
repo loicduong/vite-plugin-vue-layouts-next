@@ -1,6 +1,6 @@
 import type { Component, ComputedRef } from 'vue'
 import type { NavigationGuard, RouteLocationNormalized, Router, RouteRecordNormalized } from 'vue-router'
-import type { LayoutName, LayoutProps } from './layoutMeta'
+import type { LayoutKey, LayoutName, LayoutProps } from './layoutMeta'
 import * as Vue from 'vue'
 import { computed, defineAsyncComponent, defineComponent, h, inject, shallowRef } from 'vue'
 import { matchedRouteKey, routerKey, RouterView, START_LOCATION, useRoute, useRouter } from 'vue-router'
@@ -48,7 +48,7 @@ const override = shallowRef<ResolvedLayout | null>(null)
 const guardedRouters = new WeakSet<Router>()
 
 /** `defaultLayout` of the last created wrapper; shared with `useLayout()`. */
-let resolvedDefaultLayout = 'default'
+let resolvedDefaultLayout: LayoutKey = 'default'
 
 /**
  * Change the layout of the current page without navigating, optionally passing props
@@ -122,7 +122,8 @@ const ROUTE_GUARD_NAMES = ['beforeRouteEnter', 'beforeRouteUpdate', 'beforeRoute
 
 /** `fallbackLayout` is rendered when the requested layout is not in `layouts`; if it is missing too, the page renders without a layout. */
 export function createLayoutWrapper(layouts: LayoutMap, defaultLayout: string, fallbackLayout: string = defaultLayout): Component {
-  resolvedDefaultLayout = defaultLayout
+  // `defaultLayout` comes from vite.config, which the generated registry cannot type.
+  resolvedDefaultLayout = defaultLayout as LayoutKey
   /** Lazy layouts already loaded (by the `beforeResolve` preload or an async render). */
   const resolved = new Map<string, Component>()
   /** In-flight loads, so a layout's factory runs at most once. */

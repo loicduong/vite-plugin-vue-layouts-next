@@ -1,6 +1,16 @@
 import type { RouteMeta } from 'vue-router'
 
-export type LayoutName = string | false
+/** Augmented by the `.d.ts` that the `dts` option generates; keys are normalized layout names. */
+export interface LayoutRegistry {}
+
+type RegisteredLayoutName = keyof LayoutRegistry extends never
+  ? string
+  : keyof LayoutRegistry & string
+
+export type LayoutName = RegisteredLayoutName | false
+
+/** Same as Nuxt's `LayoutKey`: a layout name, without `false`. */
+export type LayoutKey = Exclude<LayoutName, false>
 
 export type LayoutProps = Record<string, unknown>
 

@@ -1,7 +1,7 @@
 import type { LayoutMeta, LayoutProps } from './layoutMeta'
 
 export { normalizeLayoutName } from '../layoutName'
-export type { LayoutMeta, LayoutName, LayoutOptions, LayoutProps } from './layoutMeta'
+export type { LayoutKey, LayoutMeta, LayoutName, LayoutOptions, LayoutProps, LayoutRegistry } from './layoutMeta'
 export { createGetRoutes, createSetupLayouts } from './setupLayouts'
 export type { SetupLayoutsOptions } from './setupLayouts'
 export { createLayoutWrapper, lazyLayout, setPageLayout, useLayout } from './wrapper'
