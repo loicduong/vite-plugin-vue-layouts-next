@@ -1,3 +1,9 @@
+# [3.3.0](https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v3.2.0...v3.3.0) (2026-10-09)
+
+
+### Features
+
+* typed layout names via `dts` option ([#54](https://github.com/loicduong/vite-plugin-vue-layouts-next/issues/54)) ([6717506](https://github.com/loicduong/vite-plugin-vue-layouts-next/commit/671750675a620e17327249b98a0c2eb6d1122428))
 # [3.2.0](https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v3.1.0...v3.2.0) (2026-10-01)
 
 
