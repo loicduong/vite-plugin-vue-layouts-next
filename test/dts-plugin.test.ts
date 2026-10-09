@@ -126,6 +126,19 @@ describe('dts in client-side mode', () => {
     expect(code).toContain('"admin": unknown')
   })
 
+  it('skips node_modules like import.meta.glob does', async () => {
+    const layouts = await createProject()
+    await mkdir(join(layouts, 'vendor', 'node_modules', 'pkg'), { recursive: true })
+    await writeFile(join(layouts, 'vendor', 'node_modules', 'pkg', 'leaked.vue'), SFC)
+    const plugin = ClientSideLayout({ layoutsDirs: 'src/layouts', dts: true })
+    setup(plugin)
+    await buildStart(plugin)
+
+    const code = await readDts()
+    expect(code).toContain('"default": unknown')
+    expect(code).not.toContain('leaked')
+  })
+
   it('resolves a root-relative layoutsDirs under the Vite root', async () => {
     await createProject()
     const plugin = ClientSideLayout({ layoutsDirs: '/src/layouts', dts: true })
