@@ -3,8 +3,10 @@ import type { clientSideOptions, FileContainer, ResolvedOptions, UserOptions } f
 import { resolve } from 'node:path'
 import process from 'node:process'
 import { createVirtualModuleCode } from './clientSide'
+import { generateDts, resolveDtsPath } from './dts'
 import { getFilesFromPath } from './files'
 import { getImportCode } from './importCode'
+import { normalizeLayoutName } from './layoutName'
 import getClientCode, { RUNTIME_ID } from './RouteLayout'
 
 import { debug, normalizePath, resolveDirs } from './utils'
@@ -27,6 +29,7 @@ function resolveOptions(userOptions: UserOptions): ResolvedOptions {
     exclude: [],
     importMode: defaultImportMode,
     inheritDefaultLayout: true,
+    dts: false,
     ...userOptions,
   }
 }
@@ -47,6 +50,31 @@ export default function Layout(userOptions: UserOptions = {}): Plugin {
   const options: ResolvedOptions = resolveOptions(userOptions)
 
   let layoutsDirs: string[]
+  let dtsPath: string | undefined
+
+  const isLayoutFile = (path: string) => layoutsDirs.some(dir => normalizePath(path).startsWith(dir))
+
+  const scanLayouts = async (): Promise<FileContainer[]> => {
+    const container: FileContainer[] = []
+
+    for (const dir of layoutsDirs) {
+      const layoutsDirPath = dir.startsWith('/')
+        ? normalizePath(dir)
+        : normalizePath(resolve(config.root, dir))
+
+      debug('Loading Layout Dir: %O', layoutsDirPath)
+
+      const _f = await getFilesFromPath(layoutsDirPath, options)
+      container.push({ path: layoutsDirPath, files: _f })
+    }
+
+    return container
+  }
+
+  const updateDts = async (container: FileContainer[]) => {
+    if (dtsPath)
+      await generateDts(dtsPath, container.flatMap(({ files }) => files.map(normalizeLayoutName)), config.logger)
+  }
 
   return {
     name: 'vite-plugin-vue-layouts-next',
@@ -57,6 +85,11 @@ export default function Layout(userOptions: UserOptions = {}): Plugin {
     configResolved(_config) {
       config = _config
       layoutsDirs = resolveDirs(options.layoutsDirs, config.root)
+      dtsPath = resolveDtsPath(options.dts, config.root)
+    },
+    async buildStart() {
+      if (dtsPath)
+        await updateDts(await scanLayouts())
     },
     configureServer({ moduleGraph, watcher, ws }) {
       watcher.add(options.layoutsDirs)
@@ -74,21 +107,27 @@ export default function Layout(userOptions: UserOptions = {}): Plugin {
       }
 
       const updateVirtualModule = (path: string) => {
-        path = normalizePath(path)
-
-        if (layoutsDirs.some(dir => path.startsWith(dir))) {
+        if (isLayoutFile(path)) {
           debug('reload', path)
           const module = moduleGraph.getModuleById(MODULE_ID_VIRTUAL)
           reloadModule(module)
         }
       }
 
-      watcher.on('add', (path) => {
+      // Only add/unlink can change the set of layout names.
+      const regenerateDts = async (path: string) => {
+        if (dtsPath && isLayoutFile(path))
+          await updateDts(await scanLayouts())
+      }
+
+      watcher.on('add', async (path) => {
         updateVirtualModule(path)
+        await regenerateDts(path)
       })
 
-      watcher.on('unlink', (path) => {
+      watcher.on('unlink', async (path) => {
         updateVirtualModule(path)
+        await regenerateDts(path)
       })
 
       watcher.on('change', async (path) => {
@@ -102,18 +141,8 @@ export default function Layout(userOptions: UserOptions = {}): Plugin {
     },
     async load(id) {
       if (id === MODULE_ID_VIRTUAL) {
-        const container: FileContainer[] = []
-
-        for (const dir of layoutsDirs) {
-          const layoutsDirPath = dir.startsWith('/')
-            ? normalizePath(dir)
-            : normalizePath(resolve(config.root, dir))
-
-          debug('Loading Layout Dir: %O', layoutsDirPath)
-
-          const _f = await getFilesFromPath(layoutsDirPath, options)
-          container.push({ path: layoutsDirPath, files: _f })
-        }
+        const container = await scanLayouts()
+        await updateDts(container)
 
         const importCode = getImportCode(container, options)
 
