@@ -14,6 +14,8 @@
   },
   "exclude": [
     "**/dist",
-    "**/node_modules"
+    "**/node_modules",
+    "test/types",
+    "examples/*/layouts.d.ts"
   ]
 }

@@ -2,15 +2,19 @@ import type { ModuleNode, Plugin, ResolvedConfig } from 'vite'
 import type { clientSideOptions, FileContainer, ResolvedOptions, UserOptions } from './types'
 import { resolve } from 'node:path'
 import process from 'node:process'
+import fg from 'fast-glob'
 import { createVirtualModuleCode } from './clientSide'
+import { generateDts, resolveDtsPath, serialize } from './dts'
 import { getFilesFromPath } from './files'
 import { getImportCode } from './importCode'
+import { normalizeLayoutName } from './layoutName'
 import getClientCode, { RUNTIME_ID } from './RouteLayout'
 
 import { debug, normalizePath, resolveDirs } from './utils'
 
 const MODULE_ID = 'virtual:generated-layouts'
 const MODULE_ID_VIRTUAL = '/@vite-plugin-vue-layouts-next/generated-layouts'
+const REGEX_LEADING_SLASH = /^\/+/
 
 export function defaultImportMode(name: string) {
   if (process.env.VITE_SSG)
@@ -27,6 +31,7 @@ function resolveOptions(userOptions: UserOptions): ResolvedOptions {
     exclude: [],
     importMode: defaultImportMode,
     inheritDefaultLayout: true,
+    dts: false,
     ...userOptions,
   }
 }
@@ -39,6 +44,7 @@ export default function Layout(userOptions: UserOptions = {}): Plugin {
       fallbackLayout: userOptions.fallbackLayout,
       layoutsDirs: userOptions.layoutsDirs as string,
       inheritDefaultLayout: userOptions.inheritDefaultLayout,
+      dts: userOptions.dts,
     })
   }
 
@@ -47,6 +53,33 @@ export default function Layout(userOptions: UserOptions = {}): Plugin {
   const options: ResolvedOptions = resolveOptions(userOptions)
 
   let layoutsDirs: string[]
+  let dtsPath: string | undefined
+
+  const isLayoutFile = (path: string) => layoutsDirs.some(dir => normalizePath(path).startsWith(dir))
+
+  const scanLayouts = async (): Promise<FileContainer[]> => {
+    const container: FileContainer[] = []
+
+    for (const dir of layoutsDirs) {
+      const layoutsDirPath = dir.startsWith('/')
+        ? normalizePath(dir)
+        : normalizePath(resolve(config.root, dir))
+
+      debug('Loading Layout Dir: %O', layoutsDirPath)
+
+      const _f = await getFilesFromPath(layoutsDirPath, options)
+      container.push({ path: layoutsDirPath, files: _f })
+    }
+
+    return container
+  }
+
+  const enqueueDts = serialize()
+
+  const updateDts = () => enqueueDts(async () => {
+    if (dtsPath)
+      await generateDts(dtsPath, (await scanLayouts()).flatMap(({ files }) => files.map(normalizeLayoutName)), config.logger)
+  })
 
   return {
     name: 'vite-plugin-vue-layouts-next',
@@ -57,6 +90,11 @@ export default function Layout(userOptions: UserOptions = {}): Plugin {
     configResolved(_config) {
       config = _config
       layoutsDirs = resolveDirs(options.layoutsDirs, config.root)
+      dtsPath = resolveDtsPath(options.dts, config.root)
+    },
+    async buildStart() {
+      if (dtsPath)
+        await updateDts()
     },
     configureServer({ moduleGraph, watcher, ws }) {
       watcher.add(options.layoutsDirs)
@@ -74,21 +112,27 @@ export default function Layout(userOptions: UserOptions = {}): Plugin {
       }
 
       const updateVirtualModule = (path: string) => {
-        path = normalizePath(path)
-
-        if (layoutsDirs.some(dir => path.startsWith(dir))) {
+        if (isLayoutFile(path)) {
           debug('reload', path)
           const module = moduleGraph.getModuleById(MODULE_ID_VIRTUAL)
           reloadModule(module)
         }
       }
 
-      watcher.on('add', (path) => {
+      // Only add/unlink can change the set of layout names.
+      const regenerateDts = async (path: string) => {
+        if (dtsPath && isLayoutFile(path))
+          await updateDts()
+      }
+
+      watcher.on('add', async (path) => {
         updateVirtualModule(path)
+        await regenerateDts(path)
       })
 
-      watcher.on('unlink', (path) => {
+      watcher.on('unlink', async (path) => {
         updateVirtualModule(path)
+        await regenerateDts(path)
       })
 
       watcher.on('change', async (path) => {
@@ -102,18 +146,7 @@ export default function Layout(userOptions: UserOptions = {}): Plugin {
     },
     async load(id) {
       if (id === MODULE_ID_VIRTUAL) {
-        const container: FileContainer[] = []
-
-        for (const dir of layoutsDirs) {
-          const layoutsDirPath = dir.startsWith('/')
-            ? normalizePath(dir)
-            : normalizePath(resolve(config.root, dir))
-
-          debug('Loading Layout Dir: %O', layoutsDirPath)
-
-          const _f = await getFilesFromPath(layoutsDirPath, options)
-          container.push({ path: layoutsDirPath, files: _f })
-        }
+        const container = await scanLayouts()
 
         const importCode = getImportCode(container, options)
 
@@ -134,12 +167,52 @@ export function ClientSideLayout(options?: clientSideOptions): Plugin {
     fallbackLayout,
     importMode = process.env.VITE_SSG ? 'sync' : 'async',
     inheritDefaultLayout = true,
+    dts,
   } = options || {}
   const layoutDir = layoutsDirs ?? legacyLayoutDir ?? 'src/layouts'
+
+  let config: ResolvedConfig
+  let layoutsRoot: string
+  let dtsPath: string | undefined
+
+  // The virtual module globs in the browser, so names for the .d.ts are scanned here with the same pattern.
+  const enqueueDts = serialize()
+
+  const regenerateDts = () => enqueueDts(async () => {
+    if (!dtsPath)
+      return
+    // Same pattern and default `node_modules` exclusion as the `import.meta.glob` in the virtual module.
+    const files = await fg('**/*.vue', { cwd: layoutsRoot, onlyFiles: true, ignore: ['**/node_modules/**'] })
+    await generateDts(dtsPath, files.map(normalizeLayoutName), config.logger)
+  })
+
   return {
     name: 'vite-plugin-vue-layouts-next',
     config() {
       return { optimizeDeps: { include: [RUNTIME_ID] } }
+    },
+    configResolved(_config) {
+      config = _config
+      // `layoutDir` is root-relative like the glob ('/src/layouts'), not absolute on disk.
+      layoutsRoot = normalizePath(resolve(config.root, layoutDir.replace(REGEX_LEADING_SLASH, '')))
+      dtsPath = resolveDtsPath(dts, config.root)
+    },
+    async buildStart() {
+      await regenerateDts()
+    },
+    configureServer({ watcher }) {
+      if (!dtsPath)
+        return
+
+      watcher.add(layoutsRoot)
+
+      const onLayoutsChange = async (path: string) => {
+        if (normalizePath(path).startsWith(layoutsRoot))
+          await regenerateDts()
+      }
+
+      watcher.on('add', onLayoutsChange)
+      watcher.on('unlink', onLayoutsChange)
     },
     resolveId(id) {
       if (id === MODULE_ID)
@@ -160,11 +233,13 @@ export function ClientSideLayout(options?: clientSideOptions): Plugin {
   }
 }
 
+const CLIENT_LAYOUT_KEYS = ['layoutsDirs', 'defaultLayout', 'fallbackLayout', 'inheritDefaultLayout', 'dts']
+
 function canEnableClientLayout(options: UserOptions) {
   const keys = Object.keys(options)
 
   // Non isomorphic options
-  if (keys.length > 4 || keys.some(key => !['layoutsDirs', 'defaultLayout', 'fallbackLayout', 'inheritDefaultLayout'].includes(key)))
+  if (keys.some(key => !CLIENT_LAYOUT_KEYS.includes(key)))
     return false
 
   // arrays and glob cannot be isomorphic either

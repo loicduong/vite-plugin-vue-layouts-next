@@ -63,7 +63,7 @@
     "lint": "eslint",
     "lint:fix": "eslint --fix",
     "test": "vitest run",
-    "typecheck": "tsc"
+    "typecheck": "tsc && tsc -p test/types/registry && tsc -p test/types/fallback && tsc -p examples/spa"
   },
   "peerDependencies": {
     "vite": "^6.0.0 || ^7.0.0 || ^8.0.0",

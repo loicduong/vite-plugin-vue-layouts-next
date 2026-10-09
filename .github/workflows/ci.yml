@@ -39,3 +39,6 @@ jobs:
 
       - name: Build examples
         run: pnpm spa:build && pnpm ssg:build && pnpm cli:build && pnpm ner:build
+
+      - name: Check generated layouts.d.ts is committed
+        run: git diff --exit-code -- examples/spa/layouts.d.ts

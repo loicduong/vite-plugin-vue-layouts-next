@@ -11,6 +11,7 @@ function createOptions(): ResolvedOptions {
     exclude: [],
     importMode: () => 'async',
     inheritDefaultLayout: true,
+    dts: false,
   }
 }
 

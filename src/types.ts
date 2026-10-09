@@ -35,6 +35,12 @@ interface Options {
    * @default true
    */
   inheritDefaultLayout: boolean
+  /**
+   * Generate a `.d.ts` that types layout names.
+   * `true` writes `layouts.d.ts` in the Vite root; a string is a path relative to the root.
+   * @default false
+   */
+  dts: boolean | string
 }
 
 export interface FileContainer {
@@ -78,4 +84,10 @@ export interface clientSideOptions {
    * @default true
    */
   inheritDefaultLayout?: boolean
+  /**
+   * Generate a `.d.ts` that types layout names.
+   * `true` writes `layouts.d.ts` in the Vite root; a string is a path relative to the root.
+   * @default false
+   */
+  dts?: boolean | string
 }

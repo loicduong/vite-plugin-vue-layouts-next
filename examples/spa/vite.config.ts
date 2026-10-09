@@ -14,6 +14,7 @@ const config = defineConfig({
       // `src/layouts/drafts/*` is scanned but dropped, so pages asking for it fall back to `default`.
       exclude: ['**/drafts/**'],
       importMode: name => (name === 'default' ? 'sync' : 'async'),
+      dts: true,
     }),
   ],
 })
