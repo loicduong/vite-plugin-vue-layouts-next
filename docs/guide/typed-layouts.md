@@ -7,12 +7,13 @@ of a page that silently renders the fallback layout. Editors also autocomplete l
 
 ```ts [vite.config.ts]
 Layouts({
-  dts: true, // writes layouts.d.ts next to vite.config.ts
+  dts: true, // writes layouts.d.ts in the Vite root
 })
 ```
 
-`dts` also accepts a path relative to the Vite root, for example `'src/types/layouts.d.ts'`. It works the same with
-`ClientSideLayout()`.
+The Vite root is the project directory unless you set `root` in `vite.config`. `dts` also accepts a path relative to
+that root, for example `'src/layouts.d.ts'`, which most Vite templates' tsconfig already includes through `src/**/*`.
+It works the same with `ClientSideLayout()`.
 
 Then add the file to your `tsconfig.json`:
 
