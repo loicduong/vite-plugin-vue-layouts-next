@@ -87,6 +87,7 @@ Full documentation lives at **[vue-layouts.loicduong.dev][docs]**:
 - [Config][docs-config] - plugin options, layout names and ClientSideLayout options
 - [Common Patterns][docs-patterns] - transitions and passing data between layouts and pages
 - [Dynamic Layouts][docs-dynamic-layout] - `setPageLayout` and `useLayout`
+- [Typed Layouts][docs-typed-layouts] - generated `.d.ts` that type-checks layout names
 - [ClientSideLayout][docs-client-side-layout] - the lighter, glob-import based variant
 - [Examples][docs-examples] - runnable SPA, SSG, client-side and nested-routes setups
 
@@ -138,6 +139,7 @@ PRs accepted. [Open an issue][open-an-issue] or submit PRs for any improvements.
 [docs-config]: https://vue-layouts.loicduong.dev/config/
 [docs-patterns]: https://vue-layouts.loicduong.dev/guide/patterns
 [docs-dynamic-layout]: https://vue-layouts.loicduong.dev/guide/dynamic-layout
+[docs-typed-layouts]: https://vue-layouts.loicduong.dev/guide/typed-layouts
 [docs-client-side-layout]: https://vue-layouts.loicduong.dev/guide/client-side-layout
 [docs-examples]: https://vue-layouts.loicduong.dev/guide/examples
 [docs-llms]: https://vue-layouts.loicduong.dev/llms.txt

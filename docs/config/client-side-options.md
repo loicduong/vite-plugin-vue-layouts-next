@@ -67,3 +67,12 @@ the glob import applies one mode to every layout.
 
 Whether nested routes should inherit the default layout from parent routes. Behaves exactly like the default plugin's
 option.
+
+## dts
+
+- **Type:** `boolean | string`
+- **Default:** `false`
+- **Related:** [`dts`](/config/plugin-options#dts), [Typed Layouts](/guide/typed-layouts)
+
+Generate a `.d.ts` that types layout names. `true` writes `layouts.d.ts` in the Vite root; a string is a path relative
+to the root. Add the file to your `tsconfig.json` `include`.

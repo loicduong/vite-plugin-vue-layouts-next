@@ -10,6 +10,7 @@ interface UserOptions {
   defaultLayout?: string
   importMode?: (name: string) => 'sync' | 'async'
   inheritDefaultLayout?: boolean
+  dts?: boolean | string
 }
 ```
 
@@ -135,3 +136,12 @@ Layouts({
   inheritDefaultLayout: false,
 })
 ```
+
+## dts
+
+- **Type:** `boolean | string`
+- **Default:** `false`
+- **Related:** [Typed Layouts](/guide/typed-layouts)
+
+Generate a `.d.ts` that types layout names. `true` writes `layouts.d.ts` in the Vite root; a string is a path relative
+to the root. Add the file to your `tsconfig.json` `include`.
