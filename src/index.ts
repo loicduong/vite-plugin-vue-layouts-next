@@ -2,6 +2,7 @@ import type { ModuleNode, Plugin, ResolvedConfig } from 'vite'
 import type { clientSideOptions, FileContainer, ResolvedOptions, UserOptions } from './types'
 import { resolve } from 'node:path'
 import process from 'node:process'
+import fg from 'fast-glob'
 import { createVirtualModuleCode } from './clientSide'
 import { generateDts, resolveDtsPath } from './dts'
 import { getFilesFromPath } from './files'
@@ -13,6 +14,7 @@ import { debug, normalizePath, resolveDirs } from './utils'
 
 const MODULE_ID = 'virtual:generated-layouts'
 const MODULE_ID_VIRTUAL = '/@vite-plugin-vue-layouts-next/generated-layouts'
+const REGEX_LEADING_SLASH = /^\/+/
 
 export function defaultImportMode(name: string) {
   if (process.env.VITE_SSG)
@@ -42,6 +44,7 @@ export default function Layout(userOptions: UserOptions = {}): Plugin {
       fallbackLayout: userOptions.fallbackLayout,
       layoutsDirs: userOptions.layoutsDirs as string,
       inheritDefaultLayout: userOptions.inheritDefaultLayout,
+      dts: userOptions.dts,
     })
   }
 
@@ -163,12 +166,49 @@ export function ClientSideLayout(options?: clientSideOptions): Plugin {
     fallbackLayout,
     importMode = process.env.VITE_SSG ? 'sync' : 'async',
     inheritDefaultLayout = true,
+    dts,
   } = options || {}
   const layoutDir = layoutsDirs ?? legacyLayoutDir ?? 'src/layouts'
+
+  let config: ResolvedConfig
+  let layoutsRoot: string
+  let dtsPath: string | undefined
+
+  // The virtual module globs in the browser, so names for the .d.ts are scanned here with the same pattern.
+  const regenerateDts = async () => {
+    if (!dtsPath)
+      return
+    const files = await fg('**/*.vue', { cwd: layoutsRoot, onlyFiles: true })
+    await generateDts(dtsPath, files.map(normalizeLayoutName), config.logger)
+  }
+
   return {
     name: 'vite-plugin-vue-layouts-next',
     config() {
       return { optimizeDeps: { include: [RUNTIME_ID] } }
+    },
+    configResolved(_config) {
+      config = _config
+      // `layoutDir` is root-relative like the glob ('/src/layouts'), not absolute on disk.
+      layoutsRoot = normalizePath(resolve(config.root, layoutDir.replace(REGEX_LEADING_SLASH, '')))
+      dtsPath = resolveDtsPath(dts, config.root)
+    },
+    async buildStart() {
+      await regenerateDts()
+    },
+    configureServer({ watcher }) {
+      if (!dtsPath)
+        return
+
+      watcher.add(layoutsRoot)
+
+      const onLayoutsChange = async (path: string) => {
+        if (normalizePath(path).startsWith(layoutsRoot))
+          await regenerateDts()
+      }
+
+      watcher.on('add', onLayoutsChange)
+      watcher.on('unlink', onLayoutsChange)
     },
     resolveId(id) {
       if (id === MODULE_ID)
@@ -189,11 +229,13 @@ export function ClientSideLayout(options?: clientSideOptions): Plugin {
   }
 }
 
+const CLIENT_LAYOUT_KEYS = ['layoutsDirs', 'defaultLayout', 'fallbackLayout', 'inheritDefaultLayout', 'dts']
+
 function canEnableClientLayout(options: UserOptions) {
   const keys = Object.keys(options)
 
   // Non isomorphic options
-  if (keys.length > 4 || keys.some(key => !['layoutsDirs', 'defaultLayout', 'fallbackLayout', 'inheritDefaultLayout'].includes(key)))
+  if (keys.some(key => !CLIENT_LAYOUT_KEYS.includes(key)))
     return false
 
   // arrays and glob cannot be isomorphic either

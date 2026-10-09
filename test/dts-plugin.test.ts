@@ -5,7 +5,7 @@ import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import Layout from '../src/index'
+import Layout, { ClientSideLayout } from '../src/index'
 
 const SFC = '<template><slot /></template>\n'
 
@@ -110,5 +110,65 @@ describe('dts in plugin mode', () => {
     watcher.emit('change', join(layouts, 'default.vue'))
     await new Promise(resolve => setTimeout(resolve, 50))
     expect(existsSync(join(root, 'layouts.d.ts'))).toBe(false)
+  })
+})
+
+describe('dts in client-side mode', () => {
+  it('writes runtime-normalized names on buildStart', async () => {
+    await createProject()
+    const plugin = ClientSideLayout({ layoutsDirs: 'src/layouts', dts: true })
+    setup(plugin)
+    await buildStart(plugin)
+
+    const code = await readDts()
+    expect(code).toContain('"default": unknown')
+    expect(code).toContain('"sub-layout-sub": unknown')
+    expect(code).toContain('"admin": unknown')
+  })
+
+  it('resolves a root-relative layoutsDirs under the Vite root', async () => {
+    await createProject()
+    const plugin = ClientSideLayout({ layoutsDirs: '/src/layouts', dts: true })
+    setup(plugin)
+    await buildStart(plugin)
+
+    expect(await readDts()).toContain('"default": unknown')
+  })
+
+  it('writes nothing without the option', async () => {
+    await createProject()
+    const plugin = ClientSideLayout({ layoutsDirs: 'src/layouts' })
+    setup(plugin)
+    await buildStart(plugin)
+
+    expect(existsSync(join(root, 'layouts.d.ts'))).toBe(false)
+  })
+
+  it('regenerates on add and unlink, not on change', async () => {
+    const layouts = await createProject()
+    const plugin = ClientSideLayout({ layoutsDirs: 'src/layouts', dts: true })
+    setup(plugin)
+    await buildStart(plugin)
+    const watcher = createServer(plugin)
+
+    const added = join(layouts, 'focus.vue')
+    await writeFile(added, SFC)
+    watcher.emit('add', added)
+    await vi.waitFor(async () => expect(await readDts()).toContain('"focus": unknown'))
+
+    await rm(added)
+    watcher.emit('unlink', added)
+    await vi.waitFor(async () => expect(await readDts()).not.toContain('"focus"'))
+
+    await rm(join(root, 'layouts.d.ts'))
+    watcher.emit('change', join(layouts, 'default.vue'))
+    await new Promise(resolve => setTimeout(resolve, 50))
+    expect(existsSync(join(root, 'layouts.d.ts'))).toBe(false)
+  })
+
+  it('keeps Layout() on the client-side variant when dts is set', async () => {
+    const plugin = Layout({ layoutsDirs: 'src/layouts', dts: true })
+    const result = await (plugin.load as (id: string) => Promise<{ code: string }>)('\0virtual:generated-layouts')
+    expect(result.code).toContain('import.meta.glob("/src/layouts/**/*.vue"')
   })
 })
