@@ -1,0 +1,10 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "paths": {
+      "vite-plugin-vue-layouts-next/runtime": ["../../src/runtime/index.ts"]
+    }
+  },
+  "include": ["src/**/*.ts", "layouts.d.ts", "typed-router.d.ts", "../../client.d.ts"],
+  "exclude": []
+}
