@@ -14,6 +14,7 @@ function createOptions(overrides: Partial<ResolvedOptions> = {}): ResolvedOption
     exclude: [],
     importMode: () => 'async',
     inheritDefaultLayout: true,
+    dts: false,
     ...overrides,
   }
 }
