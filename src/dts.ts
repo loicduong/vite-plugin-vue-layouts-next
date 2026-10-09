@@ -46,3 +46,16 @@ export async function generateDts(path: string, names: string[], logger: Pick<Lo
     logger.warn(`[vite-plugin-vue-layouts-next] Could not write ${path}: ${(error as Error).message}`)
   }
 }
+
+/**
+ * Runs tasks one after another. Overlapping scans can finish out of order, and the last
+ * write must come from the scan that started last.
+ */
+export function serialize(): (task: () => Promise<void>) => Promise<void> {
+  let tail: Promise<void> = Promise.resolve()
+  return (task) => {
+    const run = tail.then(task)
+    tail = run.catch(() => {})
+    return run
+  }
+}

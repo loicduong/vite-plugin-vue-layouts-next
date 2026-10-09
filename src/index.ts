@@ -4,7 +4,7 @@ import { resolve } from 'node:path'
 import process from 'node:process'
 import fg from 'fast-glob'
 import { createVirtualModuleCode } from './clientSide'
-import { generateDts, resolveDtsPath } from './dts'
+import { generateDts, resolveDtsPath, serialize } from './dts'
 import { getFilesFromPath } from './files'
 import { getImportCode } from './importCode'
 import { normalizeLayoutName } from './layoutName'
@@ -74,10 +74,12 @@ export default function Layout(userOptions: UserOptions = {}): Plugin {
     return container
   }
 
-  const updateDts = async (container: FileContainer[]) => {
+  const enqueueDts = serialize()
+
+  const updateDts = () => enqueueDts(async () => {
     if (dtsPath)
-      await generateDts(dtsPath, container.flatMap(({ files }) => files.map(normalizeLayoutName)), config.logger)
-  }
+      await generateDts(dtsPath, (await scanLayouts()).flatMap(({ files }) => files.map(normalizeLayoutName)), config.logger)
+  })
 
   return {
     name: 'vite-plugin-vue-layouts-next',
@@ -92,7 +94,7 @@ export default function Layout(userOptions: UserOptions = {}): Plugin {
     },
     async buildStart() {
       if (dtsPath)
-        await updateDts(await scanLayouts())
+        await updateDts()
     },
     configureServer({ moduleGraph, watcher, ws }) {
       watcher.add(options.layoutsDirs)
@@ -120,7 +122,7 @@ export default function Layout(userOptions: UserOptions = {}): Plugin {
       // Only add/unlink can change the set of layout names.
       const regenerateDts = async (path: string) => {
         if (dtsPath && isLayoutFile(path))
-          await updateDts(await scanLayouts())
+          await updateDts()
       }
 
       watcher.on('add', async (path) => {
@@ -145,7 +147,6 @@ export default function Layout(userOptions: UserOptions = {}): Plugin {
     async load(id) {
       if (id === MODULE_ID_VIRTUAL) {
         const container = await scanLayouts()
-        await updateDts(container)
 
         const importCode = getImportCode(container, options)
 
@@ -175,12 +176,14 @@ export function ClientSideLayout(options?: clientSideOptions): Plugin {
   let dtsPath: string | undefined
 
   // The virtual module globs in the browser, so names for the .d.ts are scanned here with the same pattern.
-  const regenerateDts = async () => {
+  const enqueueDts = serialize()
+
+  const regenerateDts = () => enqueueDts(async () => {
     if (!dtsPath)
       return
     const files = await fg('**/*.vue', { cwd: layoutsRoot, onlyFiles: true })
     await generateDts(dtsPath, files.map(normalizeLayoutName), config.logger)
-  }
+  })
 
   return {
     name: 'vite-plugin-vue-layouts-next',

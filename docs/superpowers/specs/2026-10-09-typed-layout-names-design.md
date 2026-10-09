@@ -136,9 +136,8 @@ declare module 'vite-plugin-vue-layouts-next/runtime' {
 
 - `configResolved` resolves the dts path from `config.root`.
 - The layout file scan in `load` is extracted into a helper that returns the
-  `FileContainer[]`. `load` keeps using it for the virtual module; when `dts` is
-  enabled, the normalized names of all files are passed to `createDtsCode` and
-  written.
+  `FileContainer[]`. `load` keeps using it for the virtual module only; it does
+  not write the `.d.ts` (`buildStart` and the watcher already cover every case).
 - `buildStart` also runs the scan + write when `dts` is enabled, so the file
   exists after `vite build` and before the virtual module is first requested in
   dev.
@@ -156,6 +155,13 @@ When `dts` is enabled only:
 - `configureServer` watches the layouts dir and regenerates on `add` / `unlink`.
 
 With `dts` disabled, the client-side plugin behaves exactly as today.
+
+### Ordering
+
+In both modes, every regeneration (scan + write) runs through one queue per
+plugin instance (`serialize()` in `src/dts.ts`). Overlapping `add`/`unlink`
+events, for example from a `git checkout`, would otherwise let an earlier scan
+finish last and overwrite the file with a stale list.
 
 ### Edge cases
 
