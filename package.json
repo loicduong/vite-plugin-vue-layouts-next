@@ -6,6 +6,7 @@
   "description": "Router based layout plugin for Vite 8, Vue 3 and Vue Router 5.",
   "author": "loicduong",
   "license": "MIT",
+  "funding": "https://github.com/sponsors/loicduong",
   "homepage": "https://github.com/loicduong/vite-plugin-vue-layouts-next",
   "repository": {
     "type": "git",
