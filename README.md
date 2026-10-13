@@ -3,6 +3,7 @@
 [![npm version][npm-badge]][npm]
 [![monthly downloads][monthly-downloads-badge]][monthly-downloads]
 [![standard-readme compliant][standard-readme-badge]][standard-readme]
+[![sponsor][sponsor-badge]][sponsor]
 
 Router based layout plugin for Vite 8, Vue 3 and Vue Router 5.
 
@@ -128,6 +129,8 @@ PRs accepted. [Open an issue][open-an-issue] or submit PRs for any improvements.
 [monthly-downloads-badge]: https://img.shields.io/npm/dm/vite-plugin-vue-layouts-next
 [standard-readme]: https://github.com/RichardLitt/standard-readme
 [standard-readme-badge]: https://img.shields.io/badge/readme%20style-standard-brightgreen.svg?style=flat-square
+[sponsor]: https://github.com/sponsors/loicduong
+[sponsor-badge]: https://img.shields.io/github/sponsors/loicduong?logo=githubsponsors&label=sponsor
 [license]: ./LICENSE
 [open-an-issue]: https://github.com/loicduong/vite-plugin-vue-layouts-next/issues/new
 [vite-plugin-vue-layouts]: https://github.com/JohnCampionJr/vite-plugin-vue-layouts
