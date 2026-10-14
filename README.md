@@ -3,7 +3,6 @@
 [![npm version][npm-badge]][npm]
 [![monthly downloads][monthly-downloads-badge]][monthly-downloads]
 [![standard-readme compliant][standard-readme-badge]][standard-readme]
-[![sponsor][sponsor-badge]][sponsor]
 
 Router based layout plugin for Vite 8, Vue 3 and Vue Router 5.
 
@@ -113,12 +112,6 @@ pnpm docs:dev
 
 PRs accepted. [Open an issue][open-an-issue] or submit PRs for any improvements.
 
-- PR titles must follow [Conventional Commits](https://www.conventionalcommits.org/) (`feat: …`, `fix: …`, `docs: …`);
-  they become the squash-merge commit subject and feed the generated changelog.
-- Releases are cut by a maintainer with `pnpm release` (version bump + changelog + `release: vX.Y.Z` commit + tag);
-  GitHub Actions then tests, builds, publishes to npm with provenance and creates the GitHub Release;
-  `CHANGELOG.md` is generated from those commit messages by `conventional-changelog` (angular preset).
-
 ## License
 
 [MIT © loicduong][license]
@@ -129,8 +122,6 @@ PRs accepted. [Open an issue][open-an-issue] or submit PRs for any improvements.
 [monthly-downloads-badge]: https://img.shields.io/npm/dm/vite-plugin-vue-layouts-next
 [standard-readme]: https://github.com/RichardLitt/standard-readme
 [standard-readme-badge]: https://img.shields.io/badge/readme%20style-standard-brightgreen.svg?style=flat-square
-[sponsor]: https://github.com/sponsors/loicduong
-[sponsor-badge]: https://img.shields.io/github/sponsors/loicduong?logo=githubsponsors&label=sponsor
 [license]: ./LICENSE
 [open-an-issue]: https://github.com/loicduong/vite-plugin-vue-layouts-next/issues/new
 [vite-plugin-vue-layouts]: https://github.com/JohnCampionJr/vite-plugin-vue-layouts
