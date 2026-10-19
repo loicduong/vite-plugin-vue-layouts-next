@@ -3,6 +3,7 @@ import { resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { describe, expect, it, vi } from 'vitest'
 import Layout, { ClientSideLayout } from '../src/index'
+import { normalizePath } from '../src/utils'
 
 const MODULE_ID_VIRTUAL = '/@vite-plugin-vue-layouts-next/generated-layouts'
 const MODULE_ID_NULL = '\0virtual:generated-layouts'
@@ -222,5 +223,27 @@ describe('dev server watcher', () => {
       path: '*',
       type: 'full-reload',
     })
+  })
+
+  // Chokidar reports paths relative to the cwd for a relative watched dir, which neither Vite's module graph nor `isLayoutFile` match.
+  it('watches relative layoutsDirs as absolute paths', () => {
+    const plugin = Layout({
+      layoutsDirs: 'layouts',
+      extensions: ['vue'],
+    }) as Plugin & {
+      configResolved: (config: { root: string }) => void
+      configureServer: (server: unknown) => void
+    }
+
+    plugin.configResolved!({ root: fixturesRoot })
+
+    const add = vi.fn()
+    plugin.configureServer!({
+      watcher: { add, on: vi.fn() },
+      moduleGraph: { getModuleById: vi.fn(), invalidateModule: vi.fn() },
+      ws: { send: vi.fn() },
+    })
+
+    expect(add).toHaveBeenCalledWith([normalizePath(resolve(fixturesRoot, 'layouts'))])
   })
 })
