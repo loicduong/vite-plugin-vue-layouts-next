@@ -182,7 +182,7 @@ export function ClientSideLayout(options?: clientSideOptions): Plugin {
     if (!dtsPath)
       return
     // Same pattern and default `node_modules` exclusion as the `import.meta.glob` in the virtual module.
-    const files = await glob('**/*.vue', { cwd: layoutsRoot, onlyFiles: true, ignore: ['**/node_modules/**'] })
+    const files = await glob('**/*.vue', { cwd: layoutsRoot, onlyFiles: true, expandDirectories: false, ignore: ['**/node_modules/**'] })
     await generateDts(dtsPath, files.map(normalizeLayoutName), config.logger)
   })
 

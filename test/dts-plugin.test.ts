@@ -139,6 +139,19 @@ describe('dts in client-side mode', () => {
     expect(code).not.toContain('leaked')
   })
 
+  it('does not list files inside a directory named like a layout', async () => {
+    const layouts = await createProject()
+    await mkdir(join(layouts, 'group.vue'), { recursive: true })
+    await writeFile(join(layouts, 'group.vue', 'notes.txt'), 'Not a layout.\n')
+    const plugin = ClientSideLayout({ layoutsDirs: 'src/layouts', dts: true })
+    setup(plugin)
+    await buildStart(plugin)
+
+    const code = await readDts()
+    expect(code).toContain('"default": unknown')
+    expect(code).not.toContain('notes')
+  })
+
   it('resolves a root-relative layoutsDirs under the Vite root', async () => {
     await createProject()
     const plugin = ClientSideLayout({ layoutsDirs: '/src/layouts', dts: true })

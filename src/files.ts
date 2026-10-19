@@ -14,6 +14,8 @@ export async function getFilesFromPath(path: string, options: ResolvedOptions): 
   const files = await glob(`**/*.${ext}`, {
     ignore: ['node_modules', '.git', '**/__*__/*', ...exclude],
     onlyFiles: true,
+    // Otherwise a directory named like `group.vue/` matches and every file inside it is returned.
+    expandDirectories: false,
     cwd: path,
   })
 

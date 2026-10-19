@@ -41,6 +41,12 @@ describe('getFilesFromPath', () => {
 
     expect(files.sort()).toEqual(['default.vue', 'drafts/wip.vue', 'markdown.md'])
   })
+
+  it('does not return the contents of a directory whose name matches the extension', async () => {
+    const files = await getFilesFromPath(layoutsRoot, createOptions())
+
+    expect(files.filter(file => file.startsWith('group.vue/'))).toEqual([])
+  })
 })
 
 describe('resolveDirs', () => {
