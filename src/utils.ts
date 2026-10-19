@@ -9,6 +9,7 @@ const REGEX_BACKSLASH = /\\/g
 const REGEX_PATH_CHARS = /[_.\-\\/]/g
 const REGEX_BRACKETS_PARENS = /[[:\]()]/g
 const REGEX_TRAILING_SLASHES = /\/+$/
+const REGEX_BRACES = /[{}]/g
 
 export function extensionsToGlob(extensions: string[]) {
   return extensions.length > 1 ? `{${extensions.join(',')}}` : extensions[0] || ''
@@ -24,11 +25,7 @@ export function pathToName(filepath: string) {
   return filepath.replace(REGEX_PATH_CHARS, '_').replace(REGEX_BRACKETS_PARENS, '$')
 }
 
-function isDirectory(entry: Dirent, path: string) {
-  if (entry.isDirectory())
-    return true
-  if (!entry.isSymbolicLink())
-    return false
+function isExistingDir(path: string) {
   try {
     return statSync(path).isDirectory()
   }
@@ -37,51 +34,72 @@ function isDirectory(entry: Dirent, path: string) {
   }
 }
 
-/** picomatch, which tinyglobby also uses, matches `{1..3}` but not ranges like `{1..10}` or `{01..10}`. */
+function isDirectory(entry: Dirent, path: string) {
+  return entry.isDirectory() || (entry.isSymbolicLink() && isExistingDir(path))
+}
+
+/**
+ * picomatch, which tinyglobby also uses, matches `{1..3}` but not ranges like `{1..10}` or `{01..10}`.
+ * Any brace left after expansion is literal, either escaped or like `{tenant}`, but brace-expansion drops
+ * the escapes, so they are added back before picomatch reads the pattern.
+ */
 export function expandBraces(patterns: string[]): string[] {
-  return patterns.flatMap(pattern => expand(pattern))
+  return patterns.flatMap(pattern => expand(pattern).map(expanded => expanded.replace(REGEX_BRACES, '\\$&')))
+}
+
+// `picomatch.scan` misses every glob after an escaped brace, so the static base is found one segment at a time.
+function splitBase(pattern: string) {
+  const segments = pattern.split('/')
+  const globStart = segments.findIndex(segment => picomatch.scan(segment).isGlob)
+  const staticSegments = globStart === -1 ? segments : segments.slice(0, globStart)
+  return {
+    // Only the base is a filesystem path; the glob keeps the escapes the matcher still needs.
+    base: staticSegments.map(segment => picomatch.scan(segment, { unescape: true }).base).join('/'),
+    glob: globStart === -1 ? '' : segments.slice(globStart).join('/'),
+  }
 }
 
 // tinyglobby does not return a directory symlink as a match, so the directories are walked here.
 // Braces are expanded first because `picomatch.scan` finds no base for `{/a,/b}/**`.
 function findDirs(pattern: string, root: string): string[] {
   const found = new Set<string>()
-  for (const expanded of expand(pattern)) {
-    for (const dir of walkDirs(expanded, root))
+  const globsByBase = new Map<string, string[]>()
+
+  for (const expanded of expandBraces([pattern])) {
+    // Walked paths never end in a slash, so `src/**/layouts/` would match nothing.
+    const split = splitBase(expanded.replace(REGEX_TRAILING_SLASHES, ''))
+    const base = resolve(root, split.base)
+    const { glob } = split
+    // A brace alternative can be a plain path, as in `{src/**/layouts,shared/layouts}`.
+    if (!glob) {
+      if (isExistingDir(base))
+        found.add(base)
+      continue
+    }
+    const globs = globsByBase.get(base)
+    if (globs)
+      globs.push(glob)
+    else
+      globsByBase.set(base, [glob])
+  }
+
+  for (const [base, globs] of globsByBase) {
+    for (const dir of walkDirs(base, picomatch(globs)))
       found.add(dir)
   }
   return [...found]
 }
 
-function walkDirs(pattern: string, root: string): string[] {
-  // Walked paths never end in a slash, so `src/**/layouts/` would match nothing.
-  const trimmed = pattern.replace(REGEX_TRAILING_SLASHES, '')
-  // Only the base is a filesystem path; `unescape` would also strip the escapes the matcher still needs.
-  const { base } = picomatch.scan(trimmed, { unescape: true })
-  const { glob } = picomatch.scan(trimmed)
-  // A brace alternative can be a plain path, as in `{src/**/layouts,shared/layouts}`.
-  if (!glob) {
-    const dir = resolve(root, base)
-    try {
-      return statSync(dir).isDirectory() ? [dir] : []
-    }
-    catch {
-      return []
-    }
-  }
-
-  const isMatch = picomatch(glob)
+function walkDirs(base: string, isMatch: (path: string) => boolean): string[] {
   const found: string[] = []
   const ancestors = new Set<string>()
 
-  const walk = (dir: string, relDir: string) => {
-    let real: string
+  const walk = (dir: string, real: string, relDir: string) => {
+    // A symlink can point back to one of its own ancestors.
+    if (ancestors.has(real))
+      return
     let entries: Dirent[]
     try {
-      real = realpathSync(dir)
-      // A symlink can point back to one of its own ancestors.
-      if (ancestors.has(real))
-        return
       entries = readdirSync(dir, { withFileTypes: true })
     }
     catch {
@@ -96,12 +114,28 @@ function walkDirs(pattern: string, root: string): string[] {
       const relPath = relDir ? `${relDir}/${entry.name}` : entry.name
       if (isMatch(relPath))
         found.push(path)
-      walk(path, relPath)
+      let childReal = join(real, entry.name)
+      if (entry.isSymbolicLink()) {
+        try {
+          childReal = realpathSync(path)
+        }
+        catch {
+          continue
+        }
+      }
+      walk(path, childReal, relPath)
     }
     ancestors.delete(real)
   }
 
-  walk(resolve(root, base), '')
+  let real: string
+  try {
+    real = realpathSync(base)
+  }
+  catch {
+    return found
+  }
+  walk(base, real, '')
   return found
 }
 

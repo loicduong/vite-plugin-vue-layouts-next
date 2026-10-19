@@ -72,6 +72,17 @@ describe('getFilesFromPath', () => {
       expect(files).toEqual(['keep/layout.vue'])
     })
   })
+
+  it('treats a non-expanding brace in exclude as literal', async () => {
+    await withTmpDirs(['{tenant}', 'tenant', 'keep'], async (tmp) => {
+      for (const dir of ['{tenant}', 'tenant', 'keep'])
+        await writeFile(join(tmp, dir, 'layout.vue'), '')
+
+      const files = await getFilesFromPath(tmp, createOptions({ exclude: ['{tenant}/**'] }))
+
+      expect(files.sort()).toEqual(['keep/layout.vue', 'tenant/layout.vue'])
+    })
+  })
 })
 
 describe('resolveDirs', () => {
@@ -159,6 +170,22 @@ describe('resolveDirs', () => {
     await withTmpDirs(['src/a/layouts[old]', 'src/b/layoutso', 'src/c/layoutsd'], (tmp) => {
       expect(resolveDirs('src/**/layouts\\[old\\]', tmp)).toEqual([
         normalizePath(join(tmp, 'src/a/layouts[old]')),
+      ])
+    })
+  })
+
+  it('keeps escaped braces after `**` literal', async () => {
+    await withTmpDirs(['src/a/layouts{admin,legacy}', 'src/b/layoutsadmin', 'src/c/layoutslegacy'], (tmp) => {
+      expect(resolveDirs('src/**/layouts\\{admin,legacy\\}', tmp)).toEqual([
+        normalizePath(join(tmp, 'src/a/layouts{admin,legacy}')),
+      ])
+    })
+  })
+
+  it('walks below a non-expanding brace in the base', async () => {
+    await withTmpDirs(['src/{tenant}/x/layouts', 'src/other/layouts'], (tmp) => {
+      expect(resolveDirs('src/{tenant}/**/layouts', tmp)).toEqual([
+        normalizePath(join(tmp, 'src/{tenant}/x/layouts')),
       ])
     })
   })
