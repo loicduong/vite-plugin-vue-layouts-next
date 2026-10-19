@@ -1,7 +1,7 @@
 import type { Dirent } from 'node:fs'
 import { readdirSync, realpathSync, statSync } from 'node:fs'
 import { join, resolve } from 'node:path'
-import { expand } from 'brace-expansion'
+import expand from 'brace-expansion'
 import Debug from 'debug'
 import picomatch from 'picomatch'
 
@@ -55,7 +55,10 @@ function findDirs(pattern: string, root: string): string[] {
 
 function walkDirs(pattern: string, root: string): string[] {
   // Walked paths never end in a slash, so `src/**/layouts/` would match nothing.
-  const { base, glob } = picomatch.scan(pattern.replace(REGEX_TRAILING_SLASHES, ''), { unescape: true })
+  const trimmed = pattern.replace(REGEX_TRAILING_SLASHES, '')
+  // Only the base is a filesystem path; `unescape` would also strip the escapes the matcher still needs.
+  const { base } = picomatch.scan(trimmed, { unescape: true })
+  const { glob } = picomatch.scan(trimmed)
   // A brace alternative can be a plain path, as in `{src/**/layouts,shared/layouts}`.
   if (!glob) {
     const dir = resolve(root, base)

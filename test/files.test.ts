@@ -155,6 +155,14 @@ describe('resolveDirs', () => {
     })
   })
 
+  it('keeps escaped glob characters after `**` literal', async () => {
+    await withTmpDirs(['src/a/layouts[old]', 'src/b/layoutso', 'src/c/layoutsd'], (tmp) => {
+      expect(resolveDirs('src/**/layouts\\[old\\]', tmp)).toEqual([
+        normalizePath(join(tmp, 'src/a/layouts[old]')),
+      ])
+    })
+  })
+
   it('does not include the base directory of a trailing `**`', () => {
     const dirs = resolveDirs(`${normalizePath(dirsRoot)}/src/modules/**`, fixturesRoot)
 
