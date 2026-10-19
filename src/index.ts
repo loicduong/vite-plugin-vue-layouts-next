@@ -97,7 +97,7 @@ export default function Layout(userOptions: UserOptions = {}): Plugin {
         await updateDts()
     },
     configureServer({ moduleGraph, watcher, ws }) {
-      watcher.add(options.layoutsDirs)
+      watcher.add(layoutsDirs)
 
       const reloadModule = (module: ModuleNode | undefined, path = '*') => {
         if (module) {
