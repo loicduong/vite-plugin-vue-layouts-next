@@ -73,7 +73,7 @@
   },
   "dependencies": {
     "debug": "catalog:",
-    "fast-glob": "catalog:"
+    "tinyglobby": "catalog:"
   },
   "devDependencies": {
     "@antfu/eslint-config": "catalog:",

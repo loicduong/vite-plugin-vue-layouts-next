@@ -1,6 +1,6 @@
 import { resolve } from 'node:path'
 import Debug from 'debug'
-import fg from 'fast-glob'
+import { globSync } from 'tinyglobby'
 
 const REGEX_BACKSLASH = /\\/g
 const REGEX_PATH_CHARS = /[_.\-\\/]/g
@@ -28,7 +28,8 @@ export function resolveDirs(dirs: string | string[] | null, root: string) {
 
   for (const dir of dirsArray) {
     if (dir.includes('**')) {
-      const matches = fg.sync(dir, { onlyDirectories: true })
+      // tinyglobby would otherwise also match every subdirectory of each layouts dir.
+      const matches = globSync(dir, { onlyDirectories: true, expandDirectories: false })
       for (const match of matches)
         dirsResolved.push(normalizePath(resolve(root, match)))
     }
