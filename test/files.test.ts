@@ -1,5 +1,7 @@
 import type { ResolvedOptions } from '../src/types'
-import { relative, resolve } from 'node:path'
+import { mkdir, mkdtemp, rm, symlink } from 'node:fs/promises'
+import { tmpdir } from 'node:os'
+import { join, relative, resolve } from 'node:path'
 import process from 'node:process'
 import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
@@ -67,6 +69,50 @@ describe('resolveDirs', () => {
       normalizePath(resolve(dirsRoot, 'src/modules/admin/layouts')),
       normalizePath(resolve(dirsRoot, 'src/modules/blog/layouts')),
     ])
+  })
+
+  it('keeps absolute `**` patterns absolute when the root differs from the cwd', () => {
+    const dirs = resolveDirs(`${normalizePath(dirsRoot)}/src/**/layouts`, fixturesRoot)
+
+    expect(dirs.sort()).toEqual([
+      normalizePath(resolve(dirsRoot, 'src/layouts')),
+      normalizePath(resolve(dirsRoot, 'src/modules/admin/layouts')),
+      normalizePath(resolve(dirsRoot, 'src/modules/blog/layouts')),
+    ])
+  })
+
+  it('does not include the base directory of a trailing `**`', () => {
+    const dirs = resolveDirs(`${normalizePath(dirsRoot)}/src/modules/**`, fixturesRoot)
+
+    expect(dirs.sort()).toEqual([
+      'admin',
+      'admin/layouts',
+      'admin/layouts/drafts',
+      'blog',
+      'blog/layouts',
+    ].map(dir => normalizePath(resolve(dirsRoot, 'src/modules', dir))))
+  })
+
+  it('matches symlinked directories and survives symlink loops', async () => {
+    const tmp = await mkdtemp(join(tmpdir(), 'vue-layouts-dirs-'))
+    try {
+      await mkdir(join(tmp, 'shared', 'layouts'), { recursive: true })
+      await mkdir(join(tmp, 'src', 'layouts'), { recursive: true })
+      await mkdir(join(tmp, 'src', 'module'), { recursive: true })
+      // `junction` lets the test create directory links on Windows without admin rights.
+      await symlink(join(tmp, 'shared', 'layouts'), join(tmp, 'src', 'module', 'layouts'), 'junction')
+      await symlink(join(tmp, 'src'), join(tmp, 'src', 'module', 'loop'), 'junction')
+
+      const dirs = resolveDirs(`${normalizePath(tmp)}/src/**/layouts`, fixturesRoot)
+
+      expect(dirs.sort()).toEqual([
+        normalizePath(join(tmp, 'src', 'layouts')),
+        normalizePath(join(tmp, 'src', 'module', 'layouts')),
+      ])
+    }
+    finally {
+      await rm(tmp, { recursive: true, force: true })
+    }
   })
 
   it('returns no directories for null', () => {

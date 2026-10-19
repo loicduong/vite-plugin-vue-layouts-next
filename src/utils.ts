@@ -1,6 +1,8 @@
-import { resolve } from 'node:path'
+import type { Dirent } from 'node:fs'
+import { readdirSync, realpathSync, statSync } from 'node:fs'
+import { join, resolve } from 'node:path'
 import Debug from 'debug'
-import { globSync } from 'tinyglobby'
+import picomatch from 'picomatch'
 
 const REGEX_BACKSLASH = /\\/g
 const REGEX_PATH_CHARS = /[_.\-\\/]/g
@@ -20,6 +22,58 @@ export function pathToName(filepath: string) {
   return filepath.replace(REGEX_PATH_CHARS, '_').replace(REGEX_BRACKETS_PARENS, '$')
 }
 
+function isDirectory(entry: Dirent, path: string) {
+  if (entry.isDirectory())
+    return true
+  if (!entry.isSymbolicLink())
+    return false
+  try {
+    return statSync(path).isDirectory()
+  }
+  catch {
+    return false
+  }
+}
+
+// tinyglobby does not return a directory symlink as a match, so the directories are walked here.
+function findDirs(pattern: string): string[] {
+  const { base, glob } = picomatch.scan(pattern)
+  const isMatch = picomatch(glob)
+  const found: string[] = []
+  const ancestors = new Set<string>()
+
+  const walk = (dir: string, relDir: string) => {
+    let real: string
+    let entries: Dirent[]
+    try {
+      real = realpathSync(dir)
+      // A symlink can point back to one of its own ancestors.
+      if (ancestors.has(real))
+        return
+      entries = readdirSync(dir, { withFileTypes: true })
+    }
+    catch {
+      return
+    }
+
+    ancestors.add(real)
+    for (const entry of entries) {
+      const path = join(dir, entry.name)
+      if (!isDirectory(entry, path))
+        continue
+      const relPath = relDir ? `${relDir}/${entry.name}` : entry.name
+      if (isMatch(relPath))
+        found.push(path)
+      walk(path, relPath)
+    }
+    ancestors.delete(real)
+  }
+
+  // Relative patterns are matched from process.cwd(), not from the Vite root.
+  walk(resolve(base), '')
+  return found
+}
+
 export function resolveDirs(dirs: string | string[] | null, root: string) {
   if (dirs === null)
     return []
@@ -28,10 +82,8 @@ export function resolveDirs(dirs: string | string[] | null, root: string) {
 
   for (const dir of dirsArray) {
     if (dir.includes('**')) {
-      // tinyglobby would otherwise also match every subdirectory of each layouts dir.
-      const matches = globSync(dir, { onlyDirectories: true, expandDirectories: false })
-      for (const match of matches)
-        dirsResolved.push(normalizePath(resolve(root, match)))
+      for (const match of findDirs(dir))
+        dirsResolved.push(normalizePath(match))
     }
     else {
       dirsResolved.push(normalizePath(resolve(root, dir)))

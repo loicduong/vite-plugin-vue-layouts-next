@@ -173,6 +173,9 @@ catalogs:
     '@types/node':
       specifier: ^22.20.4
       version: 22.20.4
+    '@types/picomatch':
+      specifier: ^4.0.3
+      version: 4.0.3
     '@vitejs/plugin-vue':
       specifier: ^6.0.9
       version: 6.0.9
@@ -215,6 +218,9 @@ catalogs:
     nodemon:
       specifier: ^3.1.14
       version: 3.1.14
+    picomatch:
+      specifier: ^4.0.7
+      version: 4.0.7
     tinyglobby:
       specifier: ^0.2.17
       version: 0.2.17
@@ -260,6 +266,9 @@ importers:
       debug:
         specifier: 'catalog:'
         version: 4.4.3(supports-color@5.5.0)
+      picomatch:
+        specifier: 'catalog:'
+        version: 4.0.7
       tinyglobby:
         specifier: 'catalog:'
         version: 0.2.17
@@ -273,6 +282,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 22.20.4
+      '@types/picomatch':
+        specifier: 'catalog:'
+        version: 4.0.3
       '@vitejs/plugin-vue':
         specifier: 'catalog:'
         version: 6.0.9(vite@8.3.2(@types/node@22.20.4)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1))(vue@3.5.43(typescript@6.0.3))
@@ -1258,6 +1270,9 @@ packages:
 
   '@types/normalize-package-data@2.4.4':
     resolution: {integrity: sha512-37i+OaWTh9qeK4LSHPsyRC7NahnGotNuZvjLSgcPzblpHB3rrCJxAOgI5gCdKm7coonsaX1Of0ILiTcnZjbfxA==}
+
+  '@types/picomatch@4.0.3':
+    resolution: {integrity: sha512-iG0T6+nYJ9FAPmx9SsUlnwcq1ZVRuCXcVEvWnntoPlrOpwtSTKNDC9uVAxTsC3PUvJ+99n4RpAcNgBbHX3JSnQ==}
 
   '@types/unist@3.0.3':
     resolution: {integrity: sha512-ko/gIFJRv177XgZsZcBwnqJN5x/Gien8qNOn0D5bQU/zAzVf9Zt3BlcUiLqhV9y4ARk0GbT3tnUiPNgnTXzc/Q==}
@@ -4597,6 +4612,8 @@ snapshots:
       undici-types: 8.9.0
 
   '@types/normalize-package-data@2.4.4': {}
+
+  '@types/picomatch@4.0.3': {}
 
   '@types/unist@3.0.3': {}
 
