@@ -182,6 +182,31 @@ describe('resolveDirs', () => {
     })
   })
 
+  it('returns shallower directories first', async () => {
+    await withTmpDirs(['src/a/b/layouts', 'src/admin/layouts', 'src/layouts'], (tmp) => {
+      const dirs = resolveDirs('src/**/layouts', tmp)
+
+      expect(dirs[0]).toBe(normalizePath(join(tmp, 'src/layouts')))
+      expect(dirs[2]).toBe(normalizePath(join(tmp, 'src/a/b/layouts')))
+    })
+  })
+
+  it('treats `[!b]` as a negated class', async () => {
+    await withTmpDirs(['src/a/layouts', 'src/b/layouts'], (tmp) => {
+      expect(resolveDirs('src/[!b]/**/layouts', tmp)).toEqual([normalizePath(join(tmp, 'src/a/layouts'))])
+    })
+  })
+
+  it('keeps a leading `!` in a static segment literal', async () => {
+    await withTmpDirs(['src/!admin/x/layouts', 'src/admin/layouts'], (tmp) => {
+      expect(resolveDirs('src/!admin/**/layouts', tmp)).toEqual([normalizePath(join(tmp, 'src/!admin/x/layouts'))])
+    })
+  })
+
+  it('ignores repeated slashes after `**`', () => {
+    expect(resolveDirs('src/**//layouts', dirsRoot).sort()).toEqual(resolveDirs('src/**/layouts', dirsRoot).sort())
+  })
+
   it('walks below a non-expanding brace in the base', async () => {
     await withTmpDirs(['src/{tenant}/x/layouts', 'src/other/layouts'], (tmp) => {
       expect(resolveDirs('src/{tenant}/**/layouts', tmp)).toEqual([

@@ -10,6 +10,7 @@ const REGEX_PATH_CHARS = /[_.\-\\/]/g
 const REGEX_BRACKETS_PARENS = /[[:\]()]/g
 const REGEX_TRAILING_SLASHES = /\/+$/
 const REGEX_BRACES = /[{}]/g
+const REGEX_REPEATED_SLASHES = /(?<=[^/])\/{2,}/g
 
 export function extensionsToGlob(extensions: string[]) {
   return extensions.length > 1 ? `{${extensions.join(',')}}` : extensions[0] || ''
@@ -50,11 +51,12 @@ export function expandBraces(patterns: string[]): string[] {
 // `picomatch.scan` misses every glob after an escaped brace, so the static base is found one segment at a time.
 function splitBase(pattern: string) {
   const segments = pattern.split('/')
-  const globStart = segments.findIndex(segment => picomatch.scan(segment).isGlob)
+  // A leading `!` in a single segment is part of the name, not a negation of the whole pattern.
+  const globStart = segments.findIndex(segment => picomatch.scan(segment, { nonegate: true }).isGlob)
   const staticSegments = globStart === -1 ? segments : segments.slice(0, globStart)
   return {
     // Only the base is a filesystem path; the glob keeps the escapes the matcher still needs.
-    base: staticSegments.map(segment => picomatch.scan(segment, { unescape: true }).base).join('/'),
+    base: staticSegments.map(segment => picomatch.scan(segment, { unescape: true, nonegate: true }).base).join('/'),
     glob: globStart === -1 ? '' : segments.slice(globStart).join('/'),
   }
 }
@@ -66,8 +68,9 @@ function findDirs(pattern: string, root: string): string[] {
   const globsByBase = new Map<string, string[]>()
 
   for (const expanded of expandBraces([pattern])) {
-    // Walked paths never end in a slash, so `src/**/layouts/` would match nothing.
-    const split = splitBase(expanded.replace(REGEX_TRAILING_SLASHES, ''))
+    // Walked paths never end in a slash or hold an empty segment, so `src/**/layouts/` and `src/**//layouts`
+    // would match nothing. A leading `//` is kept for UNC paths.
+    const split = splitBase(expanded.replace(REGEX_TRAILING_SLASHES, '').replace(REGEX_REPEATED_SLASHES, '/'))
     const base = resolve(root, split.base)
     const { glob } = split
     // A brace alternative can be a plain path, as in `{src/**/layouts,shared/layouts}`.
@@ -84,17 +87,18 @@ function findDirs(pattern: string, root: string): string[] {
   }
 
   for (const [base, globs] of globsByBase) {
-    for (const dir of walkDirs(base, picomatch(globs)))
+    // `posix` makes `[!b]` a negated class, as it is in fast-glob.
+    for (const dir of walkDirs(base, picomatch(globs, { posix: true })))
       found.add(dir)
   }
   return [...found]
 }
 
 function walkDirs(base: string, isMatch: (path: string) => boolean): string[] {
-  const found: string[] = []
+  const found: { path: string, depth: number }[] = []
   const ancestors = new Set<string>()
 
-  const walk = (dir: string, real: string, relDir: string) => {
+  const walk = (dir: string, real: string, relDir: string, depth: number) => {
     // A symlink can point back to one of its own ancestors.
     if (ancestors.has(real))
       return
@@ -113,7 +117,7 @@ function walkDirs(base: string, isMatch: (path: string) => boolean): string[] {
         continue
       const relPath = relDir ? `${relDir}/${entry.name}` : entry.name
       if (isMatch(relPath))
-        found.push(path)
+        found.push({ path, depth })
       let childReal = join(real, entry.name)
       if (entry.isSymbolicLink()) {
         try {
@@ -123,7 +127,7 @@ function walkDirs(base: string, isMatch: (path: string) => boolean): string[] {
           continue
         }
       }
-      walk(path, childReal, relPath)
+      walk(path, childReal, relPath, depth + 1)
     }
     ancestors.delete(real)
   }
@@ -133,10 +137,11 @@ function walkDirs(base: string, isMatch: (path: string) => boolean): string[] {
     real = realpathSync(base)
   }
   catch {
-    return found
+    return []
   }
-  walk(base, real, '')
-  return found
+  walk(base, real, '', 0)
+  // Shallower directories come first, as they did with fast-glob, because a later layout of the same name wins.
+  return found.sort((a, b) => a.depth - b.depth).map(({ path }) => path)
 }
 
 export function resolveDirs(dirs: string | string[] | null, root: string) {
