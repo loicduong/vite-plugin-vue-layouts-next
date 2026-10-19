@@ -72,13 +72,16 @@
     "vue-router": "^4.0.11 || ^5.0.0"
   },
   "dependencies": {
+    "brace-expansion": "catalog:",
     "debug": "catalog:",
-    "fast-glob": "catalog:"
+    "picomatch": "catalog:",
+    "tinyglobby": "catalog:"
   },
   "devDependencies": {
     "@antfu/eslint-config": "catalog:",
     "@types/debug": "catalog:",
     "@types/node": "catalog:",
+    "@types/picomatch": "catalog:",
     "@vitejs/plugin-vue": "catalog:",
     "@vue/test-utils": "catalog:",
     "bumpp": "catalog:",

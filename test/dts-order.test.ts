@@ -17,7 +17,7 @@ function scan(): Promise<string[]> {
 }
 
 vi.mock('../src/files', () => ({ getFilesFromPath: scan }))
-vi.mock('fast-glob', () => ({ default: scan }))
+vi.mock('tinyglobby', () => ({ glob: scan }))
 
 let root: string
 

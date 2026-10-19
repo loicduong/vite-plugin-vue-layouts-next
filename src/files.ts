@@ -1,6 +1,6 @@
 import type { ResolvedOptions } from './types'
-import fg from 'fast-glob'
-import { debug, extensionsToGlob } from './utils'
+import { glob } from 'tinyglobby'
+import { debug, expandBraces, extensionsToGlob } from './utils'
 
 export async function getFilesFromPath(path: string, options: ResolvedOptions): Promise<string[]> {
   const {
@@ -11,9 +11,11 @@ export async function getFilesFromPath(path: string, options: ResolvedOptions): 
   const ext = extensionsToGlob(extensions)
   debug(extensions)
 
-  const files = await fg(`**/*.${ext}`, {
-    ignore: ['node_modules', '.git', '**/__*__/*', ...exclude],
+  const files = await glob(`**/*.${ext}`, {
+    ignore: ['node_modules', '.git', '**/__*__/*', ...expandBraces(exclude)],
     onlyFiles: true,
+    // Otherwise a directory named like `group.vue/` matches and every file inside it is returned.
+    expandDirectories: false,
     cwd: path,
   })
 
