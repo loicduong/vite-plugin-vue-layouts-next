@@ -40,6 +40,7 @@ catalog:
   '@vue/server-renderer': ^3.5.43
   '@vue/test-utils': ^2.5.1
   '@vueuse/head': ^2.0.0
+  brace-expansion: ^5.0.12
   bumpp: ^12.3.0
   conventional-changelog-cli: ^5.0.0
   cross-env: ^10.1.0

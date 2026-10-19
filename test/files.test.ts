@@ -1,5 +1,5 @@
 import type { ResolvedOptions } from '../src/types'
-import { mkdir, mkdtemp, rm, symlink } from 'node:fs/promises'
+import { mkdir, mkdtemp, rm, symlink, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join, relative, resolve } from 'node:path'
 import process from 'node:process'
@@ -22,6 +22,18 @@ function createOptions(overrides: Partial<ResolvedOptions> = {}): ResolvedOption
     inheritDefaultLayout: true,
     dts: false,
     ...overrides,
+  }
+}
+
+async function withTmpDirs(dirs: string[], run: (tmp: string) => void | Promise<void>) {
+  const tmp = await mkdtemp(join(tmpdir(), 'vue-layouts-'))
+  try {
+    for (const dir of dirs)
+      await mkdir(join(tmp, dir), { recursive: true })
+    await run(tmp)
+  }
+  finally {
+    await rm(tmp, { recursive: true, force: true })
   }
 }
 
@@ -48,6 +60,17 @@ describe('getFilesFromPath', () => {
     const files = await getFilesFromPath(layoutsRoot, createOptions())
 
     expect(files.filter(file => file.startsWith('group.vue/'))).toEqual([])
+  })
+
+  it('expands brace ranges in exclude', async () => {
+    await withTmpDirs(['1', '2', '10', 'keep'], async (tmp) => {
+      for (const dir of ['1', '2', '10', 'keep'])
+        await writeFile(join(tmp, dir, 'layout.vue'), '')
+
+      const files = await getFilesFromPath(tmp, createOptions({ exclude: ['{1..10}/**'] }))
+
+      expect(files).toEqual(['keep/layout.vue'])
+    })
   })
 })
 
@@ -104,19 +127,32 @@ describe('resolveDirs', () => {
     ])
   })
 
-  it('matches a leading brace range', async () => {
-    const tmp = await mkdtemp(join(tmpdir(), 'vue-layouts-range-'))
-    try {
-      for (const dir of ['1/x/layouts', '2/layouts', '5/layouts', 'src/layouts'])
-        await mkdir(join(tmp, dir), { recursive: true })
-      const expected = (dirs: string[]) => dirs.map(dir => normalizePath(join(tmp, dir)))
+  it('expands multi-digit, padded and stepped brace ranges', async () => {
+    await withTmpDirs(['1/x/layouts', '2/layouts', '5/layouts', '10/layouts', '01/layouts', 'src/layouts'], (tmp) => {
+      const expected = (dirs: string[]) => dirs.map(dir => normalizePath(join(tmp, dir))).sort()
 
-      expect(resolveDirs('{1..3}/**/layouts', tmp).sort()).toEqual(expected(['1/x/layouts', '2/layouts']))
-      expect(resolveDirs('{{1..3},src}/**/layouts', tmp).sort()).toEqual(expected(['1/x/layouts', '2/layouts', 'src/layouts']))
-    }
-    finally {
-      await rm(tmp, { recursive: true, force: true })
-    }
+      expect(resolveDirs('{1..10}/**/layouts', tmp).sort()).toEqual(expected(['1/x/layouts', '2/layouts', '5/layouts', '10/layouts']))
+      expect(resolveDirs('{01..03}/**/layouts', tmp).sort()).toEqual(expected(['01/layouts']))
+      expect(resolveDirs('{1..9..4}/**/layouts', tmp).sort()).toEqual(expected(['1/x/layouts', '5/layouts']))
+      expect(resolveDirs('{{1..2},src}/**/layouts', tmp).sort()).toEqual(expected(['1/x/layouts', '2/layouts', 'src/layouts']))
+    })
+  })
+
+  it('keeps an escaped comma inside a brace alternative', async () => {
+    await withTmpDirs(['foo,bar/layouts', 'bar/layouts', 'baz/layouts'], (tmp) => {
+      expect(resolveDirs('{foo\\,bar,baz}/**/layouts', tmp).sort()).toEqual([
+        normalizePath(join(tmp, 'baz/layouts')),
+        normalizePath(join(tmp, 'foo,bar/layouts')),
+      ])
+    })
+  })
+
+  it('unescapes glob characters in the static base', async () => {
+    await withTmpDirs(['src/[tenant]/x/layouts'], (tmp) => {
+      expect(resolveDirs('src/\\[tenant\\]/**/layouts', tmp)).toEqual([
+        normalizePath(join(tmp, 'src/[tenant]/x/layouts')),
+      ])
+    })
   })
 
   it('does not include the base directory of a trailing `**`', () => {

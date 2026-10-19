@@ -188,6 +188,9 @@ catalogs:
     '@vueuse/head':
       specifier: ^2.0.0
       version: 2.0.0
+    brace-expansion:
+      specifier: ^5.0.12
+      version: 5.0.12
     bumpp:
       specifier: ^12.3.0
       version: 12.3.0
@@ -263,6 +266,9 @@ importers:
 
   .:
     dependencies:
+      brace-expansion:
+        specifier: 'catalog:'
+        version: 5.0.12
       debug:
         specifier: 'catalog:'
         version: 4.4.3(supports-color@5.5.0)

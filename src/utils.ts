@@ -1,6 +1,7 @@
 import type { Dirent } from 'node:fs'
 import { readdirSync, realpathSync, statSync } from 'node:fs'
 import { join, resolve } from 'node:path'
+import { expand } from 'brace-expansion'
 import Debug from 'debug'
 import picomatch from 'picomatch'
 
@@ -36,40 +37,16 @@ function isDirectory(entry: Dirent, path: string) {
   }
 }
 
-// `picomatch.scan` finds no base for `{/a,/b}/**`, so a leading brace is split into one pattern per root.
-function expandLeadingBraces(pattern: string): string[] {
-  if (!pattern.startsWith('{'))
-    return [pattern]
-
-  const alternatives: string[] = []
-  let depth = 0
-  let start = 1
-  for (let i = 0; i < pattern.length; i++) {
-    const char = pattern[i]
-    if (char === '{') {
-      depth++
-    }
-    else if (char === ',' && depth === 1) {
-      alternatives.push(pattern.slice(start, i))
-      start = i + 1
-    }
-    else if (char === '}' && --depth === 0) {
-      // A group without a top-level comma, like a `{1..3}` range, is left for picomatch to match.
-      if (alternatives.length === 0)
-        return [pattern]
-      alternatives.push(pattern.slice(start, i))
-      const rest = pattern.slice(i + 1)
-      return alternatives.flatMap(alternative => expandLeadingBraces(alternative + rest))
-    }
-  }
-
-  return [pattern]
+/** picomatch, which tinyglobby also uses, matches `{1..3}` but not ranges like `{1..10}` or `{01..10}`. */
+export function expandBraces(patterns: string[]): string[] {
+  return patterns.flatMap(pattern => expand(pattern))
 }
 
 // tinyglobby does not return a directory symlink as a match, so the directories are walked here.
+// Braces are expanded first because `picomatch.scan` finds no base for `{/a,/b}/**`.
 function findDirs(pattern: string, root: string): string[] {
   const found = new Set<string>()
-  for (const expanded of expandLeadingBraces(pattern)) {
+  for (const expanded of expand(pattern)) {
     for (const dir of walkDirs(expanded, root))
       found.add(dir)
   }
@@ -78,7 +55,7 @@ function findDirs(pattern: string, root: string): string[] {
 
 function walkDirs(pattern: string, root: string): string[] {
   // Walked paths never end in a slash, so `src/**/layouts/` would match nothing.
-  const { base, glob } = picomatch.scan(pattern.replace(REGEX_TRAILING_SLASHES, ''))
+  const { base, glob } = picomatch.scan(pattern.replace(REGEX_TRAILING_SLASHES, ''), { unescape: true })
   // A brace alternative can be a plain path, as in `{src/**/layouts,shared/layouts}`.
   if (!glob) {
     const dir = resolve(root, base)
