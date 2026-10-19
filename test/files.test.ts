@@ -90,6 +90,35 @@ describe('resolveDirs', () => {
     ])
   })
 
+  it('ignores a trailing slash on a `**` pattern', () => {
+    expect(resolveDirs('src/**/layouts/', dirsRoot).sort()).toEqual(resolveDirs('src/**/layouts', dirsRoot).sort())
+  })
+
+  it('keeps plain-path alternatives of a leading brace that exist', () => {
+    const dirs = resolveDirs('{src/modules/**/layouts,src/layouts,src/missing}', dirsRoot)
+
+    expect(dirs.sort()).toEqual([
+      normalizePath(resolve(dirsRoot, 'src/layouts')),
+      normalizePath(resolve(dirsRoot, 'src/modules/admin/layouts')),
+      normalizePath(resolve(dirsRoot, 'src/modules/blog/layouts')),
+    ])
+  })
+
+  it('matches a leading brace range', async () => {
+    const tmp = await mkdtemp(join(tmpdir(), 'vue-layouts-range-'))
+    try {
+      for (const dir of ['1/x/layouts', '2/layouts', '5/layouts', 'src/layouts'])
+        await mkdir(join(tmp, dir), { recursive: true })
+      const expected = (dirs: string[]) => dirs.map(dir => normalizePath(join(tmp, dir)))
+
+      expect(resolveDirs('{1..3}/**/layouts', tmp).sort()).toEqual(expected(['1/x/layouts', '2/layouts']))
+      expect(resolveDirs('{{1..3},src}/**/layouts', tmp).sort()).toEqual(expected(['1/x/layouts', '2/layouts', 'src/layouts']))
+    }
+    finally {
+      await rm(tmp, { recursive: true, force: true })
+    }
+  })
+
   it('does not include the base directory of a trailing `**`', () => {
     const dirs = resolveDirs(`${normalizePath(dirsRoot)}/src/modules/**`, fixturesRoot)
 

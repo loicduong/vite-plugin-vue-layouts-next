@@ -7,6 +7,7 @@ import picomatch from 'picomatch'
 const REGEX_BACKSLASH = /\\/g
 const REGEX_PATH_CHARS = /[_.\-\\/]/g
 const REGEX_BRACKETS_PARENS = /[[:\]()]/g
+const REGEX_TRAILING_SLASHES = /\/+$/
 
 export function extensionsToGlob(extensions: string[]) {
   return extensions.length > 1 ? `{${extensions.join(',')}}` : extensions[0] || ''
@@ -53,6 +54,9 @@ function expandLeadingBraces(pattern: string): string[] {
       start = i + 1
     }
     else if (char === '}' && --depth === 0) {
+      // A group without a top-level comma, like a `{1..3}` range, is left for picomatch to match.
+      if (alternatives.length === 0)
+        return [pattern]
       alternatives.push(pattern.slice(start, i))
       const rest = pattern.slice(i + 1)
       return alternatives.flatMap(alternative => expandLeadingBraces(alternative + rest))
@@ -73,7 +77,19 @@ function findDirs(pattern: string, root: string): string[] {
 }
 
 function walkDirs(pattern: string, root: string): string[] {
-  const { base, glob } = picomatch.scan(pattern)
+  // Walked paths never end in a slash, so `src/**/layouts/` would match nothing.
+  const { base, glob } = picomatch.scan(pattern.replace(REGEX_TRAILING_SLASHES, ''))
+  // A brace alternative can be a plain path, as in `{src/**/layouts,shared/layouts}`.
+  if (!glob) {
+    const dir = resolve(root, base)
+    try {
+      return statSync(dir).isDirectory() ? [dir] : []
+    }
+    catch {
+      return []
+    }
+  }
+
   const isMatch = picomatch(glob)
   const found: string[] = []
   const ancestors = new Set<string>()
