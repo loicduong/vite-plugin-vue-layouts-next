@@ -59,10 +59,9 @@ describe('resolveDirs', () => {
     ])
   })
 
-  it('expands `**` patterns to the matching directories only', () => {
-    // `**` patterns are matched from the process cwd.
-    const pattern = `${normalizePath(relative(process.cwd(), dirsRoot))}/src/**/layouts`
-    const dirs = resolveDirs(pattern, process.cwd())
+  it('expands relative `**` patterns from the root, not the cwd', () => {
+    expect(process.cwd()).not.toBe(dirsRoot)
+    const dirs = resolveDirs('src/**/layouts', dirsRoot)
 
     expect(dirs.sort()).toEqual([
       normalizePath(resolve(dirsRoot, 'src/layouts')),
@@ -78,6 +77,16 @@ describe('resolveDirs', () => {
       normalizePath(resolve(dirsRoot, 'src/layouts')),
       normalizePath(resolve(dirsRoot, 'src/modules/admin/layouts')),
       normalizePath(resolve(dirsRoot, 'src/modules/blog/layouts')),
+    ])
+  })
+
+  it('expands a leading brace of absolute roots', () => {
+    const modules = normalizePath(resolve(dirsRoot, 'src/modules'))
+    const dirs = resolveDirs(`{${modules}/admin,${modules}/blog,${modules}/admin}/**/layouts`, fixturesRoot)
+
+    expect(dirs.sort()).toEqual([
+      `${modules}/admin/layouts`,
+      `${modules}/blog/layouts`,
     ])
   })
 
@@ -120,8 +129,7 @@ describe('resolveDirs', () => {
   })
 
   it('scans every resolved directory and applies exclude to each', async () => {
-    const pattern = `${normalizePath(relative(process.cwd(), dirsRoot))}/src/modules/**/layouts`
-    const dirs = resolveDirs([normalizePath(resolve(dirsRoot, 'src/layouts')), pattern], process.cwd()).sort()
+    const dirs = resolveDirs(['src/layouts', 'src/modules/**/layouts'], dirsRoot).sort()
     const options = createOptions({ layoutsDirs: dirs, exclude: ['**/drafts/**'] })
 
     const scanned = await Promise.all(dirs.map(async dir => [normalizePath(relative(dirsRoot, dir)), (await getFilesFromPath(dir, options)).sort()]))

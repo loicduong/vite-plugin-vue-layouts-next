@@ -35,8 +35,44 @@ function isDirectory(entry: Dirent, path: string) {
   }
 }
 
+// `picomatch.scan` finds no base for `{/a,/b}/**`, so a leading brace is split into one pattern per root.
+function expandLeadingBraces(pattern: string): string[] {
+  if (!pattern.startsWith('{'))
+    return [pattern]
+
+  const alternatives: string[] = []
+  let depth = 0
+  let start = 1
+  for (let i = 0; i < pattern.length; i++) {
+    const char = pattern[i]
+    if (char === '{') {
+      depth++
+    }
+    else if (char === ',' && depth === 1) {
+      alternatives.push(pattern.slice(start, i))
+      start = i + 1
+    }
+    else if (char === '}' && --depth === 0) {
+      alternatives.push(pattern.slice(start, i))
+      const rest = pattern.slice(i + 1)
+      return alternatives.flatMap(alternative => expandLeadingBraces(alternative + rest))
+    }
+  }
+
+  return [pattern]
+}
+
 // tinyglobby does not return a directory symlink as a match, so the directories are walked here.
-function findDirs(pattern: string): string[] {
+function findDirs(pattern: string, root: string): string[] {
+  const found = new Set<string>()
+  for (const expanded of expandLeadingBraces(pattern)) {
+    for (const dir of walkDirs(expanded, root))
+      found.add(dir)
+  }
+  return [...found]
+}
+
+function walkDirs(pattern: string, root: string): string[] {
   const { base, glob } = picomatch.scan(pattern)
   const isMatch = picomatch(glob)
   const found: string[] = []
@@ -69,8 +105,7 @@ function findDirs(pattern: string): string[] {
     ancestors.delete(real)
   }
 
-  // Relative patterns are matched from process.cwd(), not from the Vite root.
-  walk(resolve(base), '')
+  walk(resolve(root, base), '')
   return found
 }
 
@@ -82,7 +117,7 @@ export function resolveDirs(dirs: string | string[] | null, root: string) {
 
   for (const dir of dirsArray) {
     if (dir.includes('**')) {
-      for (const match of findDirs(dir))
+      for (const match of findDirs(dir, root))
         dirsResolved.push(normalizePath(match))
     }
     else {
