@@ -1,3 +1,9 @@
+## [3.3.1](https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v3.3.0...v3.3.1) (2026-10-20)
+
+
+### Bug Fixes
+
+* watch resolved `layoutsDirs` so relative dirs trigger reloads ([#59](https://github.com/loicduong/vite-plugin-vue-layouts-next/issues/59)) ([211ef9a](https://github.com/loicduong/vite-plugin-vue-layouts-next/commit/211ef9a739c63f33e785de8c9c635c283cc4d40e))
 # [3.3.0](https://github.com/loicduong/vite-plugin-vue-layouts-next/compare/v3.2.0...v3.3.0) (2026-10-09)
 
 
