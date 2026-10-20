@@ -1,0 +1,16 @@
+{
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "vite --port 5600 --strictPort"
+  },
+  "dependencies": {
+    "vue": "catalog:",
+    "vue-router": "catalog:"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "catalog:",
+    "vite": "catalog:",
+    "vite-plugin-vue-layouts-next": "workspace:*"
+  }
+}
